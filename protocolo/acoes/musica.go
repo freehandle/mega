@@ -1,0 +1,56 @@
+package acoes
+
+import (
+	"time"
+
+	"github.com/freehandle/breeze/crypto"
+	"github.com/freehandle/breeze/util"
+)
+
+// estrutura da acao postar
+type PostarMusica struct {
+	Epoca    uint64
+	Autor    crypto.Token
+	Conteudo string // texto 1 paragrafo
+	Data     time.Time
+}
+
+// faz o hash da instrucao
+func (p *PostarMusica) FazHash() crypto.Hash {
+	return crypto.Hasher([]byte(p.Serializa()))
+}
+
+// traz a autoria da instrucao
+func (p *PostarMusica) Autoria() crypto.Token {
+	return p.Autor
+}
+
+// serializa a instrucao
+func (p *PostarMusica) Serializa() []byte {
+	bytes := make([]byte, 0)
+	util.PutUint64(p.Epoca, &bytes)
+	util.PutToken(p.Autor, &bytes)
+	util.PutByte(APostarMusica, &bytes)
+	util.PutString(p.Conteudo, &bytes)
+	util.PutTime(p.Data, &bytes)
+	return bytes
+}
+
+// le a instrucao a partir da serializacao
+func LeMusica(postideia []byte) *PostarMusica {
+	acao := PostarMusica{}
+	posicao := 0
+	acao.Epoca, posicao = util.ParseUint64(postideia, posicao)
+	acao.Autor, posicao = util.ParseToken(postideia, posicao)
+	// se o byte correspondente ao tipo de acao nao for o esperado, retorna nulo
+	if postideia[posicao] != APostarMusica {
+		return nil
+	}
+	posicao += 1
+	acao.Conteudo, posicao = util.ParseString(postideia, posicao)
+	acao.Data, posicao = util.ParseTime(postideia, posicao)
+	if posicao != len(postideia) {
+		return nil
+	}
+	return &acao
+}
