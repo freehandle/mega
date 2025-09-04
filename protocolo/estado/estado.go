@@ -1,9 +1,14 @@
 package estado
 
-import "github.com/freehandle/breeze/crypto"
+import (
+	"errors"
+	"mega/protocolo/acoes"
 
-type ArrobaUsuario struct {
-	arroba string
+	"github.com/freehandle/breeze/crypto"
+)
+
+type EncontraApelido interface {
+	Token(handle string) *crypto.Token
 }
 
 type Estado struct {
@@ -11,13 +16,189 @@ type Estado struct {
 	ArrobasPraTokens    map[string]crypto.Token
 	HashTokenPraArrobas map[crypto.Hash]string
 	HashTokenPraJornal  map[crypto.Hash]*Jornal
+	Apelidos            EncontraApelido
 }
 
 type Jornal struct {
-	ideia  *Ideia
-	meme   *Meme
-	musica *Musica
-	fofoca *Fofoca
-	causo  *Causo
-	livro  *Livro
+	ideia  []*Ideia
+	meme   []*Meme
+	musica []*Musica
+	fofoca []*Fofoca
+	causo  []*Causo
+	livro  []*Livro
+}
+
+func (e *Estado) VerificaSeMembro(token crypto.Token) bool {
+	hash := crypto.HashToken(token)
+	_, katu := e.HashTokenPraArrobas[hash]
+	return katu // katu quer dizer bom, certo, ok, em tupinambá :)
+}
+
+func (e *Estado) Acao(dados []byte) error {
+	tipo := acoes.TipoDeAcao(dados)
+	switch tipo {
+	case acoes.APostarCauso:
+		acao := acoes.LeCauso(dados)
+		if acao == nil {
+			return errors.New("nao foi possivel ler a acao do tipo post causo")
+		}
+		err := e.ValidaCauso(acao)
+		return err
+	case acoes.APostarFofoca:
+		acao := acoes.LeFofoca(dados)
+		if acao == nil {
+			return errors.New("nao foi possivel ler a acao do tipo post fofoca")
+		}
+		err := e.ValidaFofoca(acao)
+		return err
+	case acoes.APostarIdeia:
+		acao := acoes.LeIdeia(dados)
+		if acao == nil {
+			return errors.New("nao foi possivel ler a acao do tipo post ideia")
+		}
+		err := e.ValidaIdeia(acao)
+		return err
+	case acoes.APostarLivro:
+		acao := acoes.LeLivro(dados)
+		if acao == nil {
+			return errors.New("nao foi possivel ler a acao do tipo post livro")
+		}
+		err := e.ValidaLivro(acao)
+		return err
+	case acoes.APostarMeme:
+		acao := acoes.LeMeme(dados)
+		if acao == nil {
+			return errors.New("nao foi possivel ler a acao do tipo post meme")
+		}
+		err := e.ValidaMeme(acao)
+		return err
+	case acoes.APostarMusica:
+		acao := acoes.LeMusica(dados)
+		if acao == nil {
+			return errors.New("nao foi possivel ler a acao do tipo post musica")
+		}
+		err := e.ValidaMusica(acao)
+		return err
+	}
+	return errors.New("acao nao reconhecida")
+}
+
+func (e *Estado) ValidaCauso(acao *acoes.PostarCauso) error {
+	if !e.VerificaSeMembro(acao.Autor) {
+		return errors.New("autor do post nao reconhecido")
+	}
+	novocauso := Causo{
+		Conteudo: acao.Conteudo,
+		Autor:    acao.Autor,
+		Data:     acao.Data,
+		Hash:     acao.FazHash(),
+	}
+	if !novocauso.ChecaFormato() {
+		return errors.New("formato do causo nao esta adequado")
+	}
+	if !novocauso.ChecaTempo(e) {
+		return errors.New("ainda nao pode postar no campo causo")
+	}
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].causo = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].causo, &novocauso)
+	return nil
+}
+
+func (e *Estado) ValidaFofoca(acao *acoes.PostarFofoca) error {
+	if !e.VerificaSeMembro(acao.Autor) {
+		return errors.New("autor do post nao reconhecido")
+	}
+	novafofoca := Fofoca{
+		Conteudo: acao.Conteudo,
+		Autor:    acao.Autor,
+		Data:     acao.Data,
+		Hash:     acao.FazHash(),
+	}
+	if !novafofoca.ChecaFormato() {
+		return errors.New("formato da fofoca nao esta adequado")
+	}
+	if !novafofoca.ChecaTempo(e) {
+		return errors.New("ainda nao pode postar no campo fofoca")
+	}
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].fofoca = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].fofoca, &novafofoca)
+	return nil
+}
+
+func (e *Estado) ValidaIdeia(acao *acoes.PostarIdeia) error {
+	if !e.VerificaSeMembro(acao.Autor) {
+		return errors.New("autor do post nao reconhecido")
+	}
+	novaideia := Ideia{
+		Conteudo: acao.Conteudo,
+		Autor:    acao.Autor,
+		Data:     acao.Data,
+		Hash:     acao.FazHash(),
+	}
+	if !novaideia.ChecaFormato() {
+		return errors.New("formado da ideia nao esta adequado")
+	}
+	if !novaideia.ChecaTempo(e) {
+		return errors.New("ainda nao pode postar no campo ideia")
+	}
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].ideia = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].ideia, &novaideia)
+	return nil
+}
+
+func (e *Estado) ValidaLivro(acao *acoes.PostarLivro) error {
+	if !e.VerificaSeMembro(acao.Autor) {
+		return errors.New("autor do post nao reconhecido")
+	}
+	novolivro := Livro{
+		Conteudo: acao.Conteudo,
+		Autor:    acao.Autor,
+		Data:     acao.Data,
+		Hash:     acao.FazHash(),
+	}
+	if !novolivro.ChecaFormato() {
+		return errors.New("formado do livro nao esta adequado")
+	}
+	if !novolivro.ChecaTempo(e) {
+		return errors.New("ainda nao pode postar no campo livro")
+	}
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].livro = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].livro, &novolivro)
+	return nil
+}
+
+func (e *Estado) ValidaMeme(acao *acoes.PostarMeme) error {
+	if !e.VerificaSeMembro(acao.Autor) {
+		return errors.New("autor do post nao reconhecido")
+	}
+	novomeme := Meme{
+		Conteudo: acao.Conteudo,
+		Autor:    acao.Autor,
+		Data:     acao.Data,
+		Hash:     acao.FazHash(),
+	}
+	if !novomeme.ChecaFormato() {
+		return errors.New("formato do meme nao esta adequado")
+	}
+	if !novomeme.ChecaTempo(e) {
+		return errors.New("ainda nao pode postar no campo meme")
+	}
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].meme = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].meme, &novomeme)
+	return nil
+}
+
+func (e *Estado) ValidaMusica(acao *acoes.PostarMusica) error {
+	if !e.VerificaSeMembro(acao.Autor) {
+		return errors.New("autor do post nao reconhecido")
+	}
+	novamusica := Musica{
+		Conteudo: acao.Conteudo,
+		Autor:    acao.Autor,
+		Data:     acao.Data,
+		Hash:     acao.FazHash(),
+	}
+	if !novamusica.ChecaFormato() {
+		return errors.New("formato da musica nao esta adequado")
+	}
+	if !novamusica.ChecaTempo(e) {
+		return errors.New("ainda nao pode postar no campo musica")
+	}
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].musica = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].musica, &novamusica)
+	return nil
 }

@@ -18,8 +18,6 @@ type Acao interface {
 	Serializa() []byte     // serializa a instrucao
 	Autoria() crypto.Token // verifica a autoria
 	FazHash() crypto.Hash  // faz o hash da instrucao de postagem
-	// ChecaTempo() bool      // checa se pode postar, ou se ainda nao pode
-	// ChecaFormato() bool    // checa se o formato está adequado para o tipo de acao
 }
 
 // retorna o byte do tipo de acao referente aos dados recebidos

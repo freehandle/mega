@@ -9,8 +9,9 @@ import (
 
 type Livro struct {
 	Conteudo []byte
-	Autor    crypto.Token //arroba
+	Autor    crypto.Token
 	Data     time.Time
+	Hash     crypto.Hash
 }
 
 // precisa ser uma imagem
@@ -21,7 +22,8 @@ func (i *Livro) ChecaFormato() bool {
 
 // o campo livro pode ser atualizado no maximo a cada 30 dias
 func (i *Livro) ChecaTempo(s *Estado) bool {
-	livroAntigo := s.HashTokenPraJornal[crypto.Hash(i.Autor)].livro
+	livros := s.HashTokenPraJornal[crypto.Hash(i.Autor)].livro
+	livroAntigo := livros[len(livros)-1]
 	if livroAntigo != nil {
 		if !i.Data.After(livroAntigo.Data) {
 			fmt.Println("data antiga incorreta, verificar")
@@ -29,8 +31,8 @@ func (i *Livro) ChecaTempo(s *Estado) bool {
 
 		}
 		dias := i.Data.Sub(livroAntigo.Data).Hours() / 24
-		if dias < 7 {
-			fmt.Println("ainda nao pode postar")
+		if dias < 30 {
+			fmt.Println("ainda não pode postar no campo livro")
 			return false
 		}
 		// ja se passou um mes, pode postar

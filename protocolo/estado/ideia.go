@@ -10,8 +10,9 @@ import (
 
 type Ideia struct {
 	Conteudo string
-	Autor    crypto.Token //arroba
+	Autor    crypto.Token
 	Data     time.Time
+	Hash     crypto.Hash
 }
 
 // precisa ter ao menos 1 caractere e no maximo uma pagina de caracteres (~2500 glyphos?)
@@ -24,7 +25,8 @@ func (i *Ideia) ChecaFormato() bool {
 
 // o campo ideia pode ser atualizado no maximo a cada 30 dias
 func (i *Ideia) ChecaTempo(s *Estado) bool {
-	ideiaAntiga := s.HashTokenPraJornal[crypto.Hash(i.Autor)].ideia
+	ideias := s.HashTokenPraJornal[crypto.Hash(i.Autor)].ideia
+	ideiaAntiga := ideias[len(ideias)-1]
 	if ideiaAntiga != nil {
 		if !i.Data.After(ideiaAntiga.Data) {
 			fmt.Println("data antiga incorreta, verificar")
@@ -33,7 +35,7 @@ func (i *Ideia) ChecaTempo(s *Estado) bool {
 		}
 		dias := i.Data.Sub(ideiaAntiga.Data).Hours() / 24
 		if dias < 30 {
-			fmt.Println("ainda nao pode postar")
+			fmt.Println("ainda não pode postar no campo ideia")
 			return false
 		}
 		// ja se passou um mes, pode postar

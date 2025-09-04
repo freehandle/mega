@@ -10,8 +10,9 @@ import (
 
 type Fofoca struct {
 	Conteudo string
-	Autor    crypto.Token //arroba
+	Autor    crypto.Token
 	Data     time.Time
+	Hash     crypto.Hash
 }
 
 // precisa ter ao menos 100 caracteres e no maximo uma pagina de caracteres (~2500 glyphos?)
@@ -24,7 +25,8 @@ func (i *Fofoca) ChecaFormato() bool {
 
 // o campo fofoca pode ser atualizado no maximo a cada 15 dias
 func (i *Fofoca) ChecaTempo(s *Estado) bool {
-	fofocaAntiga := s.HashTokenPraJornal[crypto.Hash(i.Autor)].fofoca
+	fofocas := s.HashTokenPraJornal[crypto.Hash(i.Autor)].fofoca
+	fofocaAntiga := fofocas[len(fofocas)-1]
 	if fofocaAntiga != nil {
 		if !i.Data.After(fofocaAntiga.Data) {
 			fmt.Println("data antiga incorreta, verificar")
@@ -33,7 +35,7 @@ func (i *Fofoca) ChecaTempo(s *Estado) bool {
 		}
 		dias := i.Data.Sub(fofocaAntiga.Data).Hours() / 24
 		if dias < 15 {
-			fmt.Println("ainda nao pode postar")
+			fmt.Println("ainda não pode postar no campo fofoca")
 			return false
 		}
 		// ja se passou uma quinzena, pode postar

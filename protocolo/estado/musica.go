@@ -10,13 +10,14 @@ import (
 
 type Musica struct {
 	Conteudo string
-	Autor    crypto.Token //arroba
+	Autor    crypto.Token
 	Data     time.Time
+	Hash     crypto.Hash
 }
 
-// precisa ter ao menos 10 caracteres e no maximo um paragrafo (~800 glyphos?)
+// precisa ter ao menos 1 caractere e no maximo um paragrafo (~800 glyphos?)
 func (i *Musica) ChecaFormato() bool {
-	if utf8.RuneCountInString(i.Conteudo) < 10 || utf8.RuneCountInString(i.Conteudo) > 800 {
+	if utf8.RuneCountInString(i.Conteudo) < 1 || utf8.RuneCountInString(i.Conteudo) > 800 {
 		return false
 	}
 	return true
@@ -24,7 +25,8 @@ func (i *Musica) ChecaFormato() bool {
 
 // o campo musica pode ser atualizado no maximo a cada 15 dias
 func (i *Musica) ChecaTempo(s *Estado) bool {
-	musicaAntiga := s.HashTokenPraJornal[crypto.Hash(i.Autor)].musica
+	musicas := s.HashTokenPraJornal[crypto.Hash(i.Autor)].musica
+	musicaAntiga := musicas[len(musicas)-1]
 	if musicaAntiga != nil {
 		if !i.Data.After(musicaAntiga.Data) {
 			fmt.Println("data antiga incorreta, verificar")
@@ -33,7 +35,7 @@ func (i *Musica) ChecaTempo(s *Estado) bool {
 		}
 		dias := i.Data.Sub(musicaAntiga.Data).Hours() / 24
 		if dias < 15 {
-			fmt.Println("ainda nao pode postar")
+			fmt.Println("ainda não pode postar no campo musica")
 			return false
 		}
 		// ja se passou uma quinzena, pode postar

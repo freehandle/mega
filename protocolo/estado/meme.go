@@ -9,8 +9,9 @@ import (
 
 type Meme struct {
 	Conteudo []byte
-	Autor    crypto.Token //arroba
+	Autor    crypto.Token
 	Data     time.Time
+	Hash     crypto.Hash
 }
 
 // precisa ser uma imagem
@@ -19,9 +20,10 @@ func (i *Meme) ChecaFormato() bool {
 	return true
 }
 
-// o campo meme pode ser atualizado no maximo a cada 30 dias
+// o campo meme pode ser atualizado no maximo a cada 7 dias
 func (i *Meme) ChecaTempo(s *Estado) bool {
-	memeAntigo := s.HashTokenPraJornal[crypto.Hash(i.Autor)].meme
+	memes := s.HashTokenPraJornal[crypto.Hash(i.Autor)].meme
+	memeAntigo := memes[len(memes)-1]
 	if memeAntigo != nil {
 		if !i.Data.After(memeAntigo.Data) {
 			fmt.Println("data antiga incorreta, verificar")
@@ -30,7 +32,7 @@ func (i *Meme) ChecaTempo(s *Estado) bool {
 		}
 		dias := i.Data.Sub(memeAntigo.Data).Hours() / 24
 		if dias < 7 {
-			fmt.Println("ainda nao pode postar")
+			fmt.Println("ainda não pode postar no campo meme")
 			return false
 		}
 		// ja se passou um mes, pode postar
