@@ -15,9 +15,9 @@ type Causo struct {
 	Hash     crypto.Hash
 }
 
-// precisa ter ao menos 1 caractere e no maximo duas laudas de caracteres (2500/pag, approx 2pg?)
+// precisa ter ao menos 100 caracteres e no maximo dois paragrafos de caracteres (~1600 glyphos?)
 func (i *Causo) ChecaFormato() bool {
-	if utf8.RuneCountInString(i.Conteudo) < 100 || utf8.RuneCountInString(i.Conteudo) > 5000 {
+	if utf8.RuneCountInString(i.Conteudo) < 100 || utf8.RuneCountInString(i.Conteudo) > 1600 {
 		return false
 	}
 	return true

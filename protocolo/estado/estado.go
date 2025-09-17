@@ -28,12 +28,25 @@ type Jornal struct {
 	livro  []*Livro
 }
 
+// inicializa o estado do protocolo mega
+func EstadoInicial() *Estado {
+	estado := &Estado{
+		Epoca:               0,
+		ArrobasPraTokens:    make(map[string]crypto.Token),
+		HashTokenPraArrobas: make(map[crypto.Hash]string),
+		HashTokenPraJornal:  map[crypto.Hash]*Jornal{},
+	}
+	return estado
+}
+
+// verifica se um token fornecido é membro da rede
 func (e *Estado) VerificaSeMembro(token crypto.Token) bool {
 	hash := crypto.HashToken(token)
 	_, katu := e.HashTokenPraArrobas[hash]
 	return katu // katu quer dizer bom, certo, ok, em tupinambá :)
 }
 
+// Le e valida as ações do protocolo
 func (e *Estado) Acao(dados []byte) error {
 	tipo := acoes.TipoDeAcao(dados)
 	switch tipo {
@@ -83,6 +96,7 @@ func (e *Estado) Acao(dados []byte) error {
 	return errors.New("acao nao reconhecida")
 }
 
+// Valida ação postar causo
 func (e *Estado) ValidaCauso(acao *acoes.PostarCauso) error {
 	if !e.VerificaSeMembro(acao.Autor) {
 		return errors.New("autor do post nao reconhecido")
@@ -103,6 +117,7 @@ func (e *Estado) ValidaCauso(acao *acoes.PostarCauso) error {
 	return nil
 }
 
+// Valida a ação postar fofoca
 func (e *Estado) ValidaFofoca(acao *acoes.PostarFofoca) error {
 	if !e.VerificaSeMembro(acao.Autor) {
 		return errors.New("autor do post nao reconhecido")
@@ -123,6 +138,7 @@ func (e *Estado) ValidaFofoca(acao *acoes.PostarFofoca) error {
 	return nil
 }
 
+// Valida a ação postar ideia
 func (e *Estado) ValidaIdeia(acao *acoes.PostarIdeia) error {
 	if !e.VerificaSeMembro(acao.Autor) {
 		return errors.New("autor do post nao reconhecido")
@@ -143,6 +159,7 @@ func (e *Estado) ValidaIdeia(acao *acoes.PostarIdeia) error {
 	return nil
 }
 
+// Valida a ação postar livro
 func (e *Estado) ValidaLivro(acao *acoes.PostarLivro) error {
 	if !e.VerificaSeMembro(acao.Autor) {
 		return errors.New("autor do post nao reconhecido")
@@ -163,6 +180,7 @@ func (e *Estado) ValidaLivro(acao *acoes.PostarLivro) error {
 	return nil
 }
 
+// Valida a ção postar meme
 func (e *Estado) ValidaMeme(acao *acoes.PostarMeme) error {
 	if !e.VerificaSeMembro(acao.Autor) {
 		return errors.New("autor do post nao reconhecido")
@@ -183,6 +201,7 @@ func (e *Estado) ValidaMeme(acao *acoes.PostarMeme) error {
 	return nil
 }
 
+// Valida a ação postar música
 func (e *Estado) ValidaMusica(acao *acoes.PostarMusica) error {
 	if !e.VerificaSeMembro(acao.Autor) {
 		return errors.New("autor do post nao reconhecido")

@@ -3,9 +3,9 @@ package protocoloalt
 import (
 	"unicode/utf8"
 
-	"github.com/freehandle/brisa/crypto"
-	"github.com/freehandle/brisa/protocol/actions"
-	"github.com/freehandle/brisa/util"
+	"github.com/freehandle/breeze/crypto"
+	"github.com/freehandle/breeze/protocol/actions"
+	"github.com/freehandle/breeze/util"
 	"github.com/freehandle/handles/attorney"
 )
 
@@ -30,8 +30,8 @@ type Anúncio struct {
 	Conteúdo []byte
 }
 
-// Serializa ação para bytes compatíveis com o protooclo brisa e o protocol
-// arrobas
+// Serializa ação para bytes compatíveis com o protooclo brisa e o protocolo
+// apelidos
 func (a *Anúncio) Serialize() []byte {
 	bytes := []byte{0, actions.IVoid} // breeze (version 0) void action
 	util.PutUint64(a.Epoca, &bytes)

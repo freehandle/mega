@@ -15,9 +15,9 @@ type Fofoca struct {
 	Hash     crypto.Hash
 }
 
-// precisa ter ao menos 100 caracteres e no maximo uma pagina de caracteres (~2500 glyphos?)
+// precisa ter ao menos 100 caracteres e no maximo duas paginas de caracteres (~2500 glyphos?)
 func (i *Fofoca) ChecaFormato() bool {
-	if utf8.RuneCountInString(i.Conteudo) < 100 || utf8.RuneCountInString(i.Conteudo) > 2500 {
+	if utf8.RuneCountInString(i.Conteudo) < 100 || utf8.RuneCountInString(i.Conteudo) > 5000 {
 		return false
 	}
 	return true
