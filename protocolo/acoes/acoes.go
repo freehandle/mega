@@ -10,6 +10,7 @@ const (
 	APostarLivro
 	APostarMeme
 	APostarMusica
+	AMidiaMultiparte
 	APostarErro // pro caso de dar um erro no byte da acao
 )
 

@@ -3,6 +3,7 @@ package aplicacao
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/freehandle/breeze/crypto"
@@ -18,6 +19,8 @@ func FormularioParaInt(r *http.Request, field string) int {
 }
 
 // Leitura de formularios
+
+// Leitura Formulario Causo
 func FormularioCauso(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time) PostarCauso {
 	if r == nil {
 		return PostarCauso{}
@@ -28,12 +31,13 @@ func FormularioCauso(r *http.Request, apelidos map[string]crypto.Token, datahora
 	acao := PostarCauso{
 		Acao:       "PostarCauso",
 		ID:         FormularioParaInt(r, "id"),
-		CampoCauso: r.FormValue("campocauso"),
+		CampoCauso: r.FormValue("campoCauso"),
 		DataHora:   datahora,
 	}
 	return acao
 }
 
+// Leitura Formulario Fofoca
 func FormularioFofoca(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time) PostarFofoca {
 	if r == nil {
 		return PostarFofoca{}
@@ -44,8 +48,87 @@ func FormularioFofoca(r *http.Request, apelidos map[string]crypto.Token, datahor
 	acao := PostarFofoca{
 		Acao:        "PostarFofoca",
 		ID:          FormularioParaInt(r, "id"),
-		CampoFofoca: r.FormValue("campofofoca"),
+		CampoFofoca: r.FormValue("campoFofoca"),
 		DataHora:    datahora,
 	}
 	return acao
+}
+
+// Leitura Formulario Ideia
+func FormularioIdeia(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time) PostarIdeia {
+	if r == nil {
+		return PostarIdeia{}
+	}
+	if apelidos == nil {
+		return PostarIdeia{}
+	}
+	acao := PostarIdeia{
+		Acao:       "PostarIdeia",
+		ID:         FormularioParaInt(r, "id"),
+		CampoIdeia: r.FormValue("campoIdeia"),
+		DataHora:   datahora,
+	}
+	return acao
+}
+
+// Leitura Formulario Livro
+func FormularioLivro(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time, arquivo []byte) PostarLivro {
+	if r == nil {
+		return PostarLivro{}
+	}
+	if apelidos == nil {
+		return PostarLivro{}
+	}
+	acao := PostarLivro{
+		Acao:         "PostarLivro",
+		ID:           FormularioParaInt(r, "id"),
+		TipoConteudo: TipoArquivo(r.FormValue("tipoConteudoLivro")),
+		ArquivoLivro: arquivo,
+		DataHora:     datahora,
+	}
+	return acao
+}
+
+// Leitura Formulario Meme
+func FormularioMeme(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time, arquivo []byte) PostarMeme {
+	if r == nil {
+		return PostarMeme{}
+	}
+	if apelidos == nil {
+		return PostarMeme{}
+	}
+	acao := PostarMeme{
+		Acao:         "PostarMeme",
+		ID:           FormularioParaInt(r, "id"),
+		TipoConteudo: TipoArquivo(r.FormValue("tipoConteudoMeme")),
+		ArquivoMeme:  arquivo,
+		DataHora:     datahora,
+	}
+	return acao
+}
+
+// Leitura Formulario Musica
+func FormularioMusica(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time) PostarMusica {
+	if r == nil {
+		return PostarMusica{}
+	}
+	if apelidos == nil {
+		return PostarMusica{}
+	}
+	acao := PostarMusica{
+		Acao:        "PostarMusica",
+		ID:          FormularioParaInt(r, "id"),
+		CampoMusica: r.FormValue("campoMusica"),
+		DataHora:    datahora,
+	}
+	return acao
+}
+
+// Retorna o tipo de arquivo
+func TipoArquivo(nomeArquivo string) string {
+	pos := strings.LastIndex(nomeArquivo, ".")
+	if pos < len(nomeArquivo) && pos > 0 {
+		return nomeArquivo[pos+1:]
+	}
+	return ""
 }

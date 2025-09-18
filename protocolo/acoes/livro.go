@@ -9,10 +9,11 @@ import (
 
 // estrutura da acao postar
 type PostarLivro struct {
-	Epoca    uint64
-	Autor    crypto.Token
-	Conteudo []byte // imagem (ver em mega)
-	Data     time.Time
+	Epoca        uint64
+	Autor        crypto.Token
+	TipoConteudo string
+	Conteudo     []byte
+	Data         time.Time
 }
 
 // faz o hash da instrucao
@@ -31,25 +32,27 @@ func (p *PostarLivro) Serializa() []byte {
 	util.PutUint64(p.Epoca, &bytes)
 	util.PutToken(p.Autor, &bytes)
 	util.PutByte(APostarLivro, &bytes)
+	util.PutString(p.TipoConteudo, &bytes)
 	util.PutByteArray(p.Conteudo, &bytes)
 	util.PutTime(p.Data, &bytes)
 	return bytes
 }
 
 // le a instrucao a partir da serializacao
-func LeLivro(postideia []byte) *PostarLivro {
+func LeLivro(postlivro []byte) *PostarLivro {
 	acao := PostarLivro{}
 	posicao := 0
-	acao.Epoca, posicao = util.ParseUint64(postideia, posicao)
-	acao.Autor, posicao = util.ParseToken(postideia, posicao)
+	acao.Epoca, posicao = util.ParseUint64(postlivro, posicao)
+	acao.Autor, posicao = util.ParseToken(postlivro, posicao)
 	// se o byte correspondente ao tipo de acao nao for o esperado, retorna nulo
-	if postideia[posicao] != APostarLivro {
+	if postlivro[posicao] != APostarLivro {
 		return nil
 	}
 	posicao += 1
-	acao.Conteudo, posicao = util.ParseByteArray(postideia, posicao)
-	acao.Data, posicao = util.ParseTime(postideia, posicao)
-	if posicao != len(postideia) {
+	acao.TipoConteudo, posicao = util.ParseString(postlivro, posicao)
+	acao.Conteudo, posicao = util.ParseByteArray(postlivro, posicao)
+	acao.Data, posicao = util.ParseTime(postlivro, posicao)
+	if posicao != len(postlivro) {
 		return nil
 	}
 	return &acao
