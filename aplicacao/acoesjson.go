@@ -54,7 +54,6 @@ func (a PostarIdeia) ParaAcao() ([]acoes.Acao, error) {
 type PostarLivro struct {
 	Acao         string    `json:"acao"`
 	ID           int       `json:"id"`
-	TipoConteudo string    `json:"tipoConteudoLivro"`
 	ArquivoLivro []byte    `json:"arquivoPraSubir"`
 	DataHora     time.Time `json:"dataHora"`
 }
@@ -77,17 +76,16 @@ func (a PostarLivro) ParaAcao() ([]acoes.Acao, error) {
 }
 
 type PostarMeme struct {
-	Acao         string    `json:"acao"`
-	ID           int       `json:"id"`
-	TipoConteudo string    `json:"tipoConteudoMeme"`
-	ArquivoMeme  []byte    `json:"arquivoPraSubir"`
-	DataHora     time.Time `json:"dataHora"`
+	Acao        string    `json:"acao"`
+	ID          int       `json:"id"`
+	ArquivoMeme []byte    `json:"arquivoPraSubir"`
+	DataHora    time.Time `json:"dataHora"`
 }
 
 func (a PostarMeme) ParaAcao() ([]acoes.Acao, error) {
 	truncated := splitBytes(a.ArquivoMeme)
 	allActions := make([]acoes.Acao, len(truncated.Parts))
-	allActions[0] = &acoes.PostarLivro{
+	allActions[0] = &acoes.PostarMeme{
 		Data:         a.DataHora,
 		TipoConteudo: a.TipoConteudo,
 	}

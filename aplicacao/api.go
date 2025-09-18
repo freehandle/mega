@@ -72,7 +72,7 @@ func FormularioIdeia(r *http.Request, apelidos map[string]crypto.Token, datahora
 }
 
 // Leitura Formulario Livro
-func FormularioLivro(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time, arquivo []byte) PostarLivro {
+func FormularioLivro(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time, arquivo []byte, tipoArquivo string) PostarLivro {
 	if r == nil {
 		return PostarLivro{}
 	}
@@ -82,7 +82,7 @@ func FormularioLivro(r *http.Request, apelidos map[string]crypto.Token, datahora
 	acao := PostarLivro{
 		Acao:         "PostarLivro",
 		ID:           FormularioParaInt(r, "id"),
-		TipoConteudo: TipoArquivo(r.FormValue("tipoConteudoLivro")),
+		TipoConteudo: tipoArquivo,
 		ArquivoLivro: arquivo,
 		DataHora:     datahora,
 	}
@@ -90,7 +90,7 @@ func FormularioLivro(r *http.Request, apelidos map[string]crypto.Token, datahora
 }
 
 // Leitura Formulario Meme
-func FormularioMeme(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time, arquivo []byte) PostarMeme {
+func FormularioMeme(r *http.Request, apelidos map[string]crypto.Token, datahora time.Time, arquivo []byte, tipoArquivo string) PostarMeme {
 	if r == nil {
 		return PostarMeme{}
 	}
@@ -100,7 +100,7 @@ func FormularioMeme(r *http.Request, apelidos map[string]crypto.Token, datahora 
 	acao := PostarMeme{
 		Acao:         "PostarMeme",
 		ID:           FormularioParaInt(r, "id"),
-		TipoConteudo: TipoArquivo(r.FormValue("tipoConteudoMeme")),
+		TipoConteudo: tipoArquivo,
 		ArquivoMeme:  arquivo,
 		DataHora:     datahora,
 	}

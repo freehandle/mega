@@ -52,5 +52,5 @@ func (a *ProcuradorGeral) IncorporarProcuracao(arroba string, procuracao *attorn
 }
 
 func (a *ProcuradorGeral) RegisterAxeDataBase(axe state.HandleProvider) {
-	a.state.Axe = axe
+	a.estado.Axe = axe
 }

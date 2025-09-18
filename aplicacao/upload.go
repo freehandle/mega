@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/breeze/protocol/actions"
@@ -37,7 +38,7 @@ func splitBytes(bytes []byte) *TruncatedFile {
 func (a *ProcuradorGeral) OperadorUpload(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(maxFileSize)
 	author := a.Autor(r)
-	file, _, err := r.FormFile("arquivoPraSubir")
+	file, operadorArquivo, err := r.FormFile("arquivoPraSubir")
 	if err != nil {
 		log.Printf("Não foi possível puxar o arquivo: %v\n", err)
 		return
@@ -48,13 +49,15 @@ func (a *ProcuradorGeral) OperadorUpload(w http.ResponseWriter, r *http.Request)
 		log.Printf("Erros ao ler os bytes do arquivo: %v\n", err)
 	}
 	var actionArray []actions.Action
-
+	name := operadorArquivo.Filename
+	parts := strings.Split(name, ".")
+	tipoArquivo := parts[len(parts)-1]
 	datahora := r.FormValue("dataHora")
 	switch r.FormValue("acao") {
 	case "PostarLivro":
-		actionArray, err = FormularioLivro(r, a.estado.ArrobasPraTokens, datahora, fileBytes).ParaAcao()
+		actionArray, err = FormularioLivro(r, a.estado.ArrobasPraTokens, datahora, fileBytes, tipoArquivo).ParaAcao()
 	case "PostarMeme":
-		actionArray, err = FormularioMeme(r, a.estado.ArrobasPraTokens, datahora, fileBytes).ParaAcao()
+		actionArray, err = FormularioMeme(r, a.estado.ArrobasPraTokens, datahora, fileBytes, tipoArquivo).ParaAcao()
 	}
 	if err == nil && len(actionArray) > 0 {
 		a.Send(actionArray, author)
