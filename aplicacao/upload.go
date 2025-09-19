@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mega/protocolo/acoes"
 	"net/http"
 	"strings"
 
 	"github.com/freehandle/breeze/crypto"
-	"github.com/freehandle/breeze/protocol/actions"
 )
 
 // tamanho maximo do arquivo que pode ser publicado
@@ -48,11 +48,11 @@ func (a *ProcuradorGeral) OperadorUpload(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		log.Printf("Erros ao ler os bytes do arquivo: %v\n", err)
 	}
-	var actionArray []actions.Action
+	var actionArray []acoes.Acao
 	name := operadorArquivo.Filename
 	parts := strings.Split(name, ".")
 	tipoArquivo := parts[len(parts)-1]
-	datahora := r.FormValue("dataHora")
+	datahora := FormularioParaDataHora(r, "dataHora")
 	switch r.FormValue("acao") {
 	case "PostarLivro":
 		actionArray, err = FormularioLivro(r, a.estado.ArrobasPraTokens, datahora, fileBytes, tipoArquivo).ParaAcao()

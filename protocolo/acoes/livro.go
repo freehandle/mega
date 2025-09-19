@@ -9,11 +9,11 @@ import (
 
 // estrutura da acao postar
 type PostarLivro struct {
-	Epoca        uint64
-	Autor        crypto.Token
-	TipoConteudo string
-	Conteudo     []byte
-	Data         time.Time
+	Epoca       uint64
+	Autor       crypto.Token
+	TipoArquivo string
+	Conteudo    []byte
+	Data        time.Time
 }
 
 // faz o hash da instrucao
@@ -32,7 +32,7 @@ func (p *PostarLivro) Serializa() []byte {
 	util.PutUint64(p.Epoca, &bytes)
 	util.PutToken(p.Autor, &bytes)
 	util.PutByte(APostarLivro, &bytes)
-	util.PutString(p.TipoConteudo, &bytes)
+	util.PutString(p.TipoArquivo, &bytes)
 	util.PutByteArray(p.Conteudo, &bytes)
 	util.PutTime(p.Data, &bytes)
 	return bytes
@@ -49,7 +49,7 @@ func LeLivro(postlivro []byte) *PostarLivro {
 		return nil
 	}
 	posicao += 1
-	acao.TipoConteudo, posicao = util.ParseString(postlivro, posicao)
+	acao.TipoArquivo, posicao = util.ParseString(postlivro, posicao)
 	acao.Conteudo, posicao = util.ParseByteArray(postlivro, posicao)
 	acao.Data, posicao = util.ParseTime(postlivro, posicao)
 	if posicao != len(postlivro) {

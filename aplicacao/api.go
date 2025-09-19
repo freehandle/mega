@@ -10,12 +10,26 @@ import (
 )
 
 // Conversao de tipos
-func FormularioParaInt(r *http.Request, field string) int {
+func FormularioParaInt(r *http.Request, campo string) int {
 	if r == nil {
 		return 0
 	}
-	value, _ := strconv.Atoi(r.FormValue(field))
-	return value
+	valor, _ := strconv.Atoi(r.FormValue(campo))
+	return valor
+}
+
+// Conversao de data
+func FormularioParaDataHora(r *http.Request, campo string) time.Time {
+	if r == nil {
+		return time.Time{}
+	}
+	formato := "Mon Jan 02 2006 15:04:05 GMT-0700"
+	stringData := r.FormValue(campo)
+	t, katu := time.Parse(formato, stringData)
+	if katu != nil {
+		return t
+	}
+	return time.Time{}
 }
 
 // Leitura de formularios
@@ -82,7 +96,7 @@ func FormularioLivro(r *http.Request, apelidos map[string]crypto.Token, datahora
 	acao := PostarLivro{
 		Acao:         "PostarLivro",
 		ID:           FormularioParaInt(r, "id"),
-		TipoConteudo: tipoArquivo,
+		TipoArquivo:  tipoArquivo,
 		ArquivoLivro: arquivo,
 		DataHora:     datahora,
 	}
@@ -98,11 +112,11 @@ func FormularioMeme(r *http.Request, apelidos map[string]crypto.Token, datahora 
 		return PostarMeme{}
 	}
 	acao := PostarMeme{
-		Acao:         "PostarMeme",
-		ID:           FormularioParaInt(r, "id"),
-		TipoConteudo: tipoArquivo,
-		ArquivoMeme:  arquivo,
-		DataHora:     datahora,
+		Acao:        "PostarMeme",
+		ID:          FormularioParaInt(r, "id"),
+		TipoArquivo: tipoArquivo,
+		ArquivoMeme: arquivo,
+		DataHora:    datahora,
 	}
 	return acao
 }

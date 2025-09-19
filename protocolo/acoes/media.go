@@ -5,6 +5,7 @@ import (
 	"github.com/freehandle/breeze/util"
 )
 
+// Implementa a quebra de um arquivo longo em multiplas acoes com cada parte do arquivo pra ele subir na blockchain
 type MidiaMultiparte struct {
 	Epoca uint64
 	Autor crypto.Token
@@ -13,22 +14,26 @@ type MidiaMultiparte struct {
 	Dados []byte
 }
 
-func (c *MidiaMultiparte) Authored() crypto.Token {
-	return c.Autor
+func (m *MidiaMultiparte) FazHash() crypto.Hash {
+	return crypto.Hasher([]byte(m.Serializa()))
 }
 
-func (c *MidiaMultiparte) Serialize() []byte {
+func (m *MidiaMultiparte) Autoria() crypto.Token {
+	return m.Autor
+}
+
+func (m *MidiaMultiparte) Serializa() []byte {
 	bytes := make([]byte, 0)
-	util.PutUint64(c.Epoca, &bytes)
-	util.PutToken(c.Autor, &bytes)
+	util.PutUint64(m.Epoca, &bytes)
+	util.PutToken(m.Autor, &bytes)
 	util.PutByte(AMidiaMultiparte, &bytes)
-	util.PutByte(c.Parte, &bytes)
-	util.PutByte(c.De, &bytes)
-	util.PutByteArray(c.Dados, &bytes)
+	util.PutByte(m.Parte, &bytes)
+	util.PutByte(m.De, &bytes)
+	util.PutByteArray(m.Dados, &bytes)
 	return bytes
 }
 
-func ParseMultipartMedia(create []byte) *MidiaMultiparte {
+func LeMidiaMultiparte(create []byte) *MidiaMultiparte {
 	action := MidiaMultiparte{}
 	position := 0
 	action.Epoca, position = util.ParseUint64(create, position)

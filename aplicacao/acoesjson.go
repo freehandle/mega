@@ -1,9 +1,8 @@
 package aplicacao
 
 import (
+	"mega/protocolo/acoes"
 	"time"
-
-	"github.com/freehandle/mega/protocolo/acoes"
 )
 
 type PostarCauso struct {
@@ -54,6 +53,7 @@ func (a PostarIdeia) ParaAcao() ([]acoes.Acao, error) {
 type PostarLivro struct {
 	Acao         string    `json:"acao"`
 	ID           int       `json:"id"`
+	TipoArquivo  string    `json:"tipoArquivo"`
 	ArquivoLivro []byte    `json:"arquivoPraSubir"`
 	DataHora     time.Time `json:"dataHora"`
 }
@@ -62,8 +62,8 @@ func (a PostarLivro) ParaAcao() ([]acoes.Acao, error) {
 	truncated := splitBytes(a.ArquivoLivro)
 	allActions := make([]acoes.Acao, len(truncated.Parts))
 	allActions[0] = &acoes.PostarLivro{
-		Data:         a.DataHora,
-		TipoConteudo: a.TipoConteudo,
+		Data:        a.DataHora,
+		TipoArquivo: a.TipoArquivo,
 	}
 	for n := 1; n < len(truncated.Parts); n++ {
 		allActions[n] = &acoes.MidiaMultiparte{
@@ -78,6 +78,7 @@ func (a PostarLivro) ParaAcao() ([]acoes.Acao, error) {
 type PostarMeme struct {
 	Acao        string    `json:"acao"`
 	ID          int       `json:"id"`
+	TipoArquivo string    `json:"tipoArquivo"`
 	ArquivoMeme []byte    `json:"arquivoPraSubir"`
 	DataHora    time.Time `json:"dataHora"`
 }
@@ -86,8 +87,8 @@ func (a PostarMeme) ParaAcao() ([]acoes.Acao, error) {
 	truncated := splitBytes(a.ArquivoMeme)
 	allActions := make([]acoes.Acao, len(truncated.Parts))
 	allActions[0] = &acoes.PostarMeme{
-		Data:         a.DataHora,
-		TipoConteudo: a.TipoConteudo,
+		Data:        a.DataHora,
+		TipoArquivo: a.TipoArquivo,
 	}
 	for n := 1; n < len(truncated.Parts); n++ {
 		allActions[n] = &acoes.MidiaMultiparte{
