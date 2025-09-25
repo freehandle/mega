@@ -1,0 +1,67 @@
+{{template "CABECALHO" .Cabecalho}}
+<div class="container_board">
+    <div class="board_header">
+      <h1>
+        <span> jornal </span>{{.Usuario}}
+      </h1>
+    </div>
+    <div class="board_content">
+      <div class="pink">
+        <p class="time_above">{{.Usuario}} publicou</p>
+        <h1><span class="pink">causo</span></h1>
+        <p class="time_below">em {{.DataCauso}}</p>
+        <p>
+        {{.Causo}}
+        </p>
+      </div>
+      <div class="red">
+        <p class="time_above">{{.Usuario}} publicou</p>
+        <h1><span class="red">fofoca</span></h1>
+        <p class="time_below">em {{.DataFofoca}}</p>
+        <p> {{.Fofoca}}</p>
+      </div>
+      <div class="blue">
+        <p class="time_above">{{.Usuario}} publicou</p>
+        <h1><span class="blue">ideia</span></h1>
+        <p class="time_below">em {{.DataIdeia}}</p>
+        <p>{{.Ideia}}</p>
+      </div>
+      <div class="green">
+        <p class="time_above">{{.Usuario}} publicou</p>
+        <h1><span class="green">livro</span></h1>
+        <p class="time_below">em {{.DataLivro}}</p>
+        <p>{{.Livro}}</p>
+      </div>
+      <div class="yellow">
+        <p class="time_above">{{.Usuario}} publicou</p>
+        <h1><span class="yellow">meme</span></h1>
+        <p class="time_below">em {{.DataMeme}}</p>
+        <p>{{.Meme}}</p>
+      </div>
+      <div class="purple">
+        <p class="time_above">{{.Usuario}} publicou</p>
+        <h1><span class="purple">música</span></h1>
+        <p class="time_below">em {{.DataMusica}}</p>
+        <p>{{.Musica}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="details">
+  <div class="header">
+  </div>
+  <h1>
+    postagens anteriores
+  </h1>
+  <h2>causo</h2>
+    <p><a href="{{.LinkCausoAnterior}}">{{.DataCausoAnterior}}</a></p>
+  <h2>fofoca</h2>
+    <p><a href="{{.LinkFofocaAnterior}}">{{.DataFofocaAnterior}}</a></p>
+  <h2>ideia</h2>
+    <p><a href="{{.LinkIdeiaAnterior}}">{{.DataIdeiaAnterior}}</a></p>
+  <h2>livro</h2>
+    <p><a href="{{.LinkLivroAnterior}}">{{.DataLivroAnterior}}</a></p>
+  <h2>meme</h2>
+    <p><a href="{{.LinkMemeAnterior}}">{{.DataMemeAnterior}}</a></p>
+  <h2>música</h2>
+  <p><a href="{{.LinkMusicaAnterior}}">{{.DataMusicaAnterior}}</a></p>

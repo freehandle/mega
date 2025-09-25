@@ -60,6 +60,7 @@ body {
     border-right: #dddfe0 1px solid;
     border-left: #dddfe0 1px solid;
     padding-left: 30px;
+    overflow: scroll;
 }
 
 .details {

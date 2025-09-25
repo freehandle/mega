@@ -1,18 +1,18 @@
-<!doctype html>
+{{define CABECALHO}}
+<!DOCTYPE html>
 
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>MEGA</title>
   <meta name="description" content="Protocolo MEGA">
-
   <meta property="og:title" content="@s livres">
   <meta property="og:type" content="website">
   <meta property="og:description" content="Protocolo social MEGA - rodando na infra do @s livres">
   
   <link rel="stylesheet" href="../static/estilo.css">
+  <script src="../static/funcoes.js"></script>
 </head>
 
 <body>
@@ -24,125 +24,44 @@
         <div>
           <h1>
             meu jornal
-            <h2>
-                atualizar
-            </h2>
-            <h2 class="selected">
-                ver
-            </h2>
+            <h2 {{if eq  .Active "Atualizar"}} class="selected"{{end}}><a href="../atualizar"> atualizar </a></h2>
+            <h2 {{if eq  .Active "Ver"}} class="selected"{{end}}><a href="../ver"> ver </a></h2>
           </h1>
         </div>
         <div>
           <h1>
             jornais
-            <h2>{{pessoas}}</h2>
+            <h2 {{if eq  .Active "Pessoa"}} class="selected"{{end}}><a href="../ver/{{.LinkSelecionada}}"> {{.PessoaSelecionada}} </a></h2>
+            {{range .Pessoas}}
+              <h2><a href="../ver/{{.Link}}"> {{.}} </a></h2>
+            {{end}}
           </h1>
         </div>
         <div>
           <h1>
             campos
           </h1>
-          <h2>
-            causo
-          </h2>
-          <h2>
-            fofoca
-          </h2>
-          <h2>
-            ideia
-          </h2>
-          <h2>
-            livro
-          </h2>
-          <h2>
-            meme
-          </h2>
-          <h2>
-            música
-          </h2>
+          <h2 {{if eq  .Active "Causo"}} class="selected"{{end}}><a href="../causo"> causo </a></h2>
+          <h2 {{if eq  .Active "Fofoca"}} class="selected"{{end}}><a href="../fofoca"> fofoca </a></h2>
+          <h2 {{if eq  .Active "Ideia"}} class="selected"{{end}}><a href="../ideia"> ideia </a></h2>
+          <h2 {{if eq  .Active "Livro"}} class="selected"{{end}}><a href="../livro"> livro </a></h2>
+          <h2 {{if eq  .Active "Meme"}} class="selected"{{end}}><a href="../meme"> meme </a></h2>
+          <h2 {{if eq  .Active "Musica"}} class="selected"{{end}}><a href="../musica"> música </a></h2>
         </div>
       </div>
     </div>
-    <div class="board">
-      <div class="container_board">
-        <div class="board_header">
-          <h1>
-            <span> jornal </span>larissa
-          </h1>
+    <div id="centro" class="board">
+      {{if .Error}}
+        <div>
+          {{.Error}}
         </div>
-        <div class="board_content">
-          <div class="pink">
-            <!-- <p class="time_above">12 de dezembro de 2025</p> -->
-            <h1><span class="pink">causo</span></h1>
-            <p class="time_below">12 de dezembro de 2025</p>
-            <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore magnam dolore, odit ut dolores commodi impedit minima consequatur voluptate cum dolorum, animi ullam sunt expedita omnis, delectus quibusdam ipsa consectetur?
-            </p>
-          </div>
-          <div class="red">
-            <!-- <p class="time_above">published on</p> -->
-            <h1><span class="red">fofoca</span></h1>
-            <p class="time_below">10 de novembro de 2025</p>
-            <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis sapiente, provident, ipsa optio, vel iste earum commodi quia consectetur temporibus illo. Autem quas cumque consequuntur ipsam adipisci modi accusantium saepe corporis illo voluptas quasi, dolores repellendus sapiente in optio non.</p>
-          </div>
-          <div class="blue">
-            <!-- <p class="time_above">published on</p> -->
-            <h1><span class="blue">ideia</span></h1>
-            <p class="time_below">10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-          <div class="green">
-            <!-- <p class="time_above">published on</p> -->
-            <h1><span class="green">livro</span></h1>
-            <p class="time_below">10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-          <div class="yellow">
-            <!-- <p class="time_above">published on</p> -->
-            <h1><span class="yellow">meme</span></h1>
-            <p class="time_below">10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-          <div class="purple">
-            <!-- <p class="time_above">published on</p> -->
-            <h1><span class="purple">música</span></h1>
-            <p class="time_below">10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-        </div>
+      {{end}}
+{{end}}
+{{define "TAIL"}}
       </div>
-    </div>
-    <div class="details">
-      <div class="header">
-      </div>
-      <h1>
-        postagens anteriores
-      </h1>
-      <h2>
-        causo
-      </h2>
-      <p>15 de dezembro de 2024</p>
-      <h2>
-        fofoca
-      </h2>
-      <p>10 de janeiro de 2025</p>
-      <h2>
-        ideia
-      </h2>
-      <p>12 de janeiro de 2024</p>
-      <h2>
-        livro
-      </h2>
-      <p>12 de janeiro de 2024</p>
-      <h2>
-        meme
-      </h2>
-      <p>12 de janeiro de 2024</p>
-      <h2>
-        música
-      </h2>
-      <p>12 de janeiro de 2024</p>
-    </div>
-
   </div>
 </body>
+</html>
+{{end}}
+{{template "CABECALHO" .Cabecalho}}
+{{template "TAIL"}}

@@ -7,6 +7,8 @@ import (
 	"github.com/freehandle/breeze/crypto"
 )
 
+var TiposImagens = []string{"jpg", "gif", "pgn", "bmp", "svg"}
+
 type EncontraApelido interface {
 	Token(handle string) *crypto.Token
 }
@@ -170,7 +172,7 @@ func (e *Estado) ValidaLivro(acao *acoes.PostarLivro) error {
 		Data:     acao.Data,
 		Hash:     acao.FazHash(),
 	}
-	if !novolivro.ChecaFormato() {
+	if !novolivro.ChecaFormato(acao.TipoArquivo) {
 		return errors.New("formado do livro nao esta adequado")
 	}
 	if !novolivro.ChecaTempo(e) {
@@ -191,7 +193,7 @@ func (e *Estado) ValidaMeme(acao *acoes.PostarMeme) error {
 		Data:     acao.Data,
 		Hash:     acao.FazHash(),
 	}
-	if !novomeme.ChecaFormato() {
+	if !novomeme.ChecaFormato(acao.TipoArquivo) {
 		return errors.New("formato do meme nao esta adequado")
 	}
 	if !novomeme.ChecaTempo(e) {

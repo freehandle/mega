@@ -2,6 +2,8 @@ package estado
 
 import (
 	"fmt"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/freehandle/breeze/crypto"
@@ -15,9 +17,9 @@ type Meme struct {
 }
 
 // precisa ser uma imagem
-func (i *Meme) ChecaFormato() bool {
-	// ver aqui o que eu faco
-	return true
+func (i *Meme) ChecaFormato(tipo string) bool {
+	tipomin := strings.ToLower(tipo)
+	return slices.Contains(TiposImagens, tipomin)
 }
 
 // o campo meme pode ser atualizado no maximo a cada 7 dias
