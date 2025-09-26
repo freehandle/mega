@@ -12,6 +12,7 @@ const (
 	APostarMusica
 	AMidiaMultiparte
 	APostarErro // pro caso de dar um erro no byte da acao
+	AEntrarRede // não é parte do protocolo MEGA, associa @ a token via protocolo palcos
 )
 
 // cada acao declarada apos AIdeia tem como identificador o byte da ação anterior + 1

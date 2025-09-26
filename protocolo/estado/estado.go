@@ -3,6 +3,7 @@ package estado
 import (
 	"errors"
 	"mega/protocolo/acoes"
+	"time"
 
 	"github.com/freehandle/breeze/crypto"
 )
@@ -19,6 +20,7 @@ type Estado struct {
 	HashTokenPraArrobas map[crypto.Hash]string
 	HashTokenPraJornal  map[crypto.Hash]*Jornal
 	Apelidos            EncontraApelido
+	HoraGenesis         time.Time
 }
 
 type Jornal struct {
