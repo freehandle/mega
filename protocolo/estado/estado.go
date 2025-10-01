@@ -10,8 +10,13 @@ import (
 
 var TiposImagens = []string{"jpg", "gif", "pgn", "bmp", "svg"}
 
+type InfoUsuario struct {
+	Arroba string
+}
+
 type EncontraApelido interface {
-	Token(handle string) *crypto.Token
+	Arroba(token crypto.Token) *InfoUsuario
+	Token(arroba string) *crypto.Token
 }
 
 type Estado struct {

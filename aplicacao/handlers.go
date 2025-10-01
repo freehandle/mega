@@ -21,12 +21,14 @@ func (a *ProcuradorGeral) ApiHandler(w http.ResponseWriter, r *http.Request) {
 		actionArray, err = FormularioCauso(r, a.estado.ArrobasPraTokens, data).ParaAcao()
 	case "PostarFofoca":
 		actionArray, err = FormularioFofoca(r, a.estado.ArrobasPraTokens, data).ParaAcao()
-		// case "PostarIdeia":
-		// 	actionArray, err = FormularioIdeia(r, a.estado.ArrobasPraTokens, data).ParaAcao()
-		// case "PostarIdeia":
-		// 	actionArray, err = FormularioIdeia(r, a.estado.ArrobasPraTokens, data).ParaAcao()
-		// case "PostarLivro":
-		// actionArray, err = FormularioLivro(r, a.estado.ArrobasPraTokens, data, arquivo, tipoArquivo).ParaAcao()
+	case "PostarIdeia":
+		actionArray, err = FormularioIdeia(r, a.estado.ArrobasPraTokens, data).ParaAcao()
+	// case "PostarLivro":
+	// 	actionArray, err = FormularioLivro(r, a.estado.ArrobasPraTokens, data, arquivo, tipoArquivo).ParaAcao()
+	// case "PostarMeme":
+	// 	actionArray, err = FormularioMeme(r, a.estado.ArrobasPraTokens, data, arquivo, tipoArquivo).ParaAcao()
+	case "PostarMusica":
+		actionArray, err = FormularioMusica(r, a.estado.ArrobasPraTokens, data).ParaAcao()
 	}
 	if err == nil && len(actionArray) > 0 {
 		a.Send(actionArray, autor)

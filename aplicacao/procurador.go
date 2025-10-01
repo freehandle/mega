@@ -50,7 +50,7 @@ func (a *ProcuradorGeral) Send(all []acoes.Acao, author crypto.Token) {
 }
 
 func (a *ProcuradorGeral) DressAction(action acoes.Acao, author crypto.Token) []byte {
-	bytes := MegaToBreeze(action.Serializa(), a.estado.Epoca)
+	bytes := MegaParaBreeze(action.Serializa(), a.estado.Epoca)
 	if bytes == nil {
 		return nil
 	}
@@ -71,14 +71,14 @@ func (a *ProcuradorGeral) DressAction(action acoes.Acao, author crypto.Token) []
 	return bytes
 }
 
-func MegaToBreeze(action []byte, epoch uint64) []byte {
+func MegaParaBreeze(action []byte, epoch uint64) []byte {
 	if action == nil {
-		log.Print("PANIC BUG: SynergyToBreeze called with nil action ")
+		log.Print("PANIC BUG: MegaParaBreeze chamado com acao nula ")
 		return nil
 	}
 	bytes := []byte{0, breeze.IVoid}                     // Breeze Void instruction version 0
-	util.PutUint64(epoch, &bytes)                        // epoch (synergy)
-	bytes = append(bytes, 1, 1, 0, 0, attorney.VoidType) // synergy protocol code + axe Void instruction code
+	util.PutUint64(epoch, &bytes)                        // epoch (mega)
+	bytes = append(bytes, 1, 1, 0, 0, attorney.VoidType) // mega protocol code + axe Void instruction code
 	bytes = append(bytes, action[8:]...)                 //
 	return bytes
 }
@@ -92,4 +92,26 @@ func (a *ProcuradorGeral) Autor(r *http.Request) crypto.Token {
 		return token
 	}
 	return crypto.ZeroToken
+}
+
+func (a *ProcuradorGeral) DefineEpoca(epoca uint64) {
+	a.estado.Epoca = epoca
+}
+
+func (a *ProcuradorGeral) IncorporarProcuracao(arroba string, procuracao *attorney.GrantPowerOfAttorney) {
+	if procuracao != nil {
+		a.signin.DarProcuracao(procuracao.Author, arroba, string(procuracao.Fingerprint))
+	}
+}
+
+func (a *ProcuradorGeral) IncorporarRevogacao(arroba string, revogacao *attorney.RevokePowerOfAttorney) {
+	if revogacao != nil {
+		a.signin.RevogarProcuracao(revogacao.Author, arroba, revogacao.Signature.String())
+	}
+}
+
+func (a *ProcuradorGeral) Incorporar(acao []byte) {
+	if err := a.estado.Acao(acao); err != nil {
+		fmt.Println("Erro ao incorporar acao:", err, acao)
+	}
 }

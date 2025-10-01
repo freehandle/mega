@@ -20,7 +20,7 @@ const resetBody = `Para resetar clique em https://%v`
 
 // var emailSigninMessage = "To: %v\r\n" + "Subject: Protocolo MEGA\r\n" + "\r\n" + "%v\r\n"
 
-const signinWithoutHandleBody = `Your email was associated to a Synergy account for the handle %v. Acressar %v using the fingerprint %v `
+const signinWithoutHandleBody = `Your email was associated to a MEGA account for the handle %v. Acressar %v using the fingerprint %v `
 
 const signinBody = `handle %v. power of attorney to %v using the fingerprint %v`
 
@@ -29,13 +29,13 @@ const signinBody = `handle %v. power of attorney to %v using the fingerprint %v`
 const passwordMessage = `Your new password for app mega account for the handle %v is %v`
 
 type GerenciadorSignin struct {
-	safe          *safe.Safe // for optional direct onboarding
-	pending       []*Signerin
-	passwords     configuracoes.PasswordManager
-	AttorneyToken crypto.Token
-	mail          Mailer
-	Attorney      *ProcuradorGeral
-	Granted       map[string]crypto.Token
+	cofre             *safe.Safe // for optional direct onboarding
+	pendente          []*Signerin
+	senhas            configuracoes.PasswordManager
+	TokenDoProcurador crypto.Token
+	mail              Mailer
+	Procurador        *ProcuradorGeral
+	Procuracao        map[string]crypto.Token
 }
 
 type SMTPGmail struct {
@@ -71,91 +71,81 @@ func NewSigninManager(passwords configuracoes.PasswordManager, mail Mailer, atto
 		return nil
 	}
 	return &GerenciadorSignin{
-		safe:          attorney.safe,
-		pending:       make([]*Signerin, 0),
-		passwords:     passwords,
-		AttorneyToken: attorney.Token,
-		Attorney:      attorney,
-		mail:          mail,
-		Granted:       make(map[string]crypto.Token),
+		cofre:             attorney.safe,
+		pendente:          make([]*Signerin, 0),
+		senhas:            passwords,
+		TokenDoProcurador: attorney.Token,
+		Procurador:        attorney,
+		mail:              mail,
+		Procuracao:        make(map[string]crypto.Token),
 	}
 }
 
-type SigninManager struct {
-	safe          *safe.Safe // for optional direct onboarding
-	pending       []*Signerin
-	passwords     configuracoes.PasswordManager
-	AttorneyToken crypto.Token
-	mail          Mailer
-	Attorney      *ProcuradorGeral
-	Granted       map[string]crypto.Token
-}
-
-func (s *SigninManager) RequestReset(user crypto.Token, email, domain string) bool {
-	if !s.passwords.HasWithEmail(user, email) {
+func (s *GerenciadorSignin) RequestReset(user crypto.Token, email, domain string) bool {
+	if !s.senhas.HasWithEmail(user, email) {
 		return false
 	}
-	reset := s.passwords.AddReset(user, email)
+	reset := s.senhas.AddReset(user, email)
 	url := fmt.Sprintf("%s/r/%s", domain, reset)
 	if reset == "" {
 		return false
 	}
-	go s.mail.Send(email, "Synergy password reset", fmt.Sprintf(resetBody, url))
+	go s.mail.Send(email, "Reset de senha pra protocolo MEGA", fmt.Sprintf(resetBody, url))
 	return true
 }
 
-func (s *SigninManager) Reset(user crypto.Token, url, password string) bool {
-	return s.passwords.DropReset(user, url, password)
+func (s *GerenciadorSignin) Reset(user crypto.Token, url, password string) bool {
+	return s.senhas.DropReset(user, url, password)
 }
 
-func (s *SigninManager) Check(user crypto.Token, password string) bool {
+func (s *GerenciadorSignin) Check(user crypto.Token, password string) bool {
 	hashed := crypto.Hasher(append(user[:], []byte(password)...))
-	return s.passwords.Check(user, hashed)
+	return s.senhas.Check(user, hashed)
 
 }
 
-func (s *SigninManager) Set(user crypto.Token, password string, email string) {
+func (s *GerenciadorSignin) Set(user crypto.Token, password string, email string) {
 	hashed := crypto.Hasher(append(user[:], []byte(password)...))
-	s.passwords.Set(user, hashed, email)
+	s.senhas.Set(user, hashed, email)
 }
 
-func (s *SigninManager) DirectReset(user crypto.Token, newpassword string) bool {
+func (s *GerenciadorSignin) DirectReset(user crypto.Token, newpassword string) bool {
 	newhashed := crypto.Hasher(append(user[:], []byte(newpassword)...))
-	return s.passwords.Reset(user, newhashed)
+	return s.senhas.Reset(user, newhashed)
 }
 
-func (s *SigninManager) Has(token crypto.Token) bool {
-	return s.passwords.Has(token)
+func (s *GerenciadorSignin) Has(token crypto.Token) bool {
+	return s.senhas.Has(token)
 }
 
-func (s *SigninManager) OnboardSigner(handle, email, passwd string) bool {
-	if s.safe == nil {
+func (s *GerenciadorSignin) OnboardSigner(handle, email, passwd string) bool {
+	if s.cofre == nil {
 		log.Println("PANIC BUG: OnboardSigner called with nil safe")
 		return false
 	}
-	ok, token := s.safe.SigninWithToken(handle, passwd, email)
+	ok, token := s.cofre.SigninWithToken(handle, passwd, email)
 	if !ok {
 		return false
 	}
-	if err := s.safe.GrantPower(handle, s.AttorneyToken.Hex(), crypto.EncodeHash(crypto.HashToken(token))); err != nil {
+	if err := s.cofre.GrantPower(handle, s.TokenDoProcurador.Hex(), crypto.EncodeHash(crypto.HashToken(token))); err != nil {
 		log.Println("error granting power of attorney", err)
 		return false
 	}
 	s.Set(token, passwd, email)
 	signin := acoes.Entrar{
-		Epoca:   s.Attorney.estado.Epoca,
+		Epoca:   s.Procurador.estado.Epoca,
 		Autor:   token,
-		Reasons: "Synergy app sign in with approved power of attorney",
+		Reasons: "Sign in no protocolo MEGA aprovado com procuração",
 	}
-	s.Attorney.Send([]acoes.Acao{&signin}, token)
-	s.Granted[handle] = token
-	go s.mail.Send(email, "Synergy Protocol Welcome", fmt.Sprintf(wellcomeBody, handle, handle, handle, handle, handle))
+	s.Procurador.Send([]acoes.Acao{&signin}, token)
+	s.Procuracao[handle] = token
+	go s.mail.Send(email, "Boas vindas ao protocolo MEGA", fmt.Sprintf(wellcomeBody, handle, handle, handle, handle, handle))
 	return true
 }
 
-func (s *SigninManager) AddSigner(handle, email string, token *crypto.Token) {
+func (s *GerenciadorSignin) AddSigner(handle, email string, token *crypto.Token) {
 	signer := &Signerin{}
-	for _, pending := range s.pending {
+	for _, pending := range s.pendente {
 		if signer.Handle == handle {
 			signer = pending
 		}
@@ -170,7 +160,7 @@ func (s *SigninManager) AddSigner(handle, email string, token *crypto.Token) {
 	} else {
 		go s.sendSigninEmail(signinWithoutHandleBody, handle, email, signer.FingerPrint)
 	}
-	s.pending = append(s.pending, signer)
+	s.pendente = append(s.pendente, signer)
 }
 
 func randomPassword() string {
@@ -179,35 +169,48 @@ func randomPassword() string {
 	return base64.StdEncoding.EncodeToString(bytes)
 }
 
-func (s *SigninManager) RevokeAttorney(handle string) {
-	delete(s.Granted, handle)
-}
-
-func (s *SigninManager) GrantAttorney(token crypto.Token, handle, fingerprint string) {
-	log.Println("to aqui", handle, fingerprint)
-	for n, signer := range s.pending {
-		if signer.Handle == handle && signer.FingerPrint == fingerprint {
+func (s *GerenciadorSignin) DarProcuracao(token crypto.Token, arroba, fingerprint string) {
+	for n, signer := range s.pendente {
+		if signer.Handle == arroba && signer.FingerPrint == fingerprint {
 			passwd := randomPassword()
 			s.Set(token, passwd, signer.Email)
 			signin := acoes.Entrar{
-				Epoca:   s.Attorney.estado.Epoca,
+				Epoca:   s.Procurador.estado.Epoca,
 				Autor:   token,
-				Reasons: "Synergy app sign in with approved power of attorney",
+				Reasons: "Ingresso na aplicação MEGA com procuração",
 			}
-			s.Attorney.Send([]acoes.Acao{&signin}, token)
+			s.Procurador.Send([]acoes.Acao{&signin}, token)
 			go s.sendPasswordEmail(signer.Handle, signer.Email, passwd)
-			s.pending = append(s.pending[:n], s.pending[n+1:]...)
-			s.Granted[handle] = token
+			s.pendente = append(s.pendente[:n], s.pendente[n+1:]...)
+			s.Procuracao[arroba] = token
 		}
 	}
 }
 
-func (s *SigninManager) sendSigninEmail(msg, handle, email, fingerprint string) {
-	body := fmt.Sprintf(msg, handle, s.AttorneyToken, fingerprint)
+func (s *GerenciadorSignin) RevogarProcuracao(token crypto.Token, arroba string, assinatura string) {
+	// for n, signer := range s.pendente {
+	// 	if signer.Handle == arroba &&  == assinatura.String() {
+	// 		passwd := randomPassword()
+	// 		s.Set(token, passwd, signer.Email)
+	// 		signin := acoes.Entrar{
+	// 			Epoca:   s.Procurador.estado.Epoca,
+	// 			Autor:   token,
+	// 			Reasons: "Ingresso na aplicação MEGA com procuração",
+	// 		}
+	// 		s.Procurador.Send([]acoes.Acao{&signin}, token)
+	// 		go s.sendPasswordEmail(signer.Handle, signer.Email, passwd)
+	// 		s.pendente = append(s.pendente[:n], s.pendente[n+1:]...)
+	// 		s.Procuracao[arroba] = token
+	// 	}
+	// }
+}
+
+func (s *GerenciadorSignin) sendSigninEmail(msg, handle, email, fingerprint string) {
+	body := fmt.Sprintf(msg, handle, s.TokenDoProcurador, fingerprint)
 	s.mail.Send(email, "Entrando no protocolo MEGA", body)
 }
 
-func (s *SigninManager) sendPasswordEmail(handle, email, password string) {
+func (s *GerenciadorSignin) sendPasswordEmail(handle, email, password string) {
 	body := fmt.Sprintf(passwordMessage, handle, password)
 	s.mail.Send(email, "Senha do MEGA", body)
 }
