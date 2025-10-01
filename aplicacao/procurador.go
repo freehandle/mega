@@ -34,11 +34,17 @@ type ProcuradorGeral struct {
 	genesisTime   time.Time
 	ephemeralprv  crypto.PrivateKey
 	ephemeralpub  crypto.Token
-	serverName    string
+	nomeMucua     string
 	hostname      string
 	session       *configuracoes.CookieStore
 	safe          *safe.Safe
 	convidar      map[crypto.Hash]struct{} // map of invite user hash to token
+}
+
+func (a *ProcuradorGeral) Arroba(r *http.Request) string {
+	autor := a.Autor(r)
+	arroba := a.estado.HashTokenPraArrobas[crypto.HashToken(autor)]
+	return arroba
 }
 
 func (a *ProcuradorGeral) Send(all []acoes.Acao, author crypto.Token) {

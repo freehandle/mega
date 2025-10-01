@@ -19,9 +19,9 @@ var arquivosTemplate []string = []string{
 
 type ServerConfig struct {
 	Vault       *configuracoes.SecretsVault
-	Attorney    crypto.Token
+	Procurador  crypto.Token
 	Ephemeral   crypto.Token
-	Passwords   configuracoes.PasswordManager
+	Senhas      configuracoes.PasswordManager
 	CookieStore *configuracoes.CookieStore
 	Indexer     *Index
 	Gateway     chan []byte
@@ -30,7 +30,7 @@ type ServerConfig struct {
 	Mail        Mailer
 	Port        int
 	Path        string
-	ServerName  string
+	NomeMucua   string
 	Hostname    string
 	Safe        *safe.Safe
 }
@@ -38,7 +38,7 @@ type ServerConfig struct {
 func NovoServidorProcuradorGeral(cfg ServerConfig) (*ProcuradorGeral, chan error) {
 	finalize := make(chan error, 2)
 
-	attorneySecret, ok := cfg.Vault.Secrets[cfg.Attorney]
+	attorneySecret, ok := cfg.Vault.Secrets[cfg.Procurador]
 	if !ok {
 		finalize <- fmt.Errorf("attorney secret key not found in vault")
 		return nil, finalize
@@ -51,7 +51,7 @@ func NovoServidorProcuradorGeral(cfg ServerConfig) (*ProcuradorGeral, chan error
 
 	attorney := ProcuradorGeral{
 		pk:           attorneySecret,
-		Token:        cfg.Attorney,
+		Token:        cfg.Procurador,
 		carteira:     attorneySecret,
 		gateway:      cfg.Gateway,
 		estado:       cfg.State,
@@ -60,7 +60,7 @@ func NovoServidorProcuradorGeral(cfg ServerConfig) (*ProcuradorGeral, chan error
 		genesisTime:  cfg.GenesisTime,
 		ephemeralpub: cfg.Ephemeral,
 		ephemeralprv: ephemeralSecret,
-		serverName:   cfg.ServerName,
+		nomeMucua:    cfg.NomeMucua,
 		hostname:     cfg.Hostname,
 		safe:         cfg.Safe,
 		convidar:     make(map[crypto.Hash]struct{}),
@@ -69,7 +69,7 @@ func NovoServidorProcuradorGeral(cfg ServerConfig) (*ProcuradorGeral, chan error
 		cfg.Path = "./"
 	}
 	templatesPath := fmt.Sprintf("%v/api/templates", cfg.Path)
-	attorney.signin = NewSigninManager(cfg.Passwords, cfg.Mail, &attorney)
+	attorney.signin = NewSigninManager(cfg.Senhas, cfg.Mail, &attorney)
 	attorney.templates = template.New("root")
 	files := make([]string, len(arquivosTemplate))
 
@@ -83,19 +83,19 @@ func NovoServidorProcuradorGeral(cfg ServerConfig) (*ProcuradorGeral, chan error
 	attorney.templates = t
 
 	staticPath := fmt.Sprintf("%v/api/static/", cfg.Path)
-	go NewServer(&attorney, cfg.Port, staticPath, finalize, cfg.ServerName)
+	go NewServer(&attorney, cfg.Port, staticPath, finalize, cfg.NomeMucua)
 
 	return &attorney, finalize
 }
 
-func NewServer(attorney *ProcuradorGeral, port int, staticPath string, finalize chan error, servername string) {
+func NewServer(procurador *ProcuradorGeral, port int, staticPath string, finalize chan error, servername string) {
 
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir(staticPath))
-	mux.Handle("/static/", http.StripPrefix("/static/", fs)) //
-	mux.HandleFunc("/api", attorney.ApiHandler)
-	// mux.HandleFunc("/", attorney.MainHandler)
-	// mux.HandleFunc("/ver", attorney.BoardsHandler)
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	// mux.HandleFunc("/api", procurador.ApiHandler)
+	mux.HandleFunc("/uploadfile", procurador.OperadorUpload)
+	mux.HandleFunc("/", procurador.MainHandler)
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%v", port),
 		Handler:      mux,

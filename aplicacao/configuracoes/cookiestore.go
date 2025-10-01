@@ -94,10 +94,7 @@ func OpenCokieStore(path string, s *estado.Estado) *CookieStore {
 		sessionend: make(map[uint64][]string),
 		position:   make(map[crypto.Token]int64),
 	}
-	epoch := uint64(0)
-	if s != nil {
-		epoch = s.Epoca
-	}
+	epoch := s.Epoca
 	for n := 0; n < len(data)/(2*crypto.Size); n++ {
 		var token crypto.Token
 		copy(token[:], data[2*n*crypto.Size:(2*n+1)*crypto.Size])

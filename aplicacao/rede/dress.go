@@ -5,11 +5,11 @@ import (
 )
 
 const (
-	breezeTailSize = crypto.SignatureSize + 8 + crypto.TokenSize
-	axeTailsize    = breezeTailSize + crypto.TokenSize + crypto.SignatureSize
+	breezeTailSize   = crypto.SignatureSize + 8 + crypto.TokenSize
+	apelidosTailSize = breezeTailSize + crypto.TokenSize + crypto.SignatureSize
 )
 
-// Breeze Void + Axé Void Specification
+// Breeze Void + Apelidos Void Specification
 // version for breeze           (byte)           0
 // void breeze instruction      (byte)           1
 // Epoch                        (8 bytes)        2
@@ -25,12 +25,12 @@ const (
 
 // Translate breeze byte array into MEGA byte array
 func BreezeToMEGA(action []byte) []byte {
-	if len(action) < 15+axeTailsize {
+	if len(action) < 15+apelidosTailSize {
 		return nil
 	}
 	// strip first 2 bytes, the 4 bytes of protocol, the byte for the axe void and
 	// the tail (signer ... wallet signayture)
-	mega := append(action[2:10], action[15:len(action)-axeTailsize]...)
+	mega := append(action[2:10], action[15:len(action)-apelidosTailSize]...)
 	return mega
 
 }

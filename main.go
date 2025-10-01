@@ -61,12 +61,12 @@ func launchMegaServer(gateway chan []byte, receive chan []byte, megaPass, emailP
 
 	attorneySecret := vault.PK
 	cookieStore := configuracoes.OpenCokieStore("cookies.dat", genesis)
-	passwordManager := configuracoes.NewFilePasswordManager("passwords.dat")
+	passwordManager := configuracoes.NewFilePasswordManager("senhas.dat")
 	config := aplicacao.ServerConfig{
 		Vault:       vault,
-		Attorney:    attorneySecret.PublicKey(),
+		Procurador:  attorneySecret.PublicKey(),
 		Ephemeral:   attorneySecret.PublicKey(),
-		Passwords:   passwordManager,
+		Senhas:      passwordManager,
 		CookieStore: cookieStore,
 		Indexer:     indexador,
 		Gateway:     gateway,
@@ -128,7 +128,7 @@ func main() {
 		HtmlPath:    "../safe/",
 		Path:        ".",
 		Port:        7000,
-		//ServerName:  "/safe",
+		ServerName:  "/safe",
 	}
 	errSignal, safe := safe.NewLocalServer(ctx, cfg, cofreSenha, ByArraySender(fornecedor), monitorCofre)
 

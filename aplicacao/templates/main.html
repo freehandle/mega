@@ -1,4 +1,5 @@
 {{define CABECALHO}}
+{{$mucua:=.NomeMucua}}
 <!DOCTYPE html>
 
 <html>
@@ -23,15 +24,22 @@
         </div>
         <div>
           <h1>
+            logado como {{.ArrobaUsuario}} 
+            <h2><a href=""> sair </a></h2>
+            <h2><a href=""> convidar </a></h2>
+          </h1>
+        </div>
+        <div>
+          <h1>
             meu jornal
-            <h2 {{if eq  .Active "Atualizar"}} class="selected"{{end}}><a href="../atualizar"> atualizar </a></h2>
-            <h2 {{if eq  .Active "Ver"}} class="selected"{{end}}><a href="../ver"> ver </a></h2>
+            <h2 {{if eq  .Ativo "Atualizar"}} class="selected"{{end}}><a href="../atualizar"> atualizar </a></h2>
+            <h2 {{if eq  .Ativo "Ver"}} class="selected"{{end}}><a href="../ver"> ver </a></h2>
           </h1>
         </div>
         <div>
           <h1>
             jornais
-            <h2 {{if eq  .Active "Pessoa"}} class="selected"{{end}}><a href="../ver/{{.LinkSelecionada}}"> {{.PessoaSelecionada}} </a></h2>
+            <h2 {{if eq  .Ativo "Pessoa"}} class="selected"{{end}}><a href="../ver/{{.LinkSelecionada}}"> {{.PessoaSelecionada}} </a></h2>
             {{range .Pessoas}}
               <h2><a href="../ver/{{.Link}}"> {{.}} </a></h2>
             {{end}}
@@ -41,19 +49,19 @@
           <h1>
             campos
           </h1>
-          <h2 {{if eq  .Active "Causo"}} class="selected"{{end}}><a href="../causo"> causo </a></h2>
-          <h2 {{if eq  .Active "Fofoca"}} class="selected"{{end}}><a href="../fofoca"> fofoca </a></h2>
-          <h2 {{if eq  .Active "Ideia"}} class="selected"{{end}}><a href="../ideia"> ideia </a></h2>
-          <h2 {{if eq  .Active "Livro"}} class="selected"{{end}}><a href="../livro"> livro </a></h2>
-          <h2 {{if eq  .Active "Meme"}} class="selected"{{end}}><a href="../meme"> meme </a></h2>
-          <h2 {{if eq  .Active "Musica"}} class="selected"{{end}}><a href="../musica"> música </a></h2>
+          <h2 {{if eq  .Ativo "Causo"}} class="selected"{{end}}><a href="../causo"> causo </a></h2>
+          <h2 {{if eq  .Ativo "Fofoca"}} class="selected"{{end}}><a href="../fofoca"> fofoca </a></h2>
+          <h2 {{if eq  .Ativo "Ideia"}} class="selected"{{end}}><a href="../ideia"> ideia </a></h2>
+          <h2 {{if eq  .Ativo "Livro"}} class="selected"{{end}}><a href="../livro"> livro </a></h2>
+          <h2 {{if eq  .Ativo "Meme"}} class="selected"{{end}}><a href="../meme"> meme </a></h2>
+          <h2 {{if eq  .Ativo "Musica"}} class="selected"{{end}}><a href="../musica"> música </a></h2>
         </div>
       </div>
     </div>
-    <div id="centro" class="board">
-      {{if .Error}}
+    <div id="centro" class="scroll">
+      {{if .Erro}}
         <div>
-          {{.Error}}
+          {{.Erro}}
         </div>
       {{end}}
 {{end}}

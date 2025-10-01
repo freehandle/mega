@@ -62,5 +62,5 @@ func (a *ProcuradorGeral) OperadorUpload(w http.ResponseWriter, r *http.Request)
 	if err == nil && len(actionArray) > 0 {
 		a.Send(actionArray, author)
 	}
-	http.Redirect(w, r, fmt.Sprintf("%v/", a.serverName), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("%v/", a.nomeMucua), http.StatusSeeOther)
 }

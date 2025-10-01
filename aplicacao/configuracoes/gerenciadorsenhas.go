@@ -44,7 +44,6 @@ func (f *filePasswordManager) HasReset(url string) (bool, crypto.Token, string) 
 	hash := crypto.Hasher(decoded)
 	if reset, ok := f.reset[hash]; ok {
 		if n, ok := f.passwords[reset.user]; ok {
-			//delete(f.reset, hash)
 			if (!reset.used) && n < len(f.hashes) && reset.expire.After(time.Now()) {
 				f.reset[hash] = passwordReset{user: reset.user, expire: reset.expire, used: true}
 				return true, reset.user, f.hashes[n].email
@@ -197,9 +196,6 @@ func NewFilePasswordManager(filename string) PasswordManager {
 	if n, err := file.Read(data); n != int(size) {
 		log.Fatalf("corrupted password manager file: %v", err)
 	}
-	//if size%64 != 0 {
-	//	log.Fatal("corrupted password manager file: incompatible size")
-	//}
 	manager := filePasswordManager{
 		file:      *file,
 		hashes:    make([]hashmail, 0),
@@ -220,7 +216,6 @@ func NewFilePasswordManager(filename string) PasswordManager {
 			copy(hash[:], bytes[crypto.Size+1:2*crypto.Size+1])
 			email := string(bytes[2*crypto.Size+1:])
 			manager.passwords[token] = len(manager.hashes)
-			// fmt.Println("em password", token, hash.String())
 			manager.hashes = append(manager.hashes, hashmail{hash: hash, email: email})
 		}
 		if pos == len(data) {
