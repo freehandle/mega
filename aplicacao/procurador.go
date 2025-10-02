@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"mega/aplicacao/configuracoes"
-	"mega/protocolo/acoes"
-	"mega/protocolo/estado"
 	"net/http"
 	"time"
+
+	"github.com/freehandle/mega/aplicacao/configuracoes"
+	"github.com/freehandle/mega/protocolo/acoes"
+	"github.com/freehandle/mega/protocolo/estado"
 
 	"github.com/freehandle/breeze/consensus/messages"
 	"github.com/freehandle/breeze/crypto"

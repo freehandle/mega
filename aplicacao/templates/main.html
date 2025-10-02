@@ -1,4 +1,4 @@
-{{define CABECALHO}}
+{{define "CABECALHO"}}
 {{$mucua:=.NomeMucua}}
 <!DOCTYPE html>
 
@@ -71,5 +71,5 @@
 </body>
 </html>
 {{end}}
-{{template "CABECALHO" .Cabecalho}}
+{{template "CABECALHO" .}}
 {{template "TAIL"}}

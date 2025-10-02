@@ -5,10 +5,11 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
-	"mega/aplicacao/configuracoes"
-	"mega/protocolo/acoes"
 	"net/smtp"
 	"time"
+
+	"github.com/freehandle/mega/aplicacao/configuracoes"
+	"github.com/freehandle/mega/protocolo/acoes"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/safe"

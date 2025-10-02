@@ -1,8 +1,9 @@
 package aplicacao
 
 import (
-	"mega/protocolo/estado"
 	"net/url"
+
+	"github.com/freehandle/mega/protocolo/estado"
 
 	"github.com/freehandle/breeze/crypto"
 )

@@ -2,7 +2,8 @@ package rede
 
 import (
 	"log"
-	"mega/aplicacao"
+
+	"github.com/freehandle/mega/aplicacao"
 
 	"github.com/freehandle/breeze/util"
 	"github.com/freehandle/handles/attorney"

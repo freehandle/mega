@@ -1,8 +1,9 @@
 package aplicacao
 
 import (
-	"mega/protocolo/acoes"
 	"time"
+
+	"github.com/freehandle/mega/protocolo/acoes"
 )
 
 type PostarCauso struct {

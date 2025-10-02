@@ -4,7 +4,7 @@ import (
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/handles/attorney"
 
-	"mega/protocolo/estado"
+	"github.com/freehandle/mega/protocolo/estado"
 )
 
 type UserInfo struct {

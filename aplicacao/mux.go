@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"mega/aplicacao/configuracoes"
-	"mega/protocolo/estado"
 	"net/http"
 	"time"
+
+	"github.com/freehandle/mega/aplicacao/configuracoes"
+	"github.com/freehandle/mega/protocolo/estado"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/safe"
@@ -66,9 +67,9 @@ func NovaMucuaProcuradorGeral(cfg ConfiguracaoMucua) (*ProcuradorGeral, chan err
 		convidar:     make(map[crypto.Hash]struct{}),
 	}
 	if cfg.Path == "" {
-		cfg.Path = "./"
+		cfg.Path = "."
 	}
-	templatesPath := fmt.Sprintf("%v/api/templates", cfg.Path)
+	templatesPath := fmt.Sprintf("%v/aplicacao/templates", cfg.Path)
 	attorney.signin = NewSigninManager(cfg.Senhas, cfg.Mail, &attorney)
 	attorney.templates = template.New("root")
 	files := make([]string, len(arquivosTemplate))

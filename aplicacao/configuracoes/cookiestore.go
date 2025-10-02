@@ -4,8 +4,9 @@ import (
 	"encoding/hex"
 	"io"
 	"log"
-	"mega/protocolo/estado"
 	"os"
+
+	"github.com/freehandle/mega/protocolo/estado"
 
 	"github.com/freehandle/breeze/crypto"
 )

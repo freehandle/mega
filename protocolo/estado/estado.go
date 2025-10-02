@@ -2,8 +2,9 @@ package estado
 
 import (
 	"errors"
-	"mega/protocolo/acoes"
 	"time"
+
+	"github.com/freehandle/mega/protocolo/acoes"
 
 	"github.com/freehandle/breeze/crypto"
 )

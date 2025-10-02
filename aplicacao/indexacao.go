@@ -2,8 +2,9 @@ package aplicacao
 
 import (
 	"errors"
-	"mega/protocolo/estado"
 	"slices"
+
+	"github.com/freehandle/mega/protocolo/estado"
 )
 
 type Index struct {

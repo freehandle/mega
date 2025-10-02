@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"mega/protocolo/acoes"
 	"net/http"
 	"strings"
+
+	"github.com/freehandle/mega/protocolo/acoes"
 
 	"github.com/freehandle/breeze/crypto"
 )

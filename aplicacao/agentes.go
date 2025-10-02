@@ -3,10 +3,11 @@ package aplicacao
 import (
 	"fmt"
 	"log"
-	"mega/protocolo/acoes"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/freehandle/mega/protocolo/acoes"
 )
 
 // Gerenciador do template principal da aplicacao
