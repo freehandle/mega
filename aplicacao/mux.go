@@ -14,7 +14,7 @@ import (
 )
 
 var arquivosTemplate []string = []string{
-	"main", "ver",
+	"main", "verjornal", "criartxt",
 }
 
 type ConfiguracaoMucua struct {
@@ -94,7 +94,8 @@ func NovaMucua(procurador *ProcuradorGeral, port int, staticPath string, finaliz
 	fs := http.FileServer(http.Dir(staticPath))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 	mux.HandleFunc("/", procurador.AgentePrincipal) // funcao que gera o template main
-
+	mux.HandleFunc("/verjornal", procurador.AgenteVerJornal)
+	mux.HandleFunc("/api", procurador.AgenteAPI)
 	mux.HandleFunc("/uploadfile", procurador.OperadorUpload)
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%v", port),

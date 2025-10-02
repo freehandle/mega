@@ -1,0 +1,38 @@
+{{template "HEAD" .Cabecalho}}
+<div class="container_board">
+    <div class="board_header">
+      <h1>
+        <span> postagem {{.NomeAcao}} em jornal </span>{{.Cabecalho.ArrobaLogado}}
+      </h1>
+      <form method="post" action="{{.ServerName}}/api">
+        <input class="none" type="text" name="action" value="{{.Acao}}" readonly/>
+
+        <label  for="conteudo">escreva aqui {{.DescreveAcao}}</label>
+        <input  type="text" name="conteudo" id="conteudo" required/><br/>      
+        <div class="submitbox">
+          <input class="submit" type="submit" value="enviar"/>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+<div class="details">
+  <div class="header">
+  </div>
+  <h1>
+    postagens anteriores
+  </h1>
+  <h2>causo</h2>
+    <p><a href="{{.LinkCausoAnterior}}">{{.DataCausoAnterior}}</a></p>
+  <h2>fofoca</h2>
+    <p><a href="{{.LinkFofocaAnterior}}">{{.DataFofocaAnterior}}</a></p>
+  <h2>ideia</h2>
+    <p><a href="{{.LinkIdeiaAnterior}}">{{.DataIdeiaAnterior}}</a></p>
+  <h2>livro</h2>
+    <p><a href="{{.LinkLivroAnterior}}">{{.DataLivroAnterior}}</a></p>
+  <h2>meme</h2>
+    <p><a href="{{.LinkMemeAnterior}}">{{.DataMemeAnterior}}</a></p>
+  <h2>música</h2>
+  <p><a href="{{.LinkMusicaAnterior}}">{{.DataMusicaAnterior}}</a></p>
+{{template "TAIL"}}

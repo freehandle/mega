@@ -49,7 +49,7 @@ func (a *ProcuradorGeral) Arroba(r *http.Request) string {
 func (a *ProcuradorGeral) Send(all []acoes.Acao, author crypto.Token) {
 	for _, action := range all {
 		dressed := a.DressAction(action, author)
-		fmt.Println("Dressed action:", dressed)
+		fmt.Println("Dressed action:", string(dressed))
 		a.gateway <- append([]byte{messages.MsgAction}, dressed...)
 	}
 }

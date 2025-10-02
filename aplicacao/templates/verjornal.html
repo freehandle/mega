@@ -2,12 +2,12 @@
 <div class="container_board">
     <div class="board_header">
       <h1>
-        <span> jornal </span>{{.Usuario}}
+        <span> jornal </span>{{.ArrobaVer}}
       </h1>
     </div>
     <div class="board_content">
       <div class="pink">
-        <p class="time_above">{{.Usuario}} publicou</p>
+        <p class="time_above">{{.ArrobaVer}} publicou</p>
         <h1><span class="pink">causo</span></h1>
         <p class="time_below">em {{.DataCauso}}</p>
         <p>
@@ -15,31 +15,31 @@
         </p>
       </div>
       <div class="red">
-        <p class="time_above">{{.Usuario}} publicou</p>
+        <p class="time_above">{{.ArrobaVer}} publicou</p>
         <h1><span class="red">fofoca</span></h1>
         <p class="time_below">em {{.DataFofoca}}</p>
         <p> {{.Fofoca}}</p>
       </div>
       <div class="blue">
-        <p class="time_above">{{.Usuario}} publicou</p>
+        <p class="time_above">{{.ArrobaVer}} publicou</p>
         <h1><span class="blue">ideia</span></h1>
         <p class="time_below">em {{.DataIdeia}}</p>
         <p>{{.Ideia}}</p>
       </div>
       <div class="green">
-        <p class="time_above">{{.Usuario}} publicou</p>
+        <p class="time_above">{{.ArrobaVer}} publicou</p>
         <h1><span class="green">livro</span></h1>
         <p class="time_below">em {{.DataLivro}}</p>
         <p>{{.Livro}}</p>
       </div>
       <div class="yellow">
-        <p class="time_above">{{.Usuario}} publicou</p>
+        <p class="time_above">{{.ArrobaVer}} publicou</p>
         <h1><span class="yellow">meme</span></h1>
         <p class="time_below">em {{.DataMeme}}</p>
         <p>{{.Meme}}</p>
       </div>
       <div class="purple">
-        <p class="time_above">{{.Usuario}} publicou</p>
+        <p class="time_above">{{.ArrobaVer}} publicou</p>
         <h1><span class="purple">música</span></h1>
         <p class="time_below">em {{.DataMusica}}</p>
         <p>{{.Musica}}</p>
@@ -65,3 +65,4 @@
     <p><a href="{{.LinkMemeAnterior}}">{{.DataMemeAnterior}}</a></p>
   <h2>música</h2>
   <p><a href="{{.LinkMusicaAnterior}}">{{.DataMusicaAnterior}}</a></p>
+  {{template "TAIL"}}
