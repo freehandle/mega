@@ -21,24 +21,23 @@ import (
 const cookieName = "sessaoMEGA"
 
 type ProcuradorGeral struct {
-	pk            crypto.PrivateKey
-	signin        *GerenciadorSignin
-	chavePrivada  crypto.PrivateKey
-	Token         crypto.Token
-	carteira      crypto.PrivateKey
-	gateway       chan []byte
-	estado        *estado.Estado
-	templates     *template.Template
-	indexer       *Index
-	emailPassword string
-	genesisTime   time.Time
-	ephemeralprv  crypto.PrivateKey
-	ephemeralpub  crypto.Token
-	nomeMucua     string
-	hostname      string
-	session       *configuracoes.CookieStore
-	safe          *safe.Safe
-	convidar      map[crypto.Hash]struct{} // map of invite user hash to token
+	pk        crypto.PrivateKey
+	signin    *GerenciadorSignin
+	Token     crypto.Token
+	carteira  crypto.PrivateKey
+	gateway   chan []byte
+	estado    *estado.Estado
+	templates *template.Template
+	indexer   *Index
+	// senhaEmail   string
+	genesisTime  time.Time
+	ephemeralprv crypto.PrivateKey
+	ephemeralpub crypto.Token
+	nomeMucua    string
+	hostname     string
+	session      *configuracoes.CookieStore
+	safe         *safe.Safe
+	convidar     map[crypto.Hash]struct{} // map of invite user hash to token
 }
 
 func (a *ProcuradorGeral) Arroba(r *http.Request) string {

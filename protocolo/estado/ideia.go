@@ -25,7 +25,7 @@ func (i *Ideia) ChecaFormato() bool {
 
 // o campo ideia pode ser atualizado no maximo a cada 30 dias
 func (i *Ideia) ChecaTempo(s *Estado) bool {
-	ideias := s.HashTokenPraJornal[crypto.Hash(i.Autor)].ideia
+	ideias := s.HashTokenPraJornal[crypto.Hash(i.Autor)].Ideias
 	ideiaAntiga := ideias[len(ideias)-1]
 	if ideiaAntiga != nil {
 		if !i.Data.After(ideiaAntiga.Data) {

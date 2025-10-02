@@ -24,7 +24,7 @@ func (i *Meme) ChecaFormato(tipo string) bool {
 
 // o campo meme pode ser atualizado no maximo a cada 7 dias
 func (i *Meme) ChecaTempo(s *Estado) bool {
-	memes := s.HashTokenPraJornal[crypto.Hash(i.Autor)].meme
+	memes := s.HashTokenPraJornal[crypto.Hash(i.Autor)].Memes
 	memeAntigo := memes[len(memes)-1]
 	if memeAntigo != nil {
 		if !i.Data.After(memeAntigo.Data) {

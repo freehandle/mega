@@ -139,7 +139,7 @@ func (s *GerenciadorSignin) OnboardSigner(handle, email, passwd string) bool {
 	}
 	s.Procurador.Send([]acoes.Acao{&signin}, token)
 	s.Procuracao[handle] = token
-	go s.mail.Send(email, "Boas vindas ao protocolo MEGA", fmt.Sprintf(wellcomeBody, handle, handle, handle, handle, handle))
+	go s.mail.Send(email, "Boas vindas ao protocolo MEGA", fmt.Sprintf(wellcomeBody, handle))
 	return true
 }
 

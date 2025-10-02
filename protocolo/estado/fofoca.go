@@ -25,7 +25,7 @@ func (i *Fofoca) ChecaFormato() bool {
 
 // o campo fofoca pode ser atualizado no maximo a cada 15 dias
 func (i *Fofoca) ChecaTempo(s *Estado) bool {
-	fofocas := s.HashTokenPraJornal[crypto.Hash(i.Autor)].fofoca
+	fofocas := s.HashTokenPraJornal[crypto.Hash(i.Autor)].Fofocas
 	fofocaAntiga := fofocas[len(fofocas)-1]
 	if fofocaAntiga != nil {
 		if !i.Data.After(fofocaAntiga.Data) {

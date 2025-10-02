@@ -31,7 +31,7 @@ func (b ByArraySender) Send(data []byte) error {
 	return nil
 }
 
-func launchLocalChain(ctx context.Context, listeners []chan []byte, receiver chan []byte) error {
+func iniciaChainLocal(ctx context.Context, listeners []chan []byte, receiver chan []byte) error {
 	genesis := attorney.NewGenesisState(notarypath)
 	IO, err := util.OpenMultiFileStore(".", "blocos")
 	if err != nil {
@@ -62,7 +62,7 @@ func launchMegaServer(gateway chan []byte, receive chan []byte, megaPass, emailP
 	attorneySecret := vault.PK
 	cookieStore := configuracoes.OpenCokieStore("cookies.dat", genesis)
 	passwordManager := configuracoes.NewFilePasswordManager("senhas.dat")
-	config := aplicacao.ServerConfig{
+	config := aplicacao.ConfiguracaoMucua{
 		Vault:       vault,
 		Procurador:  attorneySecret.PublicKey(),
 		Ephemeral:   attorneySecret.PublicKey(),
@@ -76,9 +76,9 @@ func launchMegaServer(gateway chan []byte, receive chan []byte, megaPass, emailP
 		Mail:        &aplicacao.SMTPGmail{From: "freemyhandle@gmail.com", Password: emailPass},
 		Port:        3000,
 		Safe:        safe,
-		//ServerName:    "/mega",
+		NomeMucua:   "/mega",
 	}
-	attorney, finalize := aplicacao.NovoServidorProcuradorGeral(config)
+	attorney, finalize := aplicacao.NovaMucuaProcuradorGeral(config)
 	if attorney == nil {
 		err := <-finalize
 		log.Fatalf("error creating attorney: %v\n", err)
@@ -114,7 +114,7 @@ func main() {
 	ctxBack := context.Background()
 	ctx, cancel := context.WithCancel(ctxBack)
 
-	go launchLocalChain(ctx, []chan []byte{monitorMEGA, monitorCofre}, fornecedor)
+	go iniciaChainLocal(ctx, []chan []byte{monitorMEGA, monitorCofre}, fornecedor)
 
 	vault, err := configuracoes.OpenVaultFromPassword([]byte(cofreSenha), "megavault.dat")
 	if err != nil {

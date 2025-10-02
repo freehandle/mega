@@ -25,7 +25,7 @@ func (i *Musica) ChecaFormato() bool {
 
 // o campo musica pode ser atualizado no maximo a cada 15 dias
 func (i *Musica) ChecaTempo(s *Estado) bool {
-	musicas := s.HashTokenPraJornal[crypto.Hash(i.Autor)].musica
+	musicas := s.HashTokenPraJornal[crypto.Hash(i.Autor)].Musicas
 	musicaAntiga := musicas[len(musicas)-1]
 	if musicaAntiga != nil {
 		if !i.Data.After(musicaAntiga.Data) {

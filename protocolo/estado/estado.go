@@ -29,12 +29,12 @@ type Estado struct {
 }
 
 type Jornal struct {
-	ideia  []*Ideia
-	meme   []*Meme
-	musica []*Musica
-	fofoca []*Fofoca
-	causo  []*Causo
-	livro  []*Livro
+	Ideias  []*Ideia
+	Memes   []*Meme
+	Musicas []*Musica
+	Fofocas []*Fofoca
+	Causos  []*Causo
+	Livros  []*Livro
 }
 
 // inicializa o estado do protocolo mega
@@ -122,7 +122,7 @@ func (e *Estado) ValidaCauso(acao *acoes.PostarCauso) error {
 	if !novocauso.ChecaTempo(e) {
 		return errors.New("ainda nao pode postar no campo causo")
 	}
-	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].causo = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].causo, &novocauso)
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Causos = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Causos, &novocauso)
 	return nil
 }
 
@@ -143,7 +143,7 @@ func (e *Estado) ValidaFofoca(acao *acoes.PostarFofoca) error {
 	if !novafofoca.ChecaTempo(e) {
 		return errors.New("ainda nao pode postar no campo fofoca")
 	}
-	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].fofoca = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].fofoca, &novafofoca)
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Fofocas = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Fofocas, &novafofoca)
 	return nil
 }
 
@@ -164,7 +164,7 @@ func (e *Estado) ValidaIdeia(acao *acoes.PostarIdeia) error {
 	if !novaideia.ChecaTempo(e) {
 		return errors.New("ainda nao pode postar no campo ideia")
 	}
-	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].ideia = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].ideia, &novaideia)
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Ideias = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Ideias, &novaideia)
 	return nil
 }
 
@@ -185,7 +185,7 @@ func (e *Estado) ValidaLivro(acao *acoes.PostarLivro) error {
 	if !novolivro.ChecaTempo(e) {
 		return errors.New("ainda nao pode postar no campo livro")
 	}
-	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].livro = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].livro, &novolivro)
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Livros = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Livros, &novolivro)
 	return nil
 }
 
@@ -206,7 +206,7 @@ func (e *Estado) ValidaMeme(acao *acoes.PostarMeme) error {
 	if !novomeme.ChecaTempo(e) {
 		return errors.New("ainda nao pode postar no campo meme")
 	}
-	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].meme = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].meme, &novomeme)
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Memes = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Memes, &novomeme)
 	return nil
 }
 
@@ -227,6 +227,6 @@ func (e *Estado) ValidaMusica(acao *acoes.PostarMusica) error {
 	if !novamusica.ChecaTempo(e) {
 		return errors.New("ainda nao pode postar no campo musica")
 	}
-	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].musica = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].musica, &novamusica)
+	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Musicas = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Musicas, &novamusica)
 	return nil
 }

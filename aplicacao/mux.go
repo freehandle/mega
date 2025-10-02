@@ -17,7 +17,7 @@ var arquivosTemplate []string = []string{
 	"main", "ver",
 }
 
-type ServerConfig struct {
+type ConfiguracaoMucua struct {
 	Vault       *configuracoes.SecretsVault
 	Procurador  crypto.Token
 	Ephemeral   crypto.Token
@@ -35,7 +35,7 @@ type ServerConfig struct {
 	Safe        *safe.Safe
 }
 
-func NovoServidorProcuradorGeral(cfg ServerConfig) (*ProcuradorGeral, chan error) {
+func NovaMucuaProcuradorGeral(cfg ConfiguracaoMucua) (*ProcuradorGeral, chan error) {
 	finalize := make(chan error, 2)
 
 	attorneySecret, ok := cfg.Vault.Secrets[cfg.Procurador]
@@ -83,19 +83,19 @@ func NovoServidorProcuradorGeral(cfg ServerConfig) (*ProcuradorGeral, chan error
 	attorney.templates = t
 
 	staticPath := fmt.Sprintf("%v/api/static/", cfg.Path)
-	go NewServer(&attorney, cfg.Port, staticPath, finalize, cfg.NomeMucua)
+	go NovaMucua(&attorney, cfg.Port, staticPath, finalize, cfg.NomeMucua)
 
 	return &attorney, finalize
 }
 
-func NewServer(procurador *ProcuradorGeral, port int, staticPath string, finalize chan error, servername string) {
+func NovaMucua(procurador *ProcuradorGeral, port int, staticPath string, finalize chan error, servername string) {
 
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir(staticPath))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
-	// mux.HandleFunc("/api", procurador.ApiHandler)
+	mux.HandleFunc("/", procurador.AgentePrincipal) // funcao que gera o template main
+
 	mux.HandleFunc("/uploadfile", procurador.OperadorUpload)
-	mux.HandleFunc("/", procurador.MainHandler)
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%v", port),
 		Handler:      mux,

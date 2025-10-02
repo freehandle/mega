@@ -25,7 +25,7 @@ func (i *Causo) ChecaFormato() bool {
 
 // o campo causo pode ser atualizado no maximo a cada 30 dias
 func (i *Causo) ChecaTempo(s *Estado) bool {
-	causos := s.HashTokenPraJornal[crypto.Hash(i.Autor)].causo
+	causos := s.HashTokenPraJornal[crypto.Hash(i.Autor)].Causos
 	causoAntigo := causos[len(causos)-1]
 	if causoAntigo != nil {
 		if !i.Data.After(causoAntigo.Data) {
