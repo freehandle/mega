@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"mime"
 	"net/http"
 	"time"
 
@@ -15,7 +16,7 @@ import (
 )
 
 var arquivosTemplate []string = []string{
-	"main", "verjornal", "criartxt",
+	"main", "verjornal", "criartxt", "signin",
 }
 
 type ConfiguracaoMucua struct {
@@ -91,11 +92,18 @@ func NovaMucuaProcuradorGeral(cfg ConfiguracaoMucua) (*ProcuradorGeral, chan err
 
 func NovaMucua(procurador *ProcuradorGeral, port int, staticPath string, finalize chan error, servername string) {
 
+	// mime.AddExtensionType(".js", "application/javascript")
+	mime.AddExtensionType(".css", "text/css; charset=utf-8")
+
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir(staticPath))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	// csss := http.FileServer(http.Dir(staticPath))
 	mux.HandleFunc("/", procurador.AgentePrincipal) // funcao que gera o template main
 	mux.HandleFunc("/verjornal", procurador.AgenteVerJornal)
+	mux.HandleFunc("/signin", procurador.AgenteSignin)
+
 	mux.HandleFunc("/api", procurador.AgenteAPI)
 	mux.HandleFunc("/uploadfile", procurador.OperadorUpload)
 	srv := &http.Server{

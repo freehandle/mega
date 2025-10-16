@@ -9,7 +9,7 @@ import (
 	"github.com/freehandle/breeze/crypto"
 )
 
-var TiposImagens = []string{"jpg", "gif", "pgn", "bmp", "svg"}
+var TiposImagens = []string{"jpg", "gif", "png", "bmp", "svg"}
 
 type InfoUsuario struct {
 	Arroba string

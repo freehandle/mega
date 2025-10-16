@@ -1,8 +1,8 @@
 {{define "CABECALHO"}}
 {{$mucua:=.NomeMucua}}
-<!DOCTYPE html>
+<!doctype html>
 
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +13,7 @@
   <meta property="og:description" content="Protocolo social MEGA - rodando na infra do @s livres">
   
   <link rel="stylesheet" href="../static/estilo.css">
-  <script src="../static/funcoes.js"></script>
+  <!-- <script src="../static/funcoes.js"></script> -->
 </head>
 
 <body>
@@ -24,7 +24,7 @@
         </div>
         <div>
           <h1>
-            logado como {{.ArrobaUsuario}} 
+            logado como {{.ArrobaLog}} 
             <h2><a href=""> sair </a></h2>
             <h2><a href=""> convidar </a></h2>
           </h1>
@@ -39,9 +39,11 @@
         <div>
           <h1>
             jornais
-            <h2 {{if eq  .Ativo "Pessoa"}} class="selected"{{end}}><a href="../ver/{{.LinkSelecionada}}"> {{.PessoaSelecionada}} </a></h2>
-            {{range .Pessoas}}
-              <h2><a href="../ver/{{.Link}}"> {{.}} </a></h2>
+            {{if .LinkSelecionada}}
+              <h2 {{if eq  .Ativo "Pessoa"}} class="selected"{{end}}><a href="../ver/{{.LinkSelecionada}}"> {{.PessoaSelecionada}} </a></h2>
+              {{range .Pessoas}}
+                <h2><a href="../ver/{{.Link}}"> {{.}} </a></h2>
+              {{end}}
             {{end}}
           </h1>
         </div>
@@ -49,12 +51,12 @@
           <h1>
             campos
           </h1>
-          <h2 {{if eq  .Ativo "Causo"}} class="selected"{{end}}><a href="../causo"> causo </a></h2>
-          <h2 {{if eq  .Ativo "Fofoca"}} class="selected"{{end}}><a href="../fofoca"> fofoca </a></h2>
-          <h2 {{if eq  .Ativo "Ideia"}} class="selected"{{end}}><a href="../ideia"> ideia </a></h2>
-          <h2 {{if eq  .Ativo "Livro"}} class="selected"{{end}}><a href="../livro"> livro </a></h2>
-          <h2 {{if eq  .Ativo "Meme"}} class="selected"{{end}}><a href="../meme"> meme </a></h2>
-          <h2 {{if eq  .Ativo "Musica"}} class="selected"{{end}}><a href="../musica"> música </a></h2>
+          <h2 {{if eq  .Ativo "Causo"}} class="selected"{{end}}><a href="../causos"> causo </a></h2>
+          <h2 {{if eq  .Ativo "Fofoca"}} class="selected"{{end}}><a href="../fofocas"> fofoca </a></h2>
+          <h2 {{if eq  .Ativo "Ideia"}} class="selected"{{end}}><a href="../ideias"> ideia </a></h2>
+          <h2 {{if eq  .Ativo "Livro"}} class="selected"{{end}}><a href="../livros"> livro </a></h2>
+          <h2 {{if eq  .Ativo "Meme"}} class="selected"{{end}}><a href="../memes"> meme </a></h2>
+          <h2 {{if eq  .Ativo "Musica"}} class="selected"{{end}}><a href="../musicas"> música </a></h2>
         </div>
       </div>
     </div>
@@ -65,11 +67,11 @@
         </div>
       {{end}}
 {{end}}
-{{define "TAIL"}}
+<!-- {{define "TAIL"}}
       </div>
   </div>
 </body>
 </html>
-{{end}}
+{{end}} -->
 {{template "CABECALHO" .}}
-{{template "TAIL"}}
+<!-- {{template "TAIL"}} -->

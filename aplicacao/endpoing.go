@@ -9,10 +9,19 @@ import (
 )
 
 type InformacaoCabecalho struct {
-	ArrobaLogada string
-	Ativo        string
-	Erro         string
-	NomeMucua    string
+	ArrobaLog       string
+	Ativo           string
+	Erro            string
+	NomeMucua       string
+	LinkSelecionada string
+}
+
+type ViewConvite struct {
+	Cabecalho InformacaoCabecalho
+	Seed      string
+	// pra testar
+	Nome  string
+	Nome2 string
 }
 
 type VerJornalView struct {

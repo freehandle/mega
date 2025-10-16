@@ -7,26 +7,63 @@ import (
 	"strings"
 	"time"
 
+	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/mega/protocolo/acoes"
 )
 
 // Gerenciador do template principal da aplicacao
 func (a *ProcuradorGeral) AgentePrincipal(w http.ResponseWriter, r *http.Request) {
+	// w.Header().Set("X-Content-Type-Options", "nosniff")
 	view := InformacaoCabecalho{
-		ArrobaLogada: a.Arroba(r),
-		NomeMucua:    a.nomeMucua,
-		Ativo:        "",
+		ArrobaLog:       a.Arroba(r),
+		NomeMucua:       a.nomeMucua,
+		Ativo:           "",
+		LinkSelecionada: "",
 	}
 	if err := a.templates.ExecuteTemplate(w, "main.html", view); err != nil {
 		log.Println(err)
 	}
 }
 
+func (a *ProcuradorGeral) AgenteSignin(w http.ResponseWriter, r *http.Request) {
+	hashEncoded := r.URL.Path
+	hashEncoded = strings.Replace(hashEncoded, "/signin/", "", 1)
+	hash := crypto.DecodeHash(hashEncoded)
+	if _, ok := a.convidar[hash]; ok || len(a.convidar) == 0 {
+		view := ViewConvite{
+			Cabecalho: InformacaoCabecalho{
+				NomeMucua: "teste",
+				// NomeMucua:       a.nomeMucua,
+				Ativo:           "",
+				LinkSelecionada: "",
+				ArrobaLog:       "",
+			},
+			Seed:  hashEncoded,
+			Nome:  "teste2",
+			Nome2: "teste3",
+		}
+		if err := a.templates.ExecuteTemplate(w, "signing.html", view); err != nil {
+			log.Println(err)
+		}
+	} else {
+		view := ViewConvite{
+			Cabecalho: InformacaoCabecalho{
+				Erro:      "convite inválido",
+				NomeMucua: a.nomeMucua,
+			},
+		}
+		if err := a.templates.ExecuteTemplate(w, "login.html", view); err != nil {
+			log.Println(err)
+		}
+	}
+}
+
 func (a *ProcuradorGeral) AgenteVerJornal(w http.ResponseWriter, r *http.Request) {
 	cabecalho := InformacaoCabecalho{
-		ArrobaLogada: a.Arroba(r),
-		Ativo:        "Ver",
-		NomeMucua:    a.nomeMucua,
+		ArrobaLog: a.Arroba(r),
+		// ArrobaLog: "teste",
+		Ativo:     "Ver",
+		NomeMucua: a.nomeMucua,
 	}
 	arroba := r.URL.Path
 	arroba = strings.Replace(arroba, "/jornal/", "", 1)
