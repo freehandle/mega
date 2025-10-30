@@ -84,7 +84,7 @@ func NovaMucuaProcuradorGeral(cfg ConfiguracaoMucua) (*ProcuradorGeral, chan err
 	}
 	attorney.templates = t
 
-	staticPath := fmt.Sprintf("%v/api/static/", cfg.Path)
+	staticPath := fmt.Sprintf("%v/aplicacao/static/", cfg.Path)
 	go NovaMucua(&attorney, cfg.Port, staticPath, finalize, cfg.NomeMucua)
 
 	return &attorney, finalize
@@ -96,6 +96,7 @@ func NovaMucua(procurador *ProcuradorGeral, port int, staticPath string, finaliz
 	mime.AddExtensionType(".css", "text/css; charset=utf-8")
 
 	mux := http.NewServeMux()
+	fmt.Println("Static path:", staticPath)
 	fs := http.FileServer(http.Dir(staticPath))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
