@@ -2,6 +2,7 @@ package aplicacao
 
 import (
 	"net/url"
+	"time"
 
 	"github.com/freehandle/mega/protocolo/estado"
 
@@ -46,21 +47,37 @@ func JornalUsuarioDoEstado(e *estado.Estado, arroba string) *VerJornalView {
 	token := e.ArrobasPraTokens[arrobaver]
 	jornal, ok := e.HashTokenPraJornal[crypto.HashToken(token)]
 	if !ok {
-		return nil
+		// return nil
+		view := VerJornalView{
+			ArrobaVer:  "teste",
+			DataCauso:  time.Time.Format(time.Now(), "2006-01-02 às 15h04m"),
+			Causo:      "TESTE",
+			DataFofoca: time.Time.Format(time.Now(), "2006-01-02 às 15h04m"),
+			Fofoca:     "NOVO TESTE",
+			DataIdeia:  time.Time.Format(time.Now(), "2006-01-02 às 15h04m"),
+			Ideia:      "NOVO TESTE",
+			DataLivro:  time.Time.Format(time.Now(), "2006-01-02 às 15h04m"),
+			Livro:      make([]byte, 2),
+			DataMeme:   time.Time.Format(time.Now(), "2006-01-02 às 15h04m"),
+			Meme:       make([]byte, 2),
+			DataMusica: time.Time.Format(time.Now(), "2006-01-02 às 15h04m"),
+			Musica:     "AAAAAAAAAAAAAAAAAAAAAA",
+		}
+		return &view
 	}
 	view := VerJornalView{
 		ArrobaVer:  arroba,
-		DataCauso:  jornal.Causos[len(jornal.Causos)-1].Data.Format("20060102150405"),
+		DataCauso:  jornal.Causos[len(jornal.Causos)-1].Data.Format("2006-01-02 às 15h04m"),
 		Causo:      jornal.Causos[len(jornal.Causos)-1].Conteudo,
-		DataFofoca: jornal.Fofocas[len(jornal.Fofocas)-1].Data.Format("20060102150405"),
+		DataFofoca: jornal.Fofocas[len(jornal.Fofocas)-1].Data.Format("2006-01-02 às 15h04m"),
 		Fofoca:     jornal.Fofocas[len(jornal.Fofocas)-1].Conteudo,
-		DataIdeia:  jornal.Ideias[len(jornal.Ideias)-1].Data.Format("20060102150405"),
+		DataIdeia:  jornal.Ideias[len(jornal.Ideias)-1].Data.Format("2006-01-02 às 15h04m"),
 		Ideia:      jornal.Ideias[len(jornal.Ideias)-1].Conteudo,
-		DataLivro:  jornal.Livros[len(jornal.Livros)-1].Data.Format("20060102150405"),
+		DataLivro:  jornal.Livros[len(jornal.Livros)-1].Data.Format("2006-01-02 às 15h04m"),
 		Livro:      jornal.Livros[len(jornal.Livros)-1].Conteudo,
-		DataMeme:   jornal.Memes[len(jornal.Memes)-1].Data.Format("20060102150405"),
+		DataMeme:   jornal.Memes[len(jornal.Memes)-1].Data.Format("2006-01-02 às 15h04m"),
 		Meme:       jornal.Memes[len(jornal.Memes)-1].Conteudo,
-		DataMusica: jornal.Musicas[len(jornal.Musicas)-1].Data.Format("20060102150405"),
+		DataMusica: jornal.Musicas[len(jornal.Musicas)-1].Data.Format("2006-01-02 às 15h04m"),
 		Musica:     jornal.Musicas[len(jornal.Musicas)-1].Conteudo,
 	}
 	return &view
