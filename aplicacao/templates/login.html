@@ -1,0 +1,17 @@
+{{template "CABECALHO" .}}
+<div id="generalsignin">
+    <form method="post" action="{{.NomeMucua}}/credenciais">
+      <div>
+        <label  for="handle">perfil</label>
+        <input class="text" name="handle" id="handle"/> 
+      </div>
+      <div>
+        <label for="password">senha</label>
+        <input class="text" type="password" name="password" id="password"/> 
+      </div>      
+      <input class="click" type="submit" value="enviar"/>
+  </form>
+  <a class="reset" href="{{.NomeMucua}}/mudasenha">redefinir a senha</a>
+  <a class="reset" href="{{.NomeMucua}}/esqueci">esqueci a senha</a>
+</div>
+{{template "RODAPE"}}

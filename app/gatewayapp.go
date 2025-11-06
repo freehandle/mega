@@ -1,0 +1,56 @@
+package app
+
+import (
+	"log"
+
+	"github.com/freehandle/breeze/crypto"
+	breeze "github.com/freehandle/breeze/protocol/actions"
+	"github.com/freehandle/breeze/util"
+	"github.com/freehandle/handles/attorney"
+	"github.com/freehandle/mega/protocolo/acoes"
+)
+
+type Portao interface {
+	Encaminha(todos []byte)
+}
+
+type Porteira struct {
+	portao      Portao
+	credenciais crypto.PrivateKey
+}
+
+func MegaParaBreeze(action []byte, epoch uint64) []byte {
+	if action == nil {
+		log.Print("PANIC BUG: MegaParaBreeze chamado com acao nula ")
+		return nil
+	}
+	bytes := []byte{0, breeze.IVoid}                     // Breeze Void instruction version 0
+	util.PutUint64(epoch, &bytes)                        // epoch (mega)
+	bytes = append(bytes, 1, 1, 0, 0, attorney.VoidType) // mega protocol code + axe Void instruction code
+	bytes = append(bytes, action[8:]...)                 //
+	return bytes
+}
+
+func (p *Porteira) Encaminha(all []acoes.Acao, autoria crypto.Token, epoca uint64) {
+	for _, action := range all {
+		dressed := p.TravesteAcao(action, autoria, epoca)
+		p.portao.Encaminha(dressed)
+		// gambiarra, depois usar o de baixo
+		//p.portao.Encaminha(append([]byte{messages.MsgAction}, dressed...))
+	}
+}
+
+func (p *Porteira) TravesteAcao(action acoes.Acao, autoria crypto.Token, epoca uint64) []byte {
+	bytes := MegaParaBreeze(action.Serializa(), epoca)
+	if bytes == nil {
+		return nil
+	}
+	for n := 0; n < crypto.TokenSize; n++ {
+		bytes[15+n] = autoria[n]
+	}
+	// put attorney
+	util.PutToken(p.credenciais.PublicKey(), &bytes)
+	signature := p.credenciais.Sign(bytes)
+	util.PutSignature(signature, &bytes)
+	return bytes
+}

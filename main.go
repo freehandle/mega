@@ -1,27 +1,30 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"os"
-	"os/signal"
-	"strings"
-	"time"
-
-	"github.com/freehandle/mega/aplicacao"
-	"github.com/freehandle/mega/aplicacao/configuracoes"
-	"github.com/freehandle/mega/aplicacao/rede"
-	"github.com/freehandle/mega/protocolo/estado"
-
 	"github.com/freehandle/breeze/crypto"
-	"github.com/freehandle/breeze/middleware/social"
-	"github.com/freehandle/breeze/util"
-	"github.com/freehandle/handles/attorney"
-	"github.com/freehandle/safe"
+	"github.com/freehandle/mega/app"
 )
 
-const (
+func main() {
+
+	token, pk := crypto.RandomAsymetricKey()
+	aplicacao := app.NovaAplicacaoVazia()
+	aplicacao.Credenciais = pk
+	aplicacao.Token = token
+	aplicacao.Gateway = make(chan []byte, 1)
+	aplicacao.NomeMucua = ""
+	aplicacao.Hostname = ""
+	var err error
+	aplicacao.Gerente, err = app.ContrataGerente(aplicacao, ".", "", "", pk)
+	if err != nil {
+		panic(err)
+	}
+	fim := make(chan error, 1)
+	app.NovaMucua(aplicacao, 8070, "./aplicao/static/", fim, "localhost")
+	err = <-fim
+}
+
+/*const (
 	notarypath = ""
 )
 
@@ -149,3 +152,4 @@ func main() {
 	cancel()
 	time.Sleep(5 * time.Second)
 }
+*/

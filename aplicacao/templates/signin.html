@@ -1,148 +1,24 @@
-<!doctype html>
-
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>MEGA</title>
-  <meta name="description" content="Protocolo MEGA">
-
-  <meta property="og:title" content="@s livres">
-  <meta property="og:type" content="website">
-  <meta property="og:description" content="Protocolo social MEGA - rodando na infra do @s livres">
-  
-  <link rel="stylesheet" href="../static/estilo.css">
-</head>
-
-<body>
-  <div class="container_main">
-    <div class="menu">
-      <div class="container_menu">
-        <div class="header">
-        </div>
-        <div>
-          <h1>
-            {{.Nome}}
-            <h2>
-                link
-            </h2>
-            <h2 class="selected">
-                ver
-            </h2>
-          </h1>
-        </div>
-        <div>
-          <h1>
-            jornais
-            <h2>{{.Nome2}}</h2>
-          </h1>
-        </div>
-        <div>
-          <h1>
-            campos
-          </h1>
-          <h2>
-            causo
-          </h2>
-          <h2>
-            fofoca
-          </h2>
-          <h2>
-            ideia
-          </h2>
-          <h2>
-            livro
-          </h2>
-          <h2>
-            meme
-          </h2>
-          <h2>
-            música
-          </h2>
-        </div>
-      </div>
+{{template "CABECALHO" .Cabecalho}}        
+<div id="generalsignin">
+  <form method="post" action="{{.Cabecalho.NomeMucua}}/novousuario">
+    <div>
+      <label for="handle">perfil</label>
+      <input class="text" name="handle" id="handle"/> 
     </div>
-    <div class="board">
-      <div class="container_board">
-        <div class="board_header">
-          <h1>
-            <span> jornal </span>larissa
-          </h1>
-        </div>
-        <div class="board_content">
-          <div class="pink">
-            <p class="time_above">larissa publicou</p>
-            <h1><span class="pink">causo</span></h1>
-            <p class="time_below">em 12 de dezembro de 2025</p>
-            <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore magnam dolore, odit ut dolores commodi impedit minima consequatur voluptate cum dolorum, animi ullam sunt expedita omnis, delectus quibusdam ipsa consectetur?
-            </p>
-          </div>
-          <div class="red">
-            <p class="time_above">larissa publicou</p>
-            <h1><span class="red">fofoca</span></h1>
-            <p class="time_below">em 10 de novembro de 2025</p>
-            <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis sapiente, provident, ipsa optio, vel iste earum commodi quia consectetur temporibus illo. Autem quas cumque consequuntur ipsam adipisci modi accusantium saepe corporis illo voluptas quasi, dolores repellendus sapiente in optio non.</p>
-          </div>
-          <div class="blue">
-            <p class="time_above">larissa publicou</p>
-            <h1><span class="blue">ideia</span></h1>
-            <p class="time_below">em 10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-          <div class="green">
-            <p class="time_above">larissa publicou</p>
-            <h1><span class="green">livro</span></h1>
-            <p class="time_below">em 10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-          <div class="yellow">
-            <!-- <p class="time_above">published on</p> -->
-            <h1><span class="yellow">meme</span></h1>
-            <p class="time_below">10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-          <div class="purple">
-            <!-- <p class="time_above">published on</p> -->
-            <h1><span class="purple">música</span></h1>
-            <p class="time_below">10 de agosto de 2024</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius vitae, vero harum nesciunt odit necessitatibus reiciendis illum adipisci, doloribus recusandae ipsam, incidunt unde optio fugiat placeat minus veritatis voluptas. Pariatur officiis voluptatem hic eligendi id odit error porro, soluta quis suscipit recusandae tempore facilis corrupti dolore eos corporis tempora, voluptatum amet debitis, quibusdam autem numquam. Accusamus.</p>
-          </div>
-        </div>
-      </div>
+    <div>
+      <label for="password">senha</label>
+      <input class="text" name="password" id="password"/> 
     </div>
-    <div class="details">
-      <div class="header">
-      </div>
-      <h1>
-        postagens anteriores
-      </h1>
-      <h2>
-        causo
-      </h2>
-      <p>15 de dezembro de 2024</p>
-      <h2>
-        fofoca
-      </h2>
-      <p>10 de janeiro de 2025</p>
-      <h2>
-        ideia
-      </h2>
-      <p>12 de janeiro de 2024</p>
-      <h2>
-        livro
-      </h2>
-      <p>12 de janeiro de 2024</p>
-      <h2>
-        meme
-      </h2>
-      <p>12 de janeiro de 2024</p>
-      <h2>
-        música
-      </h2>
-      <p>12 de janeiro de 2024</p>
+    <div>
+      <label for="email">email</label>
+      <input class="text" name="email" id="email"/> 
     </div>
-
-  </div>
-</body>
+    <input class="click" type="submit" value="enviar"/>
+  </form>
+  <div>
+      <p class="description"> Ao fornecer um endereço de email você garante uma opção de recuperação
+        caso perca sua senha. Se nenhum endereço de email for fornecido, não haverá como recuperar o
+        acesso à conta uma vez que a senha seja perdida. </p><br/>
+    </div>
+</div>
+{{template "RODAPE"}}

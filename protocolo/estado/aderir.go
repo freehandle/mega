@@ -1,11 +1,9 @@
 package estado
 
 import (
-	"errors"
 	"time"
 
 	"github.com/freehandle/breeze/crypto"
-	"github.com/freehandle/mega/protocolo/acoes"
 )
 
 type Aderir struct {
@@ -15,6 +13,7 @@ type Aderir struct {
 	// Apelido  string // vai ser fornecido pelo protocolo Apelidos
 }
 
+/*
 // Verifica se a @ existe no @s livres
 func (e *Estado) ValidaAderir(acao *acoes.AderirMIGA) error {
 	if !e.VerificaSeMembro(acao.Autor) {
@@ -23,3 +22,4 @@ func (e *Estado) ValidaAderir(acao *acoes.AderirMIGA) error {
 	return
 
 }
+*/

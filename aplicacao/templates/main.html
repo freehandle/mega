@@ -19,12 +19,14 @@
 <body>
   <div class="container_main">
     <div class="menu">
+{{end}}
+{{template "CABECALHO" .}}
       <div class="container_menu">
         <div class="header">
         </div>
         <div>
           <h1>
-            logado como {{.ArrobaLog}} 
+            logado como {{.Arroba}} 
             <h2><a href=""> sair </a></h2>
             <h2><a href=""> convidar </a></h2>
           </h1>
@@ -66,12 +68,10 @@
           {{.Erro}}
         </div>
       {{end}}
-{{end}}
-<!-- {{define "TAIL"}}
+{{define "RODAPE"}}
       </div>
   </div>
 </body>
 </html>
-{{end}} -->
-{{template "CABECALHO" .}}
-<!-- {{template "TAIL"}} -->
+{{end}}
+{{template "RODAPE" .}}
