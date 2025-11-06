@@ -4,8 +4,7 @@ import "github.com/freehandle/breeze/crypto"
 
 // associando cada acao prevista pelo protocolo a um byte identificador
 const (
-	AAderirMIGA byte = iota
-	APostarCauso
+	APostarCauso byte = iota
 	APostarFofoca
 	APostarIdeia
 	APostarLivro

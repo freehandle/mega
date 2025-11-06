@@ -1,0 +1,32 @@
+{{template "CABECALHO" .}}
+  <div class="singular">
+    <div class="center">
+      <form method="post" action="{{.NomeMucua}}/uploadfile" enctype="multipart/form-data">
+        {{.TipoPostTitulo}}        
+        <input class="none" type="text" name="action" value="{{.TipoPost}}" readonly/>
+        
+        <label class="formtitle" for="description">{{.TipoPostTitulo}}</label>
+        <textarea required class="formentry detailed" type="text" name="description" value="{{.Description}}" rows="4" id="descriptiondraft"></textarea><br/>
+      
+        <input required class="formentry detailed" type="file" name="fileUpload" value="File Updload" id="fileudraft" onchange="selectFile()"/><br/>
+        <input class="none" type="text" name="fileName" id="fileName" value="" readonly/>
+
+        {{if .PreviousDraft}}
+        <label class="formtitle" for="previousDraft">esboço anterior</label>
+        <input class="formentry detailed" type="text" name="previousDraft" value="{{.PreviousDraft}}" id="previosvdraft" readonly/><br/>
+        {{end}}
+    
+        <label class="formtitle" for="showrefs">referências <span>*opcional</span></label>
+        <input class="formentry detailed" type="text" name="references" value="{{.References}}" id="referencesdraft"/><br/>
+        
+        <label  class="formtitle" for="reasons">razões <span>*opcional</span></label>
+        <textarea class="formentry detailed" type="text" name="reasons" rows="3" id="reasonsfield"></textarea><br/>
+        
+        <div class="submitbox">
+            <input class="submit" type="submit" value="enviar"/>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{{template "RODAPE"}}
