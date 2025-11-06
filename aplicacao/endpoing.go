@@ -82,3 +82,20 @@ func JornalUsuarioDoEstado(e *estado.Estado, arroba string) *VerJornalView {
 	}
 	return &view
 }
+
+func AderirProtocoloMIGA(e *estado.Estado, token crypto.Token, arroba string) {
+	// FAZER VERIFICACOES USANDO IU
+	e.ArrobasPraTokens[arroba] = token
+	e.HashTokenPraArrobas[crypto.HashToken(token)] = arroba
+	e.HashTokenPraJornal[crypto.HashToken(token)] = Jornal{}
+}
+
+func PostarTexto(e *estado.Estado, arroba string, tipoAcao string) {
+	arrobaver, _ := url.QueryUnescape(arroba)
+	token := e.ArrobasPraTokens[arrobaver]
+	return
+	// jornal, ok := e.HashTokenPraJornal[crypto.HashToken(token)]
+	// if !ok {
+	// 	e.HashTokenPraJornal
+	// }
+}

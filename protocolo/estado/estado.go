@@ -60,6 +60,12 @@ func (e *Estado) VerificaSeMembro(token crypto.Token) bool {
 func (e *Estado) Acao(dados []byte) error {
 	tipo := acoes.TipoDeAcao(dados)
 	switch tipo {
+	case acoes.AAderirMIGA:
+		acao := acoes.LeAderir(dados)
+		if acao == nil {
+			return errors.New("nao foi possivel ler a acao do tipo aderir MIGA")
+		}
+
 	case acoes.APostarCauso:
 		acao := acoes.LeCauso(dados)
 		if acao == nil {
