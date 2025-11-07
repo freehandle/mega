@@ -1,5 +1,6 @@
 package acoes
 
+/*
 import (
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/breeze/util"
@@ -50,3 +51,4 @@ func LeMidiaMultiparte(create []byte) *MidiaMultiparte {
 	}
 	return &action
 }
+*/

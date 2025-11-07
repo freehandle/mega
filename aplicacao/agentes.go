@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"fmt"
 	"log"
@@ -143,3 +144,4 @@ func (a *ProcuradorGeral) AgenteAPI(w http.ResponseWriter, r *http.Request) {
 	redirect := fmt.Sprintf("%v/%v", a.nomeMucua, r.FormValue("redirect"))
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
 }
+*/

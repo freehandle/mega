@@ -1,6 +1,8 @@
 package acoes
 
 import (
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/freehandle/breeze/crypto"
@@ -12,8 +14,13 @@ type PostarMeme struct {
 	Epoca       uint64
 	Autor       crypto.Token
 	TipoArquivo string
-	Conteudo    []byte
+	Conteudo    crypto.Hash
 	Data        time.Time
+}
+
+func (p *PostarMeme) ValidarFormato() bool {
+	tipomin := strings.ToLower(p.TipoArquivo)
+	return slices.Contains(TiposImagens, tipomin)
 }
 
 // faz o hash da instrucao
@@ -33,7 +40,7 @@ func (p *PostarMeme) Serializa() []byte {
 	util.PutToken(p.Autor, &bytes)
 	util.PutByte(APostarMeme, &bytes)
 	util.PutString(p.TipoArquivo, &bytes)
-	util.PutByteArray(p.Conteudo, &bytes)
+	util.PutHash(p.Conteudo, &bytes)
 	util.PutTime(p.Data, &bytes)
 	return bytes
 }
@@ -50,7 +57,7 @@ func LeMeme(postmeme []byte) *PostarMeme {
 	}
 	posicao += 1
 	acao.TipoArquivo, posicao = util.ParseString(postmeme, posicao)
-	acao.Conteudo, posicao = util.ParseByteArray(postmeme, posicao)
+	acao.Conteudo, posicao = util.ParseHash(postmeme, posicao)
 	acao.Data, posicao = util.ParseTime(postmeme, posicao)
 	if posicao != len(postmeme) {
 		return nil

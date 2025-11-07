@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"net/http"
 	"strconv"
@@ -146,3 +147,4 @@ func TipoArquivo(nomeArquivo string) string {
 	}
 	return ""
 }
+*/

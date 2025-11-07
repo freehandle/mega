@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/freehandle/breeze/crypto"
+	"github.com/freehandle/mega/protocolo/acoes"
 )
 
 type InformacaoCabecalho struct {
@@ -25,9 +26,35 @@ type ViewConvite struct {
 	Nome2 string
 }
 
+type ViewPublicar struct {
+	Cabecalho InformacaoCabecalho
+	Tipo      string
+}
+
+// Gerenciador do template principal da aplicacao
+func (a *Aplicacao) ManejoInterfacePublicar(w http.ResponseWriter, r *http.Request) {
+	arroba := a.Autor(r)
+	fmt.Println("ARROBA:", arroba)
+	if arroba == "" {
+		http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
+		return
+	}
+	view := ViewPublicar{
+		Cabecalho: InformacaoCabecalho{
+			Arroba:          arroba,
+			NomeMucua:       a.NomeMucua,
+			Ativo:           "",
+			LinkSelecionada: "",
+		},
+		Tipo: "causo",
+	}
+	if err := a.templates.ExecuteTemplate(w, "novotexto.html", view); err != nil {
+		log.Println(err)
+	}
+}
+
 // Gerenciador do template principal da aplicacao
 func (a *Aplicacao) ManejoPrincipal(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("X-Content-Type-Options", "nosniff")
 	view := InformacaoCabecalho{
 		Arroba:          a.Autor(r),
 		NomeMucua:       a.NomeMucua,
@@ -106,13 +133,51 @@ func (a *Aplicacao) ManejoCredenciais(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	fmt.Println("DEU CERTO AQUI SEU MOCO")
 	http.SetCookie(w, cookie)
-	aviso := InformacaoCabecalho{
+	/*aviso := InformacaoCabecalho{
 		NomeMucua: a.NomeMucua,
 		Arroba:    arroba,
 	}
 	if err := a.templates.ExecuteTemplate(w, "main.html", aviso); err != nil {
 		log.Println(err)
-	}
+	}*/
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 	return
+}
+
+func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	handle := a.Autor(r)
+	token, ok := a.Indice.ArrobaParaToken[handle]
+	if !ok {
+		http.Error(w, "usuario desconhecido", http.StatusMethodNotAllowed)
+		return
+	}
+	conteudo := r.FormValue("conteudo")
+	tipo := "causo" //r.FormValue("Tipo")
+	fmt.Println("TIPO:", tipo)
+	if tipo == "causo" {
+		causo := &acoes.PostarCauso{
+			Epoca:    a.Epoca,
+			Autor:    token,
+			Conteudo: conteudo,
+		}
+		if !causo.ValidarFormato() {
+			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+			return
+		}
+		fmt.Println("CAUSO VÁLIDO, ENVIANDO PARA A REDE")
+		a.Gateway.Encaminha([]acoes.Acao{causo}, token, a.Epoca)
+	}
+	aviso := InformacaoCabecalho{
+		NomeMucua: a.NomeMucua,
+		Arroba:    handle,
+	}
+	if err := a.templates.ExecuteTemplate(w, "main.html", aviso); err != nil {
+		log.Println(err)
+	}
 }

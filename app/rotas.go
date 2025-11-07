@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -29,8 +30,8 @@ type ConfiguracaoMucua struct {
 	Safe      *safe.Safe
 }
 
-func NovaMucua(app *Aplicacao, port int, staticPath string, finalize chan error, servername string) {
-
+func NovaMucua(ctx context.Context, app *Aplicacao, port int, staticPath string, servername string) {
+	go app.Rodar(ctx)
 	mux := http.NewServeMux()
 	fmt.Println("Static path:", staticPath)
 	fs := http.FileServer(http.Dir(staticPath))
@@ -41,12 +42,14 @@ func NovaMucua(app *Aplicacao, port int, staticPath string, finalize chan error,
 	mux.HandleFunc("/signin", app.ManejoSignin)
 	mux.HandleFunc("/novousuario", app.ManejoNovoUsuario)
 	mux.HandleFunc("/credenciais", app.ManejoCredenciais)
-	//mux.HandleFunc("/api", app.AgenteAPI)
+	mux.HandleFunc("/publicar", app.ManejoInterfacePublicar)
+	mux.HandleFunc("/publica", app.ManejoPublica)
+
 	//mux.HandleFunc("/uploadfile", procurador.OperadorUpload)
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%v", port),
 		Handler:      mux,
 		WriteTimeout: 2 * time.Second,
 	}
-	finalize <- srv.ListenAndServe()
+	srv.ListenAndServe()
 }

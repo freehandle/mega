@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"crypto/rand"
 	"encoding/base64"
@@ -215,3 +216,4 @@ func (s *GerenciadorSignin) sendPasswordEmail(handle, email, password string) {
 	body := fmt.Sprintf(passwordMessage, handle, password)
 	s.mail.Send(email, "Senha do MEGA", body)
 }
+*/

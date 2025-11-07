@@ -15,6 +15,8 @@ const (
 	AEntrarRede // não é parte do protocolo MEGA, associa @ a token via protocolo palcos
 )
 
+var TiposImagens = []string{"jpg", "gif", "png", "bmp", "svg"}
+
 // cada acao declarada apos AIdeia tem como identificador o byte da ação anterior + 1
 type Acao interface {
 	Serializa() []byte     // serializa a instrucao

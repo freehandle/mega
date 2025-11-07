@@ -2,6 +2,7 @@ package acoes
 
 import (
 	"time"
+	"unicode/utf8"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/breeze/util"
@@ -13,6 +14,10 @@ type PostarFofoca struct {
 	Autor    crypto.Token
 	Conteudo string // texto 2 paginas
 	Data     time.Time
+}
+
+func (p *PostarFofoca) ValidarFormato() bool {
+	return utf8.RuneCountInString(p.Conteudo) >= 100 && utf8.RuneCountInString(p.Conteudo) <= 5000
 }
 
 // faz o hash da instrucao

@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"fmt"
 	"html/template"
@@ -114,3 +115,4 @@ func NovaMucua(procurador *ProcuradorGeral, port int, staticPath string, finaliz
 	}
 	finalize <- srv.ListenAndServe()
 }
+*/

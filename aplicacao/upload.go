@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"fmt"
 	"io"
@@ -65,3 +66,4 @@ func (a *ProcuradorGeral) OperadorUpload(w http.ResponseWriter, r *http.Request)
 	}
 	http.Redirect(w, r, fmt.Sprintf("%v/", a.nomeMucua), http.StatusSeeOther)
 }
+*/

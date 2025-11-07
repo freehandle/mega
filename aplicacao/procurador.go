@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"fmt"
 	"html/template"
@@ -121,3 +122,4 @@ func (a *ProcuradorGeral) Incorporar(acao []byte) {
 		fmt.Println("Erro ao incorporar acao:", err, acao)
 	}
 }
+*/

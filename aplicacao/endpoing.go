@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"net/url"
 	"time"
@@ -99,3 +100,4 @@ func PostarTexto(e *estado.Estado, arroba string, tipoAcao string) {
 	// 	e.HashTokenPraJornal
 	// }
 }
+*/

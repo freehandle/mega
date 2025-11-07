@@ -10,8 +10,27 @@ import (
 	"github.com/freehandle/mega/protocolo/acoes"
 )
 
+type PorteiraLocal chan []byte
+
+func (p PorteiraLocal) Send(data []byte) error {
+	p <- data
+	return nil
+}
+
+func (p PorteiraLocal) Close() error {
+	close(p)
+	return nil
+}
+
 type Portao interface {
-	Encaminha(todos []byte)
+	Send([]byte) error
+}
+
+func PorteiraDeCanal(canal chan []byte, credenciais crypto.PrivateKey) *Porteira {
+	return &Porteira{
+		portao:      PorteiraLocal(canal),
+		credenciais: credenciais,
+	}
 }
 
 type Porteira struct {
@@ -34,9 +53,9 @@ func MegaParaBreeze(action []byte, epoch uint64) []byte {
 func (p *Porteira) Encaminha(all []acoes.Acao, autoria crypto.Token, epoca uint64) {
 	for _, action := range all {
 		dressed := p.TravesteAcao(action, autoria, epoca)
-		p.portao.Encaminha(dressed)
+		p.portao.Send(dressed)
 		// gambiarra, depois usar o de baixo
-		//p.portao.Encaminha(append([]byte{messages.MsgAction}, dressed...))
+		//p.portao.Send(append([]byte{messages.MsgAction}, dressed...))
 	}
 }
 

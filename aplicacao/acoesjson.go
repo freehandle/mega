@@ -1,5 +1,6 @@
 package aplicacao
 
+/*
 import (
 	"time"
 
@@ -115,3 +116,4 @@ func (a PostarMusica) ParaAcao() ([]acoes.Acao, error) {
 	}
 	return []acoes.Acao{&acao}, nil
 }
+*/

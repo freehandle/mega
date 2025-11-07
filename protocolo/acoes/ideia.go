@@ -2,6 +2,7 @@ package acoes
 
 import (
 	"time"
+	"unicode/utf8"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/breeze/util"
@@ -13,6 +14,10 @@ type PostarIdeia struct {
 	Autor    crypto.Token
 	Conteudo string //texto 1 pag
 	Data     time.Time
+}
+
+func (p *PostarIdeia) ValidarFormato() bool {
+	return utf8.RuneCountInString(p.Conteudo) >= 1 && utf8.RuneCountInString(p.Conteudo) <= 2500
 }
 
 // faz o hash da instrucao

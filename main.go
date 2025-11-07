@@ -1,26 +1,43 @@
 package main
 
 import (
+	"context"
+	"log"
+	"time"
+
 	"github.com/freehandle/breeze/crypto"
+	"github.com/freehandle/breeze/middleware/simple"
 	"github.com/freehandle/mega/app"
+	"github.com/freehandle/mega/indice"
+	"github.com/freehandle/mega/protocolo/estado"
 )
 
 func main() {
+	pk := crypto.PrivateKeyFromString("e18e6528bd958000e51553f1828456c96509a3daa595421e24890d3153962297bb46f0c6a41ffc8ca179f3429d2584f103f66e540e21a197a45295ca8aa045de")
+	token := pk.PublicKey()
+	breezeToken := crypto.TokenFromString("91ad274d06c4be307a332a0e59449ad25ae2c65e4ad5a8f0af87067ac2fc3a54")
 
-	token, pk := crypto.RandomAsymetricKey()
+	ctx := context.Background()
+	novidades := simple.DissociateActions(ctx, simple.NewBlockReader(ctx, "/home/rmdamiao/go/src/github.com/freehandle/handles/cmd/proxy-handles", "blocos", time.Second))
+	sender, err := simple.Gateway(ctx, 7000, breezeToken, pk)
+	if err != nil {
+		log.Fatalf("error creating gateway: %v", err)
+	}
 	aplicacao := app.NovaAplicacaoVazia()
 	aplicacao.Credenciais = pk
 	aplicacao.Token = token
-	aplicacao.Gateway = make(chan []byte, 1)
+	aplicacao.Novidades = novidades
+	aplicacao.Estado = estado.Genesis(0)
+	aplicacao.Indice = indice.NovoIndice()
+	aplicacao.Gateway = app.PorteiraDeCanal(sender, pk)
 	aplicacao.NomeMucua = ""
 	aplicacao.Hostname = ""
-	var err error
 	aplicacao.Gerente, err = app.ContrataGerente(aplicacao, ".", "", "", pk)
 	if err != nil {
 		panic(err)
 	}
 	fim := make(chan error, 1)
-	app.NovaMucua(aplicacao, 8070, "./aplicao/static/", fim, "localhost")
+	app.NovaMucua(ctx, aplicacao, 8070, "./aplicao/static/", "localhost")
 	err = <-fim
 }
 

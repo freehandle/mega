@@ -2,6 +2,7 @@ package acoes
 
 import (
 	"time"
+	"unicode/utf8"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/breeze/util"
@@ -13,6 +14,10 @@ type PostarMusica struct {
 	Autor    crypto.Token
 	Conteudo string // texto 1 paragrafo
 	Data     time.Time
+}
+
+func (p *PostarMusica) ValidarFormato() bool {
+	return utf8.RuneCountInString(p.Conteudo) >= 1 && utf8.RuneCountInString(p.Conteudo) <= 800
 }
 
 // faz o hash da instrucao

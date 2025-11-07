@@ -1,15 +1,230 @@
 package estado
 
 import (
-	"errors"
-	"time"
-
-	"github.com/freehandle/mega/protocolo/acoes"
+	"sync"
 
 	"github.com/freehandle/breeze/crypto"
+	"github.com/freehandle/breeze/middleware/social"
+	"github.com/freehandle/mega/protocolo/acoes"
 )
 
-var TiposImagens = []string{"jpg", "gif", "png", "bmp", "svg"}
+const (
+	LapsoCauso  = 30 * 24 * 60 * 60
+	LapsoFofoca = 15 * 24 * 60 * 60
+	LapsoIdeia  = 30 * 24 * 60 * 60
+	LapsoLivro  = 30 * 24 * 60 * 60
+	LapsoMeme   = 7 * 24 * 60 * 60
+	LapsoMusica = 15 * 24 * 60 * 60
+)
+
+type Postagem struct {
+	Token crypto.Token
+	Tipo  byte
+}
+
+func Genesis(epoch uint64) *Estado {
+	return &Estado{
+		mu:                sync.Mutex{},
+		Epoca:             epoch,
+		UltimaAtualizacao: make(map[Postagem]uint64),
+	}
+}
+
+type Estado struct {
+	mu                sync.Mutex
+	Epoca             uint64
+	UltimaAtualizacao map[Postagem]uint64
+}
+
+type EstadoMutante struct {
+	Original *Estado
+	Mutacoes *Mutacoes
+}
+
+func (e *EstadoMutante) Mutations() *Mutacoes {
+	return e.Mutacoes
+}
+
+func (e *EstadoMutante) UltimaPublicao(token crypto.Token, tipo byte) uint64 {
+	postagem := Postagem{Token: token, Tipo: tipo}
+	if ultima, ok := e.Mutacoes.Atualizacoes[postagem]; ok {
+		return ultima
+	}
+	if ultima, ok := e.Original.UltimaAtualizacao[postagem]; ok {
+		return ultima
+	}
+	return 0
+}
+
+func (e *EstadoMutante) Validate(dados []byte) bool {
+	tipo := acoes.TipoDeAcao(dados)
+	switch tipo {
+	case acoes.APostarCauso:
+		acao := acoes.LeCauso(dados)
+		if acao == nil || !acao.ValidarFormato() {
+			return false
+		}
+		ultima := e.UltimaPublicao(acao.Autor, acoes.APostarCauso)
+		if ultima > 0 && (acao.Epoca < ultima+LapsoCauso) {
+			return false
+		}
+		if acao.Epoca <= e.Mutacoes.Epoca {
+			postagem := Postagem{Token: acao.Autor, Tipo: acoes.APostarCauso}
+			e.Mutacoes.Atualizacoes[postagem] = acao.Epoca
+			return true
+		}
+		return false
+	case acoes.APostarFofoca:
+		acao := acoes.LeFofoca(dados)
+		if acao == nil || !acao.ValidarFormato() {
+			return false
+		}
+		ultima := e.UltimaPublicao(acao.Autor, acoes.APostarFofoca)
+		if ultima > 0 && (acao.Epoca < ultima+LapsoFofoca) {
+			return false
+		}
+		if acao.Epoca <= e.Mutacoes.Epoca {
+			postagem := Postagem{Token: acao.Autor, Tipo: acoes.APostarFofoca}
+			e.Mutacoes.Atualizacoes[postagem] = acao.Epoca
+			return true
+		}
+		return false
+	case acoes.APostarIdeia:
+		acao := acoes.LeIdeia(dados)
+		if acao == nil || !acao.ValidarFormato() {
+			return false
+		}
+		ultima := e.UltimaPublicao(acao.Autor, acoes.APostarIdeia)
+		if ultima > 0 && (acao.Epoca < ultima+LapsoIdeia) {
+			return false
+		}
+		if acao.Epoca <= e.Mutacoes.Epoca {
+			postagem := Postagem{Token: acao.Autor, Tipo: acoes.APostarIdeia}
+			e.Mutacoes.Atualizacoes[postagem] = acao.Epoca
+			return true
+		}
+		return false
+	case acoes.APostarLivro:
+		acao := acoes.LeLivro(dados)
+		if acao == nil || !acao.ValidarFormato() {
+			return false
+		}
+		ultima := e.UltimaPublicao(acao.Autor, acoes.APostarLivro)
+		if ultima > 0 && (acao.Epoca < ultima+LapsoLivro) {
+			return false
+		}
+		if acao.Epoca <= e.Mutacoes.Epoca {
+			postagem := Postagem{Token: acao.Autor, Tipo: acoes.APostarLivro}
+			e.Mutacoes.Atualizacoes[postagem] = acao.Epoca
+			return true
+		}
+		return false
+	case acoes.APostarMeme:
+		acao := acoes.LeMeme(dados)
+		if acao == nil || !acao.ValidarFormato() {
+			return false
+		}
+		ultima := e.UltimaPublicao(acao.Autor, acoes.APostarMeme)
+		if ultima > 0 && (acao.Epoca < ultima+LapsoMeme) {
+			return false
+		}
+		if acao.Epoca <= e.Mutacoes.Epoca {
+			postagem := Postagem{Token: acao.Autor, Tipo: acoes.APostarMeme}
+			e.Mutacoes.Atualizacoes[postagem] = acao.Epoca
+			return true
+		}
+		return false
+	case acoes.APostarMusica:
+		acao := acoes.LeMusica(dados)
+		if acao == nil || !acao.ValidarFormato() {
+			return false
+		}
+		ultima := e.UltimaPublicao(acao.Autor, acoes.APostarMusica)
+		if ultima > 0 && (acao.Epoca < ultima+LapsoMusica) {
+			return false
+		}
+		if acao.Epoca <= e.Mutacoes.Epoca {
+			postagem := Postagem{Token: acao.Autor, Tipo: acoes.APostarMusica}
+			e.Mutacoes.Atualizacoes[postagem] = acao.Epoca
+			return true
+		}
+		return false
+	default:
+		return false
+	}
+}
+
+func (e *Estado) Validator(mutacoes ...*Mutacoes) *EstadoMutante {
+	validador := EstadoMutante{
+		Original: e,
+	}
+	if len(mutacoes) == 0 {
+		validador.Mutacoes = &Mutacoes{
+			Epoca:        e.Epoca + 1,
+			Atualizacoes: make(map[Postagem]uint64),
+		}
+	} else if len(mutacoes) == 1 {
+		validador.Mutacoes = mutacoes[0]
+	} else {
+		validador.Mutacoes = mutacoes[0].Merge(mutacoes[1:]...)
+	}
+	return &validador
+}
+
+func (e *Estado) Incorporate(mutacoes *Mutacoes) {
+	e.Epoca = mutacoes.Epoca
+	for k, v := range mutacoes.Atualizacoes {
+		e.UltimaAtualizacao[k] = v
+	}
+}
+
+func (e *Estado) Shutdown() {
+
+}
+
+func (e *Estado) Checksum() crypto.Hash {
+	return crypto.ZeroHash
+}
+
+func (e *Estado) Clone() chan social.Stateful[*Mutacoes, *EstadoMutante] {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	clone := Estado{
+		Epoca:             e.Epoca,
+		UltimaAtualizacao: make(map[Postagem]uint64),
+	}
+	for k, v := range e.UltimaAtualizacao {
+		clone.UltimaAtualizacao[k] = v
+	}
+	resposta := make(chan social.Stateful[*Mutacoes, *EstadoMutante], 2)
+	resposta <- &clone
+	return resposta
+}
+
+func (e *Estado) Serialize() []byte {
+	return nil
+}
+
+type Mutacoes struct {
+	Epoca        uint64
+	Atualizacoes map[Postagem]uint64
+}
+
+func (m *Mutacoes) Merge(mutacoes ...*Mutacoes) *Mutacoes {
+	merged := &Mutacoes{
+		Atualizacoes: make(map[Postagem]uint64),
+	}
+	for _, mu := range append([]*Mutacoes{m}, mutacoes...) {
+		for k, v := range mu.Atualizacoes {
+			if at, ok := merged.Atualizacoes[k]; !ok || v > at {
+				merged.Atualizacoes[k] = v
+			}
+		}
+	}
+	return merged
+}
+
+/*var TiposImagens = []string{"jpg", "gif", "png", "bmp", "svg"}
 
 type InfoUsuario struct {
 	Arroba string
@@ -231,3 +446,4 @@ func (e *Estado) ValidaMusica(acao *acoes.PostarMusica) error {
 	e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Musicas = append(e.HashTokenPraJornal[crypto.Hash(acao.Autor)].Musicas, &novamusica)
 	return nil
 }
+*/
