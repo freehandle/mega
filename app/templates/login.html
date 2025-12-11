@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIGA - Make Internet Great Again</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/styleMobile.css">
+    <script src="../static/login.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+
+</head>
+<body class="corTerciaria">
+    <header>
+        <h1 class="sixtyfour">MIGA - Make Internet Great Again</h1>
+    </header>
+    <div id="cardLogin" class="cardLogin sombraG">
+        <div class="cabecalhoCard corDestaque">
+                <img class="imgP" src="../img/miga.png" alt="categoria fofoca" >
+                <p class="tituloLogin">Faça login para acessar</p>
+        </div>
+        <div class="espacamento formularioLogin">
+            <label for="usuario" class="textoCard">Adicione seu usuário cadastrado</label>
+            <input class="textoCard" type="text" id="usuario" placeholder="Usuário"><br>
+            <br>
+            <label for="senha" class="textoCard">Adicione sua senha</label>
+            <input class="textoCard" type="password" id="senha" placeholder="Senha"><br>
+            <p id="mensagem"> </p>
+            <a href="javascript:void(0)" onclick="descubraSenha()" class="linkLogin">
+                Descubra sua senha
+            </a>
+            <div class="botoes">
+                <button class="cinzaClaro sombraP botaoSecundario tituloBotao"> 
+                    <a href="https://freehandle.org/">Voltar para @s Livres</a>
+                </button>
+                <button onclick="validarLogin()" class="sombraP botaoPrimario tituloBotao corDestaque">
+                    Entrar
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

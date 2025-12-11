@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIGA - Make Internet Great Again</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/styleMobile.css">
+    <script src="../static/filtros.js"></script>
+    <script src="../static/login.js"></script>
+    <script src="../static/verificacaoLogin.js"></script>
+    <script src="../static/carregarPostagem.js"></script>
+    <script src="../static/verificadorDatas.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+
+</head>
+<body class="corTerciaria">
+    <header>
+        <a href="meu_jornal.html"><h1 id="tituloJornal" class="sixtyfour"></h1></a>
+         <button onclick="logout()" class="sombraP corErro"> 
+            <p id="textoSair">Sair</p>
+            <img class="imgP" id="fecharSessao" src="../img/fechar.png" alt="fechar sessão">
+        </button>
+    </header>
+    
+    <div class="conteudo">
+        <div class="postagens">
+            <div class="categorias">                
+                <div id="fofoca" class="categoria" onclick="selecionarAba(this)">
+                    <img class="imgM" src="../img/fofoca.png" alt="categoria fofoca">
+                    <p>Fofoca</p>
+                </div>
+                <div id="causo" class="categoria" onclick="selecionarAba(this)">
+                    <img class="imgM" src="../img/causo.png" alt="categoria causo">
+                    <p>Causo</p>
+                </div>
+                <div id="ideia" class="categoria" onclick="selecionarAba(this)">
+                    <img class="imgM" src="../img/ideia.png" alt="categoria ideia">
+                    <p>Ideia</p>
+                </div>
+                <div id="livro" class="categoria" onclick="selecionarAba(this)">
+                    <img class="imgM" src="../img/livro.png" alt="categoria livro">
+                    <p>Livro</p>
+                </div>        
+                <div id="meme" class="categoria" onclick="selecionarAba(this)">
+                        <img class="imgM" src="../img/meme.png" alt="categoria meme">
+                    <p>Meme</p>
+                </div>
+                <div id="musica" class="categoria" onclick="selecionarAba(this)">
+                    <img class="imgM" src="../img/musica.png" alt="categoria música">
+                    <p>Música</p>
+                </div>
+            </div>
+    
+            <div class="carrossel">
+                <div class="carrossel">
+                    <!-- contêiner para cada categoria -->
+                    <section class="listaCards" data-categoria="fofoca"></section>            
+                    <section class="listaCards" data-categoria="causo"></section>
+                    <section class="listaCards" data-categoria="ideia"></section>            
+                    <section class="listaCards" data-categoria="livro"></section>
+                    <section class="listaCards" data-categoria="meme"></section>
+                    <section class="listaCards" data-categoria="musica"></section>
+                  </div>             
+            </div> 
+            <div class="botoes">  
+                <button onclick="window.location.href='postagem.html'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
+            </div>
+        </div>
+        <div id="divisoria"></div>
+        <div class="calendario">
+            <div id="mesAnterior"  class="mes sombraP">
+                <div id="tituloMesAnterior" class="tituloMes">                 </div>
+                <div class= "dias">
+                    <p class="dia" onclick="selecionarDia(this)">1</p>
+                    <p class="dia" onclick="selecionarDia(this)">2</p>
+                    <p class="dia" onclick="selecionarDia(this)">3</p>
+                    <p class="dia" onclick="selecionarDia(this)">4</p>
+                    <p class="dia" onclick="selecionarDia(this)">5</p>
+                    <p class="dia" onclick="selecionarDia(this)">6</p>
+                    <p class="dia" onclick="selecionarDia(this)">7</p>
+                    <p class="dia" onclick="selecionarDia(this)">8</p>
+                    <p class="dia" onclick="selecionarDia(this)">9</p>
+                    <p class="dia" onclick="selecionarDia(this)">10</p>
+                    <p class="dia" onclick="selecionarDia(this)">11</p>
+                    <p class="dia" onclick="selecionarDia(this)">12</p>
+                    <p class="dia" onclick="selecionarDia(this)">13</p>
+                    <p class="dia" onclick="selecionarDia(this)">14</p>
+                    <p class="dia" onclick="selecionarDia(this)">15</p>
+                    <p class="dia" onclick="selecionarDia(this)">16</p>
+                    <p class="dia" onclick="selecionarDia(this)">17</p>
+                    <p class="dia" onclick="selecionarDia(this)">18</p>
+                    <p class="dia" onclick="selecionarDia(this)">19</p>
+                    <p class="dia" onclick="selecionarDia(this)">20</p>
+                    <p class="dia" onclick="selecionarDia(this)">21</p>
+                    <p class="dia" onclick="selecionarDia(this)">22</p>
+                    <p class="dia" onclick="selecionarDia(this)">23</p>
+                    <p class="dia" onclick="selecionarDia(this)">24</p>
+                    <p class="dia" onclick="selecionarDia(this)">25</p>
+                    <p class="dia" onclick="selecionarDia(this)">26</p>
+                    <p class="dia" onclick="selecionarDia(this)">27</p>
+                    <p class="dia" onclick="selecionarDia(this)">28</p>
+                    <p class="dia" onclick="selecionarDia(this)">29</p>
+                    <p class="dia" onclick="selecionarDia(this)">30</p>
+                    <p class="dia" onclick="selecionarDia(this)">31</p>
+                </div>
+            </div>
+            <div class="mes sombraP">
+                <div id="tituloMesAtual" class="tituloMes"> XXXX </div>
+                <div class= "dias">
+                    <p class="dia" onclick="selecionarDia(this)">1</p>
+                    <p class="dia" onclick="selecionarDia(this)">2</p>
+                    <p class="dia" onclick="selecionarDia(this)">3</p>
+                    <p class="dia" onclick="selecionarDia(this)">4</p>
+                    <p class="dia" onclick="selecionarDia(this)">5</p>
+                    <p class="dia" onclick="selecionarDia(this)">6</p>
+                    <p class="dia" onclick="selecionarDia(this)">7</p>
+                    <p class="dia" onclick="selecionarDia(this)">8</p>
+                    <p class="dia" onclick="selecionarDia(this)">9</p>
+                    <p class="dia" onclick="selecionarDia(this)">10</p>
+                    <p class="dia" onclick="selecionarDia(this)">11</p>
+                    <p class="dia" onclick="selecionarDia(this)">12</p>
+                    <p class="dia" onclick="selecionarDia(this)">13</p>
+                    <p class="dia" onclick="selecionarDia(this)">14</p>
+                    <p class="dia" onclick="selecionarDia(this)">15</p>
+                    <p class="dia" onclick="selecionarDia(this)">16</p>
+                    <p class="dia" onclick="selecionarDia(this)">17</p>
+                    <p class="dia" onclick="selecionarDia(this)">18</p>
+                    <p class="dia" onclick="selecionarDia(this)">19</p>
+                    <p class="dia" onclick="selecionarDia(this)">20</p>
+                    <p class="dia" onclick="selecionarDia(this)">21</p>
+                    <p class="dia" onclick="selecionarDia(this)">22</p>
+                    <p class="dia" onclick="selecionarDia(this)">23</p>
+                    <p class="dia" onclick="selecionarDia(this)">24</p>
+                    <p class="dia" onclick="selecionarDia(this)">25</p>
+                    <p class="dia" onclick="selecionarDia(this)">26</p>
+                    <p class="dia" onclick="selecionarDia(this)">27</p>
+                    <p class="dia" onclick="selecionarDia(this)">28</p>
+                    <p class="dia" onclick="selecionarDia(this)">29</p>
+                    <p class="dia" onclick="selecionarDia(this)">30</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+</body>
+</html>

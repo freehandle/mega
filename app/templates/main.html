@@ -1,0 +1,77 @@
+{{define "CABECALHO"}}
+{{$mucua:=.NomeMucua}}
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MEGA</title>
+  <meta name="description" content="Protocolo MEGA">
+  <meta property="og:title" content="@s livres">
+  <meta property="og:type" content="website">
+  <meta property="og:description" content="Protocolo social MEGA - rodando na infra do @s livres">
+  
+  <link rel="stylesheet" href="/static/estilo.css">
+  <!-- <script src="../static/funcoes.js"></script> -->
+</head>
+
+<body>
+  <div class="container_main">
+    <div class="menu">
+{{end}}
+{{template "CABECALHO" .}}
+      <div class="container_menu">
+        <div class="header">
+        </div>
+        <div>
+          <h1>
+            logado como {{.Arroba}} 
+            <h2><a href=""> sair </a></h2>
+            <h2><a href=""> convidar </a></h2>
+          </h1>
+        </div>
+        <div>
+          <h1>
+            meu jornal
+            <h2 {{if eq  .Ativo "Atualizar"}} class="selected"{{end}}><a href="../atualizar"> atualizar </a></h2>
+            <h2 {{if eq  .Ativo "Ver"}} class="selected"{{end}}><a href="../ver"> ver </a></h2>
+          </h1>
+        </div>
+        <div>
+          <h1>
+            jornais
+            {{if .LinkSelecionada}}
+              <h2 {{if eq  .Ativo "Pessoa"}} class="selected"{{end}}><a href="../ver/{{.LinkSelecionada}}"> {{.PessoaSelecionada}} </a></h2>
+              {{range .Pessoas}}
+                <h2><a href="../ver/{{.Link}}"> {{.}} </a></h2>
+              {{end}}
+            {{end}}
+          </h1>
+        </div>
+        <div>
+          <h1>
+            campos
+          </h1>
+          <h2 {{if eq  .Ativo "Causo"}} class="selected"{{end}}><a href="../causos"> causo </a></h2>
+          <h2 {{if eq  .Ativo "Fofoca"}} class="selected"{{end}}><a href="../fofocas"> fofoca </a></h2>
+          <h2 {{if eq  .Ativo "Ideia"}} class="selected"{{end}}><a href="../ideias"> ideia </a></h2>
+          <h2 {{if eq  .Ativo "Livro"}} class="selected"{{end}}><a href="../livros"> livro </a></h2>
+          <h2 {{if eq  .Ativo "Meme"}} class="selected"{{end}}><a href="../memes"> meme </a></h2>
+          <h2 {{if eq  .Ativo "Musica"}} class="selected"{{end}}><a href="../musicas"> música </a></h2>
+        </div>
+      </div>
+    </div>
+    <div id="centro" class="scroll">
+      {{if .Erro}}
+        <div>
+          {{.Erro}}
+        </div>
+      {{end}}
+{{define "RODAPE"}}
+      </div>
+  </div>
+</body>
+</html>
+{{end}}
+{{template "RODAPE" .}}

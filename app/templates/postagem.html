@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIGA - Make Internet Great Again</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/styleMobile.css">
+    <script src="../static/verificacaoLogin.js"></script>
+    <script src="../static/postarConteudo.js"></script>
+    <script src="../static/verificadorDatas.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+
+</head>
+<body class="corTerciaria">
+    <header>
+        <h1 class="sixtyfour">Jornal da Ana</h1>
+    </header>
+    
+    <div class="conteudo">
+        <div class="postagens">
+            <div class="carrossel">
+                <div id="card-1" class="cardInput sombraG">
+                    <div class="cabecalhoCard corPrimaria">
+                            <img class="imgP" src="../img/fofoca.png" alt="categoria fofoca" >
+                            <p class="tituloCabecalho">Fofoca 1</p>
+                    </div>
+                    <label class="textoCard">Selecione o conteúdo que deseja postar</label>
+                    <br>
+                    <select id="tipoConteudo" class="textoCard cinzaClaro" type="text" id="usuario" placeholder="Usuário">
+                        <option value="fofoca" data-label="fofoca"> 👀 Fofoca</option>
+                        <option value="causo" data-label="causo"> 🔮 Causo</option>
+                        <option value="ideia" data-label="ideia"> 🧠 Ideia</option>
+                        <option value="livro" data-label="livro"> 📖 Livro</option>
+                        <option value="meme" data-label="meme"> 🐸 Meme</option>
+                        <option value="musica" data-label="música"> 🎶 Música</option>
+                    </select>
+                    <br>
+                    <br>
+                    <br>
+                    <p class="textoCard dataCard" id="dataCard"> </p>
+                    <br>
+                    <textarea id="textoConteudo" placeholder="Adicione seu conteúdo aqui ..." rows="5"></textarea>
+                    <br>
+                </div>
+            </div>      
+            <div class="botoes">
+                <button onclick="voltarPagina()" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </button>
+                <button id="botaoPostar" onclick="postarConteudo()" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar fofoca </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,547 @@
+body{
+    margin-top: 10px;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-bottom: 10%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: thin;
+    font-size: small;
+    color: #000;
+}
+
+header{
+    margin: 2%;
+    display: flex;
+    padding: 0 5px;
+    justify-content: space-between;
+    align-items: center;
+    gap: auto;
+    width: 100%;
+}
+
+h1 {
+    width: 90%;
+    margin: 0;
+    font-size: 2em;
+    color: #1D6CEB;
+}
+
+p{
+    margin: 0;
+}
+
+textarea{
+    margin: 1% 1% 0 5%;
+    width: 90%;
+    border: none;
+}
+
+input{
+    margin: 1% 1% 0 1%;
+    padding: 1%;
+    width: 90%;
+    border: none;
+    border-bottom: 1px solid #000;
+}
+
+button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1%;
+    gap: 10px;
+    padding: 0 10px 0 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
+    font-style: normal;
+    font-weight: 400;
+    color: #000;
+    border: 2px solid #000;
+    border-radius: 100px;
+    background-color: f5f5f5;
+    width: auto;
+    cursor: pointer;
+}
+
+a{
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+select{
+    margin: 50px;
+    padding: 20px 5px 10px 5px;
+    width: 90%;
+    border: none;
+    border-radius: 10px;
+    
+}
+
+/* ----- Classes ----- */
+.sombraP{
+    border-radius: 4px;
+    box-shadow: 5px 5px 0 0 #000;
+}
+
+.sombraG{
+    border-radius: 10px 10px 0 0;
+    box-shadow: 10px 10px 0 0 #000;
+}
+
+.espacamento{
+    margin: 20px;
+    padding: 20px;
+}
+
+.imgP {
+    height: 28px;
+    width: auto;
+}
+
+.imgM {
+    height: 36px;
+    width: auto;
+}
+
+.imgG {
+    height: 50px;
+    width: auto;
+}
+
+        /* CORES */
+.corPrimaria{
+    background-color: #1D6CEB;
+    color: #fff;
+}
+.corSecundaria{
+    background-color: #CAD3FF;
+}
+.corTerciaria{
+    background-color: #E8F2FF;
+    color: #1D6CEB;
+}
+
+.corDestaque{
+    background-color: #DEFFCA;
+    color: #000;
+}
+
+.corErro{
+    background-color: #ffe0e0;
+    color: #d22f2f;
+}
+
+.corSucesso{
+    background-color: #e0ffe0;
+    color: #387038;
+}
+
+.cinzaClaro{
+    background-color: #F5F5F5;
+}
+
+.cinzaEscuro{
+    background-color: #A9A9A9;
+}
+
+        /* TIPOGRAFIA */
+
+.linkLogin{
+    color: #1D6CEB;
+    text-decoration: underline;
+    font-size: 1em;
+    font-weight: bold;
+    line-height: normal;
+    padding: 0.5%;
+}
+
+.sixtyfour {
+  font-family: "Sixtyfour", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "BLED" 0,
+    "SCAN" 0;
+}
+
+.tituloBotao{
+    font-size: 1.1em;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    padding: 0.5%;
+}
+
+.tituloLogin{
+    color: #000;
+    font-size: 1.2em;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.tituloCabecalho{
+    color: #FFF;
+    font-size: 1em;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.dataCard{
+    font-weight: bold;
+    color: #000;
+}
+
+.textoCard{
+    margin: 0 5% 0 5%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #000;
+}
+
+        /* MODIFICADORES */
+.esconder
+{
+    display: none;
+}
+
+.msgAlerta{
+    font-size: medium;
+    padding: 5px;
+}
+
+.textoLimitado {
+    line-height: 1.6;
+    max-height: calc(1.6em * 10);
+    overflow: hidden;
+    display: block;
+    display: -webkit-box;
+    line-clamp: 10;
+    -webkit-line-clamp: 10;
+    -webkit-box-orient: vertical;
+}
+
+
+        /* COMPORNENTES INTERFACE */
+
+.conteudo{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: start;
+    gap: 30px;
+    width: 100%;
+    margin-top: 25px;
+    }
+    .postagens{
+            width: 60%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items:flex-end;
+        }   
+        .categorias{
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+            .categoria{
+                width: 50px;
+                height: 10%;
+                display: flex;
+                flex-direction: column;
+                justify-content:space-around;
+                align-items: center;
+                cursor: pointer;
+                padding: 10px;
+                font-size: 0.8em;
+                font-weight: thin;
+                color:none;
+                border: none;
+                border-radius: 0;
+                background-color: transparent;
+            }
+            .categoria:hover{
+                font-weight: bold;
+                background-color: #F5F5F5;
+                border-radius: 5px;
+                border: 1px solid #939393;
+            }
+            .categoriaSelecionada{
+                width: 50px;
+                height: 10%;
+                display: flex;
+                flex-direction: column;
+                justify-content:space-around;
+                align-items: center;
+                cursor: pointer;
+                padding: 10px;
+                font-size: 0.8em;
+                font-weight: bold;
+                color:none;
+                border: 1px solid #939393;
+                border-radius: 5px;
+                background-color: #F5F5F5;
+                box-shadow: 0 -4px 4px 0 rgba(0, 0, 0, 0.25) inset;
+            }
+
+        .listaCards{
+            display: flex;
+            flex-direction: row;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            gap: 40px;
+            padding: 0 20px 20px 20px;
+            margin-bottom: 10px;
+            max-width: 700px;
+            min-width: fit-content;            
+        }
+
+        .carrossel{
+            display: flex;
+            flex-direction: row;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            gap: 15px;
+            padding: 0 30px 30px 0;
+            margin-bottom: 10px;
+            max-width: 98%;
+            min-width: 300px;
+            scrollbar-width: auto;
+            scrollbar-color: #000 #E8F2FF;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            -webkit-scroll-snap-type: x mandatory;
+        }
+
+        .card{
+            flex: 0 0 300px;
+            scroll-snap-align: start;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0px;
+            background-color: #fff;
+            border: 2px solid #000;
+            width: 100%;
+            min-width: 300px;
+            min-height: 300px;            
+            padding-bottom: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 25px;
+            -webkit-scroll-snap-align: start;
+        }
+
+        .cardVazio{
+            flex: 0 0 300px;
+            scroll-snap-align: start;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0px;
+            border: 2px solid #000;
+            background-color: #DCDCDC;
+            width: 100%;
+            min-width: 300px;
+            height: 100%;  
+            padding-bottom: 15px;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: auto;            
+        }
+
+        .cardInput{
+            margin: 0;
+            padding: 0px;
+            background-color: #fff;
+            border: 2px solid #000;
+            width: 100%;
+            height: 100%;            
+            padding-bottom: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 25px;
+        }
+
+        .cardLogin{
+            margin: 5%;
+            padding: 0px;
+            background-color: #fff;
+            border: 2px solid #000;
+            width: 70%;
+            height: auto;            
+            padding-bottom: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 25px;
+        }
+
+            .cabecalhoCard{
+                display: flex;
+                justify-content: left;
+                gap: 10px;
+                margin-bottom: 15px;
+                height: 10%;
+                padding: 13px 14px;
+                align-items: center;
+                border-radius: 5px 5px 0 0;
+                border: 1px solid #000;
+                box-shadow: 0 -4px 4px 0 rgba(0, 0, 0, 0.35) inset;
+                color: #fff;
+            }
+                .rotuloCard{
+                    display: flex;
+                    align-items: center;
+                    gap: 3px;  
+                    margin: 0;
+                    padding: 0;
+                }
+            .rodapeCard{
+                display: none;
+                /* display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                margin: 15px 15px 0 0;  */
+              }
+
+    .botoes{
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-end;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    }
+
+    .botaoPrimario{
+        width: auto;
+        display: flex;
+        padding: 9px 20px;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .botaoPrimario:hover{
+        background-color: #154CAD;
+        box-shadow: 7px 7px 0 0 #000;
+        color: #fff;;
+    }
+    .botaoSecundario{
+        width: auto;
+        display: flex;
+        padding: 9px 20px;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        color: #000;
+    }
+
+    .botaoSecundario:hover{
+        background-color: #154CAD;
+        box-shadow: 7px 7px 0 0 #000;
+        background-color: #A9A9A9;
+    }
+
+    .calendario{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 30%;
+        max-width: 300px;
+        min-width: 230px;
+        height: auto;
+        gap: 15px;
+        color: #000;
+    }
+        .mes{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 5px;
+            min-height: 200px;
+            border: 1px solid black;
+            background-color: #FFFFFF;
+            border-radius: 5px 5px 0 0;
+        }
+            .tituloMes{
+                display: flex;
+                justify-content: center;
+                margin-bottom: 5px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid black;
+                width: 100%;
+                font-weight: bold;
+                background-color: #DEFFCA;
+                border-radius: 5px 5px 0 0;
+            }
+            
+            .dias{
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 10px;
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                text-align: center;
+                align-self: stretch;
+            }
+            .dia{
+                background-color: #F5F5F5;
+                border-radius: none;
+                padding: 3px;
+                font-weight: 200;
+                cursor: pointer;
+            }
+            .dia:hover{
+                background-color: #DCDCDC;
+               font-weight: bolder;
+            }
+
+            .diaAtual{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #FFCACA;
+                font-weight: bolder;
+                justify-content: center;
+            }
+
+            .diaCheio{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #CAD3FF;
+                font-weight: bolder;
+                cursor: pointer;
+            }
+
+.formularioLogin{
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    gap: 15px;
+}
+
+/* ----- Ids ----- */
+
+    #divisoria{
+        background-color: rgb(59, 59, 59);
+        width: 2px;
+        height: 400px;
+        margin: 10px;
+    }
+    #textoSair{
+        font-size: 1.5em;
+    }

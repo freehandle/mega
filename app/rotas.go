@@ -40,9 +40,16 @@ func NovaMucua(ctx context.Context, app *Aplicacao, port int, staticPath string,
 	mux.HandleFunc("/", app.ManejoPrincipal) // funcao que gera o template main
 	//mux.HandleFunc("/verjornal", procurador.AgenteVerJornal)
 	mux.HandleFunc("/signin", app.ManejoSignin)
+	mux.HandleFunc("/login", app.ManejoSignin)
+
 	mux.HandleFunc("/novousuario", app.ManejoNovoUsuario)
 	mux.HandleFunc("/credenciais", app.ManejoCredenciais)
-	mux.HandleFunc("/publicar", app.ManejoInterfacePublicar)
+
+	mux.HandleFunc("/postagem", app.ManejoInterfacePublicar)
+	mux.HandleFunc("/jornal", app.ManejoJornal)
+	mux.HandleFunc("/meu_jornal", app.ManejoJornal)
+	mux.HandleFunc("/post_aberto", app.ManejoJornal)
+
 	mux.HandleFunc("/publica", app.ManejoPublica)
 
 	//mux.HandleFunc("/uploadfile", procurador.OperadorUpload)

@@ -1,0 +1,184 @@
+/* ------- RESPONSIVIDADE ----- */
+@media (max-width: 768px) {
+    body{
+        margin: 0 5% 0 5%;
+        padding-top: 3%;
+    }
+    
+    header{
+        margin: 0;
+        display: flex;
+        padding: 3% 0 3% 0;
+        justify-content: center;
+    }
+
+    h1 {
+        width: 100%;
+        font-size: 1.3em;
+        line-height: 1.5;
+        justify-content: center;
+    }
+
+    button{
+        padding: 0.5%;
+        font-size: 0.8em;
+    }
+
+    select{
+        padding: 5px 3px 5px 3px;
+    }
+    label{
+        font-size: 1em;
+        margin: 0 0 10px 0;
+    }
+
+    textarea{
+        height: 200px;
+    }
+    /* ----- Classes ----- */
+    .sombraP{
+        border-radius: 4px;
+        box-shadow: 2px 2px 0 0 #000;
+    }
+    .sombraG{
+        border-radius: 10px 10px 0 0;
+        box-shadow: 5px 5px 0 0 #000;
+    }
+    .imgP {
+        height: 70%px;
+        width: auto;
+    }
+    .imgM {
+        height: 100%;
+        width: auto;
+    }
+    .espacamento{
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .botoes{
+        display: flex;
+        flex-direction: column;
+        justify-content:center;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+        }
+
+/* ----- Componentes ----- */
+
+    .conteudo{
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        gap: 10px;
+        margin: 0;
+        margin-top: 10px;
+    }
+        .postagens{
+            width: 100%;
+            height: auto;
+            justify-content: center;
+            align-items:center;
+        }   
+        .categorias{
+            display: flex;
+            justify-content: space-between;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            gap: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+            scrollbar-width: none;
+        }
+        .categoria{
+            width: 40px;
+            height: 40px;
+        }
+
+        .carrossel{
+            gap: 10px;
+            padding: 0 10px 10px 0;
+        }
+
+        .listaCards{
+            padding: 0 5px 5px 5px;
+            margin-bottom: 10px;
+            width: 100%;            
+        }
+
+        .card{
+            flex: 0 0 100px;
+            min-width: 200px;
+            min-height: 200px;            
+            padding-bottom: 15px;
+        }
+
+        .cardVazio{
+            flex: 0 0 100px;
+            min-width: 200px;
+            min-height: 200px;            
+            padding-bottom: 15px;
+        }
+
+        .cardInput{
+            margin: 0;
+            padding: 0px;
+            background-color: #fff;
+            border: 2px solid #000;
+            width: 100%;
+            height: 200%;            
+            padding-bottom: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 25px;
+        }
+
+        .cardLogin{
+            margin: 5%;
+            width: 90%;
+            height: auto;            
+            padding-bottom: 1px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 25px;
+        }
+
+
+        .calendario{
+            margin-top: 5%;
+            width: 100%;
+            max-width: 300px;
+            min-width: 100%;
+            height: auto;
+        }
+        .mes{
+            width: 100%;
+        }
+
+        .dias{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            text-align: center;
+            align-self: stretch;
+        }
+
+    /* ----- Ids ----- */
+
+    #divisoria{
+        display: none;
+    }
+    #mesAnterior{
+        display: none;
+    }
+    #textoSair{
+        display: none;
+    }
+}
