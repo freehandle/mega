@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -15,7 +16,7 @@ import (
 type VerPost struct {
 	Usuario      string
 	Categoria    string
-	DataPostagem uint64
+	DataPostagem string
 }
 
 type InformacaoCabecalho struct {
@@ -36,9 +37,17 @@ type ViewPostAberto struct {
 	TipoImagem   bool
 }
 
+type ConteudoCard struct {
+	Categoria       string //categoria com primeira em maiuscula
+	CategoriaMin    string //categoria tudo minuscula
+	Vazio           bool   //se nao ha postagem da categoria -> true
+	DataPostagem    string //data da postagem
+	ConteudoParcial string // conteudo parcial da postagem (deve caber no card)
+}
+
 type ViewJornal struct {
-	Arroba    string //dono do jornal
-	Categoria string
+	Arroba string         //dono do jornal
+	Cards  []ConteudoCard //vetor com conteudo dos cards
 }
 
 type ViewConvite struct {
@@ -91,19 +100,15 @@ func (a *Aplicacao) ManejoPrincipal(w http.ResponseWriter, r *http.Request) {
 
 // Manejo de um jornal de usuario
 func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
-	view := InformacaoCabecalho{
-		Arroba:    a.Autor(r),
-		NomeMucua: a.NomeMucua,
-		// Ativo:           "",
-		// LinkSelecionada: "",
+	view := ViewJornal{
+		// Arroba: ver,
 	}
-
 	if err := a.templates.ExecuteTemplate(w, "jornal.html", view); err != nil {
 		log.Println(err)
 	}
 }
 
-// Manejo de um jornal de usuario
+// Manejo do proprio jornal de usuario (precisa estar logado), tem link para postagem
 func (a *Aplicacao) ManejoMeuJornal(w http.ResponseWriter, r *http.Request) {
 	view := InformacaoCabecalho{
 		Arroba:    a.Autor(r),
@@ -117,8 +122,40 @@ func (a *Aplicacao) ManejoMeuJornal(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver VerPost) {
+func (v *VerPost) PegarInfoURL(r *http.Request, mucua string) {
+	endereco := r.URL.RequestURI()
+	novo := strings.Replace(endereco, mucua, "", 1) // remove servidor
 
+	re := regexp.MustCompile(`\/`) // regex para encontrar o separdor
+	partes := re.Split(novo, -1)   // partes separadas
+
+	if len(partes) == 0 {
+		return
+	}
+	if len(partes) == 1 {
+		v.Usuario = partes[0]
+		return
+	}
+	if len(partes) == 2 {
+		v.Usuario = partes[0]
+		v.Categoria = partes[1]
+		return
+	}
+	if len(partes) == 3 {
+		v.Usuario = partes[0]
+		v.Categoria = partes[1]
+		v.DataPostagem = string(partes[2])
+		return
+	}
+	fmt.Printf("Endereco URL fora de formato")
+	return
+}
+
+// Manejo de um post do jornal aberto no detalhe
+func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
+
+	ver := VerPost{}
+	ver.PegarInfoURL(r, a.NomeMucua)
 	view := ViewPostAberto{
 		Categoria:    ver.Categoria,
 		Arroba:       ver.Usuario,
@@ -130,7 +167,8 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver
 	case "Causo":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Causos
 		for i := 0; i < len(posts); i++ {
-			if posts[i].Data == ver.DataPostagem {
+			datastr := strconv.FormatUint(posts[i].Data, 10)
+			if datastr == ver.DataPostagem {
 				post_texto = posts[i]
 				break
 			}
@@ -138,7 +176,8 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver
 	case "Fofoca":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Fofocas
 		for i := 0; i < len(posts); i++ {
-			if posts[i].Data == ver.DataPostagem {
+			datastr := strconv.FormatUint(posts[i].Data, 10)
+			if datastr == ver.DataPostagem {
 				post_texto = posts[i]
 				break
 			}
@@ -146,7 +185,8 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver
 	case "Ideia":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Ideias
 		for i := 0; i < len(posts); i++ {
-			if posts[i].Data == ver.DataPostagem {
+			datastr := strconv.FormatUint(posts[i].Data, 10)
+			if datastr == ver.DataPostagem {
 				post_texto = posts[i]
 				break
 			}
@@ -154,7 +194,8 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver
 	case "Livro":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Livros
 		for i := 0; i < len(posts); i++ {
-			if posts[i].Data == ver.DataPostagem {
+			datastr := strconv.FormatUint(posts[i].Data, 10)
+			if datastr == ver.DataPostagem {
 				post_hash = posts[i]
 				break
 			}
@@ -162,7 +203,8 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver
 	case "Meme":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Memes
 		for i := 0; i < len(posts); i++ {
-			if posts[i].Data == ver.DataPostagem {
+			datastr := strconv.FormatUint(posts[i].Data, 10)
+			if datastr == ver.DataPostagem {
 				post_hash = posts[i]
 				break
 			}
@@ -170,7 +212,8 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver
 	case "Musica":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Musicas
 		for i := 0; i < len(posts); i++ {
-			if posts[i].Data == ver.DataPostagem {
+			datastr := strconv.FormatUint(posts[i].Data, 10)
+			if datastr == ver.DataPostagem {
 				post_texto = posts[i]
 				break
 			}
@@ -178,13 +221,13 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request, ver
 	default:
 		log.Println("categoria nao encontrada")
 	}
-	if post_texto == nil {
-		view.DataPostagem = strconv.Itoa(int(post_texto.Data))
+	if post_texto != nil {
+		view.DataPostagem = ver.DataPostagem
 		view.Conteudo = post_texto.Conteudo
 		view.TipoTexto = true
 	}
-	if post_hash == nil {
-		view.DataPostagem = strconv.Itoa(int(post_hash.Data))
+	if post_hash != nil {
+		view.DataPostagem = ver.DataPostagem
 		view.Conteudo = post_hash.Hash.String()
 		view.TipoImagem = true
 	}

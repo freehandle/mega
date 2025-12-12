@@ -64,12 +64,9 @@
             <div class="carrossel">
                 <div class="carrossel">
                     <!-- contêiner para cada categoria -->
-                    <section class="listaCards" data-categoria="fofoca"></section>            
-                    <section class="listaCards" data-categoria="causo"></section>
-                    <section class="listaCards" data-categoria="ideia"></section>            
-                    <section class="listaCards" data-categoria="livro"></section>
-                    <section class="listaCards" data-categoria="meme"></section>
-                    <section class="listaCards" data-categoria="musica"></section>
+                     {{range .ConteudoCard}}
+                     <section class="listaCards" data-categoria={{.CategoriaMin}}></section>
+                     {{end}}
                   </div>             
             </div> 
         </div>

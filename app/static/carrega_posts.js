@@ -12,8 +12,6 @@ function formatarData() {
   const diaAtual = new Date().getDate();
   const anoAtual = new Date().getFullYear();
   const mesAtual = new Date().getMonth();
-  // const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-  // const nomeMes = meses[mesAtual];
   return `${diaAtual}/${mesAtual}/${anoAtual}`;
 }
 
@@ -23,18 +21,16 @@ function criarCard(conteudo) {
     const card = document.createElement('article');
     card.className = 'card sombraG';
     card.setAttribute('data-categoria', conteudo.tipo);
-    card.innerHTML = `
+    card.innerHTML = `{{if eq .Vazio false}}
       <div class="cabecalhoCard corPrimaria">
-        <img class="imgP" src="../img/${conteudo.tipo}.png" alt="icone ${conteudo.tipo}">
-        <p class="tituloCabecalho">${conteudo.tipo.charAt(0).toUpperCase() + conteudo.tipo.slice(1)}</p>
+        <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+        <p class="tituloCabecalho">{{.Categoria}}</p>
       </div>
-      <p class="textoCard dataCard" id="dataCard"> ${conteudo.data}</p>
+      <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
       <br>
-      <p class="textoCard textoLimitado">${conteudo.texto}</p>
+      <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
       <br>
-      <div class="rodapeCard">
-        <img class="imgG" src="../img/zoom.png" alt="zoom">
-      </div>
+      {{end}}
     `;
     return card;
   }
@@ -44,16 +40,13 @@ function criarCard(conteudo) {
     const card = document.createElement('article');
     card.className = 'cardVazio sombraG';
     card.setAttribute('data-categoria', tipo);
-    card.innerHTML = `
+    card.innerHTML = `{{if eq. Vazio true}}
       <div class="cabecalhoCard corPrimaria">
-        <img class="imgP" src="../img/${tipo}.png" alt="icone ${tipo}">
-        <p class="tituloCabecalho">${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</p>
+        <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+        <p class="tituloCabecalho">{{.Categoria}}</p>
       </div>
       <br>
-      <p class="textoCard textoLimitado">Este Jornal não tem ${tipo === 'ideia' ? 'Ideias' : `${tipo.charAt(0).toUpperCase() + tipo.slice(1)}s`} no dia selecionado.</p>
-       <div class="rodapeCard">
-        <img class="imgG" src="../img/zoom.png" alt="zoom">
-      </div>
+      <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
     `;
     return card;
   }
