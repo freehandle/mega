@@ -7,16 +7,20 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/mega/indice"
 	"github.com/freehandle/mega/protocolo/acoes"
 )
 
-type VerPost struct {
+var Categorias = [6]string{"Meme", "Fofoca", "Causo", "Música", "Ideia", "Livro"}
+
+type VerPagina struct {
 	Usuario      string
 	Categoria    string
 	DataPostagem string
+	Tipo         string
 }
 
 type InformacaoCabecalho struct {
@@ -34,7 +38,6 @@ type ViewPostAberto struct {
 	DataPostagem string
 	Conteudo     string
 	TipoTexto    bool
-	TipoImagem   bool
 }
 
 type ConteudoCard struct {
@@ -45,9 +48,12 @@ type ConteudoCard struct {
 	ConteudoParcial string // conteudo parcial da postagem (deve caber no card)
 }
 
-type ViewJornal struct {
+type PaginaJornal struct {
 	Arroba string         //dono do jornal
 	Cards  []ConteudoCard //vetor com conteudo dos cards
+	Dia    string
+	Mes    string
+	Ano    string
 }
 
 type ViewConvite struct {
@@ -63,7 +69,176 @@ type ViewPublicar struct {
 	Tipo      string
 }
 
-// Gerenciador do template principal da aplicacao
+// Encontrando o tipo de pagina a ser construida a partir do endereco acessado
+func (v *VerPagina) PegarInfoURL(r *http.Request, mucua string) {
+	categorias_possiveis := []string{"causo", "fofoca", "ideia", "livro", "meme", "musica"}
+	endereco := r.URL.RequestURI()
+	novo := strings.Replace(endereco, mucua, "", 1) // remove servidor
+
+	re := regexp.MustCompile(`\/`) // regex para encontrar o separdor
+	partes := re.Split(novo, -1)   // partes separadas
+
+	if len(partes) == 0 || len(partes) > 3 {
+		v.Tipo = "erro"
+		fmt.Printf("Endereco URL fora de formato")
+		return
+	}
+	if len(partes) == 1 {
+		v.Usuario = partes[0]
+		v.Tipo = "jornal_atual"
+		return
+	}
+	if len(partes) == 2 {
+		v.Usuario = partes[0]
+		if res, err := regexp.MatchString("^[0-9]{6,6}$", partes[1]); res && err != nil {
+			v.DataPostagem = partes[1]
+			v.Tipo = "jornal_data"
+			return
+		}
+		for _, c := range categorias_possiveis {
+			if partes[1] == c {
+				v.Categoria = partes[1]
+				v.Tipo = "jornal_categoria"
+				return
+			}
+		}
+		return
+	}
+	if len(partes) == 3 {
+		v.Usuario = partes[0]
+		v.Categoria = partes[1]
+		v.DataPostagem = partes[2]
+		v.Tipo = "postagem_aberta"
+		return
+	}
+	fmt.Printf("Endereco URL fora de formato")
+	return
+}
+
+// Cria cards para mostrar no jornal a parti da data e categoria dadas
+func (c *ConteudoCard) CriaCard(categoria string, jornal *indice.Jornal, data float64) {
+
+	var conteudoTexto *indice.ConteudoData
+	var conteudoHash *indice.HashData
+
+	switch categoria {
+
+	case "Ideia":
+		c.Categoria = categoria
+		c.CategoriaMin = "ideia"
+		if len(jornal.Ideias) > 0 {
+			// pegando entrada mais recente de ideia do jornal
+			if data == -1 {
+				// pegar o mais recente
+				conteudoTexto = jornal.Ideias[len(jornal.Ideias)-1]
+				c.Vazio = false
+				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
+				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+				return
+			}
+			// implementar busca por data (PENDENTE)
+		} else {
+			c.Vazio = true
+			return
+		}
+	case "Causo":
+		c.Categoria = categoria
+		c.CategoriaMin = "causo"
+		if len(jornal.Causos) > 0 {
+			// pegando entrada mais recente de causo do jornal
+			if data == -1 {
+				// pegar o mais recente
+				conteudoTexto = jornal.Causos[len(jornal.Causos)-1]
+				c.Vazio = false
+				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
+				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+				return
+			}
+			// implementar busca por data (PENDENTE)
+		} else {
+			c.Vazio = true
+			return
+		}
+	case "Música":
+		c.Categoria = categoria
+		c.CategoriaMin = "musica"
+		if len(jornal.Musicas) > 0 {
+			// pegando entrada mais recente de musica do jornal
+			if data == -1 {
+				// pegar o mais recente
+				conteudoTexto = jornal.Musicas[len(jornal.Musicas)-1]
+				c.Vazio = false
+				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
+				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+				return
+			}
+			// implementar busca por data (PENDENTE)
+		} else {
+			c.Vazio = true
+			return
+		}
+	case "Fofoca":
+		c.Categoria = categoria
+		c.CategoriaMin = "fofoca"
+		if len(jornal.Fofocas) > 0 {
+			// pegando entrada mais recente de fofoca do jornal
+			if data == -1 {
+				// pegar o mais recente
+				conteudoTexto = jornal.Fofocas[len(jornal.Fofocas)-1]
+				c.Vazio = false
+				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
+				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+				return
+			}
+			// implementar busca por data (PENDENTE)
+		} else {
+			c.Vazio = true
+			return
+		}
+	case "Meme":
+		c.Categoria = categoria
+		c.CategoriaMin = "meme"
+		if len(jornal.Memes) > 0 {
+			// pegando entrada mais recente de meme do jornal
+			if data == -1 {
+				// pegar o mais recente
+				conteudoHash = jornal.Memes[len(jornal.Memes)-1]
+				c.Vazio = false
+				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
+				c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
+				return
+			}
+			// implementar busca por data (PENDENTE)
+		} else {
+			c.Vazio = true
+			return
+		}
+	case "Livro":
+		c.Categoria = categoria
+		c.CategoriaMin = "livro"
+		if len(jornal.Livros) > 0 {
+			// pegando entrada mais recente de livro do jornal
+			if data == -1 {
+				// pegar o mais recente
+				conteudoHash = jornal.Livros[len(jornal.Livros)-1]
+				c.Vazio = false
+				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
+				c.ConteudoParcial = conteudoHash.Hash.String()[:200]
+				return
+			}
+			// implementar busca por data (PENDENTE)
+		} else {
+			c.Vazio = true
+			return
+		}
+	default:
+		c.Vazio = true
+		log.Println("erro ao criar card")
+		return
+	}
+}
+
+// Gerenciador
 func (a *Aplicacao) ManejoInterfacePublicar(w http.ResponseWriter, r *http.Request) {
 	arroba := a.Autor(r)
 	fmt.Println("ARROBA:", arroba)
@@ -98,71 +273,79 @@ func (a *Aplicacao) ManejoPrincipal(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Manejo de um jornal de usuario
+// Manejo da pagina de jornal sem login
 func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
-	view := ViewJornal{
-		// Arroba: ver,
+
+	ver := VerPagina{}
+	ver.PegarInfoURL(r, a.NomeMucua)
+	if ver.Tipo == "postagem_aberta" || ver.Tipo == "erro" {
+		log.Println("endereco nao esta em formato jornal ou contem erro")
+		return
 	}
-	if err := a.templates.ExecuteTemplate(w, "jornal.html", view); err != nil {
+	pagina := PaginaJornal{
+		Arroba: ver.Usuario,
+		Cards:  []ConteudoCard{},
+	}
+
+	if ver.Tipo == "jornal_atual" {
+		// consultando foto do jornal como esta no momento da consulta
+		agora := time.Now()
+
+		// data_atual := agora.Format("20060102-15h04m05s") //AAAAMMDD-HHhMMmSSs pensar nesse formato
+		pagina.Dia = agora.Format("02")
+		pagina.Mes = agora.Format("01")
+		pagina.Ano = agora.Format("2006")
+
+		// pegando a postagem mais recente de cada categoria pra @
+
+		jornal, ok := a.Indice.ArrobaParaJornal[ver.Usuario]
+		if ok {
+			for _, cat := range Categorias {
+				card := ConteudoCard{}
+				card.CriaCard(cat, jornal, -1)
+				pagina.Cards = append(pagina.Cards, card)
+			}
+		}
+	}
+
+	if err := a.templates.ExecuteTemplate(w, "jornal.html", pagina); err != nil {
 		log.Println(err)
 	}
 }
 
 // Manejo do proprio jornal de usuario (precisa estar logado), tem link para postagem
 func (a *Aplicacao) ManejoMeuJornal(w http.ResponseWriter, r *http.Request) {
-	view := InformacaoCabecalho{
+	pagina := InformacaoCabecalho{
 		Arroba:    a.Autor(r),
 		NomeMucua: a.NomeMucua,
 		// Ativo:           "",
 		// LinkSelecionada: "",
 	}
 
-	if err := a.templates.ExecuteTemplate(w, "meu_jornal.html", view); err != nil {
+	if err := a.templates.ExecuteTemplate(w, "meu_jornal.html", pagina); err != nil {
 		log.Println(err)
 	}
-}
-
-func (v *VerPost) PegarInfoURL(r *http.Request, mucua string) {
-	endereco := r.URL.RequestURI()
-	novo := strings.Replace(endereco, mucua, "", 1) // remove servidor
-
-	re := regexp.MustCompile(`\/`) // regex para encontrar o separdor
-	partes := re.Split(novo, -1)   // partes separadas
-
-	if len(partes) == 0 {
-		return
-	}
-	if len(partes) == 1 {
-		v.Usuario = partes[0]
-		return
-	}
-	if len(partes) == 2 {
-		v.Usuario = partes[0]
-		v.Categoria = partes[1]
-		return
-	}
-	if len(partes) == 3 {
-		v.Usuario = partes[0]
-		v.Categoria = partes[1]
-		v.DataPostagem = string(partes[2])
-		return
-	}
-	fmt.Printf("Endereco URL fora de formato")
-	return
 }
 
 // Manejo de um post do jornal aberto no detalhe
 func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 
-	ver := VerPost{}
+	ver := VerPagina{}
 	ver.PegarInfoURL(r, a.NomeMucua)
-	view := ViewPostAberto{
+
+	// checa se o endereco tem a forma de um post especifico
+	if ver.Tipo != "postagem_aberta" || ver.Tipo == "erro" {
+		log.Println("endereco nao e de uma postagem aberta ou contem erro")
+		return
+	}
+	pagina := ViewPostAberto{
 		Categoria:    ver.Categoria,
 		Arroba:       ver.Usuario,
 		CategoriaMin: strings.ToLower(ver.Categoria),
 	}
 	var post_texto *indice.ConteudoData
 	var post_hash *indice.HashData
+
 	switch ver.Categoria {
 	case "Causo":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Causos
@@ -222,16 +405,16 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 		log.Println("categoria nao encontrada")
 	}
 	if post_texto != nil {
-		view.DataPostagem = ver.DataPostagem
-		view.Conteudo = post_texto.Conteudo
-		view.TipoTexto = true
+		pagina.DataPostagem = ver.DataPostagem
+		pagina.Conteudo = post_texto.Conteudo
+		pagina.TipoTexto = true
 	}
 	if post_hash != nil {
-		view.DataPostagem = ver.DataPostagem
-		view.Conteudo = post_hash.Hash.String()
-		view.TipoImagem = true
+		pagina.DataPostagem = ver.DataPostagem
+		pagina.Conteudo = post_hash.Hash.String()
+		pagina.TipoTexto = false
 	}
-	if err := a.templates.ExecuteTemplate(w, "post_aberto.html", view); err != nil {
+	if err := a.templates.ExecuteTemplate(w, "post_aberto.html", pagina); err != nil {
 		log.Println(err)
 	}
 }

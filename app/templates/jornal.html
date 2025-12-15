@@ -15,7 +15,7 @@
     <script src="../static/filtros.js"></script>
     <script src="../static/login.js"></script>
     <script src="../static/verificacaoLogin.js"></script>
-    <script src="../static/carrega_posts.js"></script>
+    <!-- <script src="../static/carrega_posts.js"></script> -->
     <script src="../static/verificadorDatas.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,8 +64,26 @@
             <div class="carrossel">
                 <div class="carrossel">
                     <!-- contêiner para cada categoria -->
-                     {{range .ConteudoCard}}
-                     <section class="listaCards" data-categoria={{.CategoriaMin}}></section>
+                     {{range .Cards}}
+                     <section class="listaCards" data-categoria={{.CategoriaMin}}>
+                        {{if .Vazio}}
+                        <div class="cabecalhoCard corPrimaria">
+                            <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                            <p class="tituloCabecalho">{{.Categoria}}</p>
+                          </div>
+                          <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
+                          <br>
+                          <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
+                          <br>
+                        {{else}}
+                        <div class="cabecalhoCard corPrimaria">
+                            <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                            <p class="tituloCabecalho">{{.Categoria}}</p>
+                        </div>
+                        <br>
+                        <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
+                        {{end}}
+                     </section>
                      {{end}}
                   </div>             
             </div> 
