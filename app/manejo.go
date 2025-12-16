@@ -14,14 +14,7 @@ import (
 	"github.com/freehandle/mega/protocolo/acoes"
 )
 
-var Categorias = [6]string{"Meme", "Fofoca", "Causo", "Música", "Ideia", "Livro"}
-
-type VerPagina struct {
-	Usuario      string
-	Categoria    string
-	DataPostagem string
-	Tipo         string
-}
+var NomesCategorias = [6]string{"meme", "fofoca", "causo", "musica", "ideia", "livro"}
 
 type InformacaoCabecalho struct {
 	Arroba string
@@ -29,31 +22,6 @@ type InformacaoCabecalho struct {
 	Erro      string
 	NomeMucua string
 	// LinkSelecionada string
-}
-
-type ViewPostAberto struct {
-	Categoria    string
-	CategoriaMin string
-	Arroba       string
-	DataPostagem string
-	Conteudo     string
-	TipoTexto    bool
-}
-
-type ConteudoCard struct {
-	Categoria       string //categoria com primeira em maiuscula
-	CategoriaMin    string //categoria tudo minuscula
-	Vazio           bool   //se nao ha postagem da categoria -> true
-	DataPostagem    string //data da postagem
-	ConteudoParcial string // conteudo parcial da postagem (deve caber no card)
-}
-
-type PaginaJornal struct {
-	Arroba string         //dono do jornal
-	Cards  []ConteudoCard //vetor com conteudo dos cards
-	Dia    string
-	Mes    string
-	Ano    string
 }
 
 type ViewConvite struct {
@@ -67,6 +35,58 @@ type ViewConvite struct {
 type ViewPublicar struct {
 	Cabecalho InformacaoCabecalho
 	Tipo      string
+}
+
+// Para puxar do endereco o tipo de pagina a ser construida
+type VerPagina struct {
+	Usuario   string
+	Categoria string
+	Data      string
+	Tipo      string
+}
+
+// Para construir a pagina de um post especifico aberto para leitura post_aberto.html
+type PaginaPostAberto struct {
+	Categoria    string
+	CategoriaMin string
+	Arroba       string
+	DataPostagem string
+	Conteudo     string
+	TipoTexto    bool
+}
+
+// Para construir o objeto card que vai na pagina jorna.html ou pagina meu_jornal.html
+type ConteudoCard struct {
+	Categoria       string //categoria com primeira em maiuscula
+	CategoriaMin    string //categoria tudo minuscula
+	Vazio           bool   //se nao ha postagem da categoria -> true
+	Data            string //data da postagem
+	ConteudoParcial string // conteudo parcial da postagem (deve caber no card)
+}
+
+type Calendario struct {
+	DiaAtual       string
+	MesAtual       string
+	AnoAtual       string
+	VermelhosDias  []string
+	VermelhosMeses []string
+	VermelhosAnos  []string
+}
+
+// Para construir a pagina de um jornal sem login jornal.html
+type PaginaJornal struct {
+	Arroba     string         //dono do jornal
+	Cards      []ConteudoCard //vetor com conteudo dos cards
+	Calendario Calendario
+}
+
+// Para enviar para o montador de card
+type ParaMontarCards struct {
+	Jornal    *indice.Jornal
+	Tipo      string
+	Categoria string
+	Data      uint64
+	Ultimo    int //index do ultimo elemento trazido no caso de posts selecionados via categoria
 }
 
 // Encontrando o tipo de pagina a ser construida a partir do endereco acessado
@@ -85,20 +105,20 @@ func (v *VerPagina) PegarInfoURL(r *http.Request, mucua string) {
 	}
 	if len(partes) == 1 {
 		v.Usuario = partes[0]
-		v.Tipo = "jornal_atual"
+		v.Tipo = "atual"
 		return
 	}
 	if len(partes) == 2 {
 		v.Usuario = partes[0]
 		if res, err := regexp.MatchString("^[0-9]{6,6}$", partes[1]); res && err != nil {
-			v.DataPostagem = partes[1]
-			v.Tipo = "jornal_data"
+			v.Data = partes[1]
+			v.Tipo = "data"
 			return
 		}
 		for _, c := range categorias_possiveis {
 			if partes[1] == c {
 				v.Categoria = partes[1]
-				v.Tipo = "jornal_categoria"
+				v.Tipo = "categoria"
 				return
 			}
 		}
@@ -107,7 +127,7 @@ func (v *VerPagina) PegarInfoURL(r *http.Request, mucua string) {
 	if len(partes) == 3 {
 		v.Usuario = partes[0]
 		v.Categoria = partes[1]
-		v.DataPostagem = partes[2]
+		v.Data = partes[2]
 		v.Tipo = "postagem_aberta"
 		return
 	}
@@ -116,117 +136,207 @@ func (v *VerPagina) PegarInfoURL(r *http.Request, mucua string) {
 }
 
 // Cria cards para mostrar no jornal a parti da data e categoria dadas
-func (c *ConteudoCard) CriaCard(categoria string, jornal *indice.Jornal, data float64) {
+func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 
 	var conteudoTexto *indice.ConteudoData
 	var conteudoHash *indice.HashData
 
-	switch categoria {
+	switch paraMontar.Categoria {
 
-	case "Ideia":
-		c.Categoria = categoria
-		c.CategoriaMin = "ideia"
-		if len(jornal.Ideias) > 0 {
+	case "ideia":
+		c.Categoria = "Ideia"
+		c.CategoriaMin = paraMontar.Categoria
+		if len(paraMontar.Jornal.Ideias) > 0 {
 			// pegando entrada mais recente de ideia do jornal
-			if data == -1 {
-				// pegar o mais recente
-				conteudoTexto = jornal.Ideias[len(jornal.Ideias)-1]
-				c.Vazio = false
-				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
-				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
-				return
+			if paraMontar.Tipo == "atual" {
+				conteudoTexto = paraMontar.Jornal.Ideias[len(paraMontar.Jornal.Ideias)-1]
 			}
-			// implementar busca por data (PENDENTE)
+			// por categoria, vai pegar o indice pedido
+			if paraMontar.Tipo == "categoria" {
+				conteudoTexto = paraMontar.Jornal.Ideias[len(paraMontar.Jornal.Ideias)-paraMontar.Ultimo]
+			}
+			// por data, vai procurar a data pedida
+			if paraMontar.Tipo == "data" {
+				for _, post := range paraMontar.Jornal.Ideias {
+					if post.Data == paraMontar.Data {
+						conteudoTexto = post
+						break
+					}
+				}
+				if conteudoTexto == nil {
+					c.Vazio = true
+					return
+				}
+			}
+			c.Vazio = false
+			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			return
 		} else {
 			c.Vazio = true
 			return
 		}
-	case "Causo":
-		c.Categoria = categoria
-		c.CategoriaMin = "causo"
-		if len(jornal.Causos) > 0 {
+	case "causo":
+		c.Categoria = "Causo"
+		c.CategoriaMin = paraMontar.Categoria
+		if len(paraMontar.Jornal.Causos) > 0 {
 			// pegando entrada mais recente de causo do jornal
-			if data == -1 {
-				// pegar o mais recente
-				conteudoTexto = jornal.Causos[len(jornal.Causos)-1]
-				c.Vazio = false
-				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
-				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
-				return
+			if paraMontar.Tipo == "atual" {
+				conteudoTexto = paraMontar.Jornal.Causos[len(paraMontar.Jornal.Causos)-1]
 			}
-			// implementar busca por data (PENDENTE)
+			// por categoria, vai pegar o indice pedido
+			if paraMontar.Tipo == "categoria" {
+				conteudoTexto = paraMontar.Jornal.Causos[len(paraMontar.Jornal.Causos)-paraMontar.Ultimo]
+			}
+			// por data, vai procurar a data pedida
+			if paraMontar.Tipo == "data" {
+				for _, post := range paraMontar.Jornal.Causos {
+					if post.Data == paraMontar.Data {
+						conteudoTexto = post
+						break
+					}
+				}
+				if conteudoTexto == nil {
+					c.Vazio = true
+					return
+				}
+			}
+			c.Vazio = false
+			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			return
 		} else {
 			c.Vazio = true
 			return
 		}
-	case "Música":
-		c.Categoria = categoria
-		c.CategoriaMin = "musica"
-		if len(jornal.Musicas) > 0 {
+	case "musica":
+		c.Categoria = "Música"
+		c.CategoriaMin = paraMontar.Categoria
+		if len(paraMontar.Jornal.Musicas) > 0 {
 			// pegando entrada mais recente de musica do jornal
-			if data == -1 {
-				// pegar o mais recente
-				conteudoTexto = jornal.Musicas[len(jornal.Musicas)-1]
-				c.Vazio = false
-				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
-				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
-				return
+			if paraMontar.Tipo == "atual" {
+				conteudoTexto = paraMontar.Jornal.Musicas[len(paraMontar.Jornal.Musicas)-1]
 			}
-			// implementar busca por data (PENDENTE)
+			// por categoria, vai pegar o indice pedido
+			if paraMontar.Tipo == "categoria" {
+				conteudoTexto = paraMontar.Jornal.Musicas[len(paraMontar.Jornal.Musicas)-paraMontar.Ultimo]
+			}
+			// por data, vai procurar a data pedida
+			if paraMontar.Tipo == "data" {
+				for _, post := range paraMontar.Jornal.Musicas {
+					if post.Data == paraMontar.Data {
+						conteudoTexto = post
+						break
+					}
+				}
+				if conteudoTexto == nil {
+					c.Vazio = true
+					return
+				}
+			}
+			c.Vazio = false
+			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			return
 		} else {
 			c.Vazio = true
 			return
 		}
-	case "Fofoca":
-		c.Categoria = categoria
-		c.CategoriaMin = "fofoca"
-		if len(jornal.Fofocas) > 0 {
+	case "fofoca":
+		c.Categoria = "Fofoca"
+		c.CategoriaMin = paraMontar.Categoria
+		if len(paraMontar.Jornal.Fofocas) > 0 {
 			// pegando entrada mais recente de fofoca do jornal
-			if data == -1 {
-				// pegar o mais recente
-				conteudoTexto = jornal.Fofocas[len(jornal.Fofocas)-1]
-				c.Vazio = false
-				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
-				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
-				return
+			if paraMontar.Tipo == "atual" {
+				conteudoTexto = paraMontar.Jornal.Fofocas[len(paraMontar.Jornal.Fofocas)-1]
 			}
-			// implementar busca por data (PENDENTE)
+			// por categoria, vai pegar o indice pedido
+			if paraMontar.Tipo == "categoria" {
+				conteudoTexto = paraMontar.Jornal.Fofocas[len(paraMontar.Jornal.Fofocas)-paraMontar.Ultimo]
+			}
+			// por data, vai procurar a data pedida
+			if paraMontar.Tipo == "data" {
+				for _, post := range paraMontar.Jornal.Fofocas {
+					if post.Data == paraMontar.Data {
+						conteudoTexto = post
+						break
+					}
+				}
+				if conteudoTexto == nil {
+					c.Vazio = true
+					return
+				}
+			}
+			c.Vazio = false
+			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			return
 		} else {
 			c.Vazio = true
 			return
 		}
-	case "Meme":
-		c.Categoria = categoria
-		c.CategoriaMin = "meme"
-		if len(jornal.Memes) > 0 {
+	case "meme":
+		c.Categoria = "Meme"
+		c.CategoriaMin = paraMontar.Categoria
+		if len(paraMontar.Jornal.Memes) > 0 {
 			// pegando entrada mais recente de meme do jornal
-			if data == -1 {
-				// pegar o mais recente
-				conteudoHash = jornal.Memes[len(jornal.Memes)-1]
-				c.Vazio = false
-				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
-				c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
-				return
+			if paraMontar.Tipo == "atual" {
+				conteudoHash = paraMontar.Jornal.Memes[len(paraMontar.Jornal.Memes)-1]
 			}
-			// implementar busca por data (PENDENTE)
+			// por categoria, vai pegar o indice pedido
+			if paraMontar.Tipo == "categoria" {
+				conteudoHash = paraMontar.Jornal.Memes[len(paraMontar.Jornal.Memes)-paraMontar.Ultimo]
+			}
+			// por data, vai procurar a data pedida
+			if paraMontar.Tipo == "data" {
+				for _, post := range paraMontar.Jornal.Memes {
+					if post.Data == paraMontar.Data {
+						conteudoHash = post
+						break
+					}
+				}
+				if conteudoTexto == nil {
+					c.Vazio = true
+					return
+				}
+			}
+			c.Vazio = false
+			c.Data = strconv.FormatUint(conteudoHash.Data, 10)
+			c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
+			return
 		} else {
 			c.Vazio = true
 			return
 		}
-	case "Livro":
-		c.Categoria = categoria
-		c.CategoriaMin = "livro"
-		if len(jornal.Livros) > 0 {
+	case "livro":
+		c.Categoria = "Livro"
+		c.CategoriaMin = paraMontar.Categoria
+		if len(paraMontar.Jornal.Livros) > 0 {
 			// pegando entrada mais recente de livro do jornal
-			if data == -1 {
-				// pegar o mais recente
-				conteudoHash = jornal.Livros[len(jornal.Livros)-1]
-				c.Vazio = false
-				c.DataPostagem = strconv.FormatUint(conteudoTexto.Data, 10)
-				c.ConteudoParcial = conteudoHash.Hash.String()[:200]
-				return
+			if paraMontar.Tipo == "atual" {
+				conteudoHash = paraMontar.Jornal.Livros[len(paraMontar.Jornal.Livros)-1]
 			}
-			// implementar busca por data (PENDENTE)
+			// por categoria, vai pegar o indice pedido
+			if paraMontar.Tipo == "categoria" {
+				conteudoHash = paraMontar.Jornal.Livros[len(paraMontar.Jornal.Livros)-paraMontar.Ultimo]
+			}
+			// por data, vai procurar a data pedida
+			if paraMontar.Tipo == "data" {
+				for _, post := range paraMontar.Jornal.Livros {
+					if post.Data == paraMontar.Data {
+						conteudoHash = post
+						break
+					}
+				}
+				if conteudoTexto == nil {
+					c.Vazio = true
+					return
+				}
+			}
+			c.Vazio = false
+			c.Data = strconv.FormatUint(conteudoHash.Data, 10)
+			c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
+			return
 		} else {
 			c.Vazio = true
 			return
@@ -236,6 +346,61 @@ func (c *ConteudoCard) CriaCard(categoria string, jornal *indice.Jornal, data fl
 		log.Println("erro ao criar card")
 		return
 	}
+}
+
+func CriaCards(paraMontar ParaMontarCards) []ConteudoCard {
+	// categoria precisa estar com a mesma grafia (no plural) usada para a construcao da struct index.Jornal
+
+	var vetorCards []ConteudoCard
+
+	// sem especificacao de categoria ou data -> traz os mais atuais por categoria
+	if paraMontar.Tipo == "atual" {
+		for _, cat := range NomesCategorias {
+			paraMontar.Categoria = cat
+			card := ConteudoCard{}
+			card.CriaCard(paraMontar)
+			vetorCards = append(vetorCards, card)
+		}
+		return vetorCards
+	}
+	if paraMontar.Tipo == "categoria" {
+		var total int = 0
+		switch paraMontar.Categoria {
+		case "ideia":
+			total = len(paraMontar.Jornal.Ideias)
+		case "meme":
+			total = len(paraMontar.Jornal.Memes)
+		case "fofoca":
+			total = len(paraMontar.Jornal.Fofocas)
+		case "causo":
+			total = len(paraMontar.Jornal.Causos)
+		case "musica":
+			total = len(paraMontar.Jornal.Musicas)
+		case "livro":
+			total = len(paraMontar.Jornal.Livros)
+		}
+		if total > 0 {
+			i := 0
+			for i < total {
+				card := ConteudoCard{}
+				paraMontar.Ultimo = i
+				card.CriaCard(paraMontar)
+				vetorCards = append(vetorCards, card)
+			}
+		}
+		return vetorCards
+		// v := reflect.ValueOf(jornal)
+		// posts := v.FieldByName(categoria)
+	}
+	if paraMontar.Tipo == "data" {
+		for _, cat := range NomesCategorias {
+			paraMontar.Categoria = cat
+			card := ConteudoCard{}
+			card.CriaCard(paraMontar)
+			vetorCards = append(vetorCards, card)
+		}
+	}
+	return vetorCards
 }
 
 // Gerenciador
@@ -287,27 +452,34 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 		Cards:  []ConteudoCard{},
 	}
 
-	if ver.Tipo == "jornal_atual" {
-		// consultando foto do jornal como esta no momento da consulta
-		agora := time.Now()
-
-		// data_atual := agora.Format("20060102-15h04m05s") //AAAAMMDD-HHhMMmSSs pensar nesse formato
-		pagina.Dia = agora.Format("02")
-		pagina.Mes = agora.Format("01")
-		pagina.Ano = agora.Format("2006")
-
-		// pegando a postagem mais recente de cada categoria pra @
-
-		jornal, ok := a.Indice.ArrobaParaJornal[ver.Usuario]
-		if ok {
-			for _, cat := range Categorias {
-				card := ConteudoCard{}
-				card.CriaCard(cat, jornal, -1)
-				pagina.Cards = append(pagina.Cards, card)
-			}
-		}
+	// tentando pegar o jornal da arroba indicada pelo endereco URL
+	jornal, ok := a.Indice.ArrobaParaJornal[ver.Usuario]
+	if !ok {
+		log.Println("Nome de usuario nao tem jornal associado")
+		return
 	}
 
+	// marcando a data atual no calendario
+	agora := time.Now()
+	pagina.Calendario.DiaAtual = agora.Format("02")
+	pagina.Calendario.MesAtual = agora.Format("01")
+	pagina.Calendario.AnoAtual = agora.Format("2006")
+
+	paraMontar := ParaMontarCards{
+		Jornal: jornal,
+		Tipo:   ver.Tipo,
+	}
+	if ver.Categoria != "" {
+		paraMontar.Categoria = ver.Categoria
+	}
+	if ver.Data != "" {
+		if dataConvertida, err := strconv.ParseUint(ver.Data, 10, 64); err != nil {
+			paraMontar.Data = dataConvertida
+		} else {
+			log.Println("Erro ao converter data")
+		}
+	}
+	pagina.Cards = CriaCards(paraMontar)
 	if err := a.templates.ExecuteTemplate(w, "jornal.html", pagina); err != nil {
 		log.Println(err)
 	}
@@ -338,7 +510,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 		log.Println("endereco nao e de uma postagem aberta ou contem erro")
 		return
 	}
-	pagina := ViewPostAberto{
+	pagina := PaginaPostAberto{
 		Categoria:    ver.Categoria,
 		Arroba:       ver.Usuario,
 		CategoriaMin: strings.ToLower(ver.Categoria),
@@ -347,56 +519,56 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	var post_hash *indice.HashData
 
 	switch ver.Categoria {
-	case "Causo":
+	case "causo":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Causos
 		for i := 0; i < len(posts); i++ {
 			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.DataPostagem {
+			if datastr == ver.Data {
 				post_texto = posts[i]
 				break
 			}
 		}
-	case "Fofoca":
+	case "fofoca":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Fofocas
 		for i := 0; i < len(posts); i++ {
 			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.DataPostagem {
+			if datastr == ver.Data {
 				post_texto = posts[i]
 				break
 			}
 		}
-	case "Ideia":
+	case "ideia":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Ideias
 		for i := 0; i < len(posts); i++ {
 			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.DataPostagem {
+			if datastr == ver.Data {
 				post_texto = posts[i]
 				break
 			}
 		}
-	case "Livro":
+	case "livro":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Livros
 		for i := 0; i < len(posts); i++ {
 			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.DataPostagem {
+			if datastr == ver.Data {
 				post_hash = posts[i]
 				break
 			}
 		}
-	case "Meme":
+	case "meme":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Memes
 		for i := 0; i < len(posts); i++ {
 			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.DataPostagem {
+			if datastr == ver.Data {
 				post_hash = posts[i]
 				break
 			}
 		}
-	case "Musica":
+	case "musica":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Musicas
 		for i := 0; i < len(posts); i++ {
 			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.DataPostagem {
+			if datastr == ver.Data {
 				post_texto = posts[i]
 				break
 			}
@@ -405,12 +577,12 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 		log.Println("categoria nao encontrada")
 	}
 	if post_texto != nil {
-		pagina.DataPostagem = ver.DataPostagem
+		pagina.DataPostagem = ver.Data
 		pagina.Conteudo = post_texto.Conteudo
 		pagina.TipoTexto = true
 	}
 	if post_hash != nil {
-		pagina.DataPostagem = ver.DataPostagem
+		pagina.DataPostagem = ver.Data
 		pagina.Conteudo = post_hash.Hash.String()
 		pagina.TipoTexto = false
 	}
