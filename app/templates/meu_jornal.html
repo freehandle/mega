@@ -12,6 +12,7 @@
     <script src="../static/verificacaoLogin.js"></script>
     <script src="../static/carregarPostagem.js"></script>
     <script src="../static/verificadorDatas.js"></script>
+    <script src="../static/compartilharJornal.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
@@ -21,7 +22,7 @@
 <body class="corTerciaria">
     <header>
         <a href="meu_jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
-        <button onclick="copy" class="sombraP corSecundaria"> 
+        <button onclick="compartilharJornal ()" class="sombraP corSecundaria"> 
             <p id="textoCompartilhar" class="tituloBotao">Compartilhar</p>
             <img class="imgP" id="compartilhar" src="../img/compartilhar.png" alt="compartilhar jornal">
         </button>  
