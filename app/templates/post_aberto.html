@@ -19,11 +19,14 @@
 <body class="corTerciaria">
     <header>
         <a href="jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
-        <img class="compartilhar" src="../img/compartilhar.svg" alt="compartilhar">
+        <button onclick="copy" class="sombraP corSecundaria"> 
+            <p id="textoCompartilhar" class="tituloBotao">Compartilhar</p>
+            <img class="imgP" id="compartilhar" src="../img/compartilhar.png" alt="compartilhar jornal">
+        </button> 
     </header>
     
     {{if .TipoTexto}}
-        <article class="card sombraG">
+        <article class="card sombraG listaCards">
             <div class="data-categoria">
                 <div class="cabecalhoCard corPrimaria">
                     <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
@@ -37,7 +40,7 @@
             </div>
         </article>
     {{else if .TipoImagem}}
-        <article class="card sombraG">
+        <article class="card sombraG listaCards">
             <div class="data-categoria">
                 <div class="cabecalhoCard corPrimaria">
                     <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
@@ -46,7 +49,7 @@
                     <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
                     <br>
                     <!-- Aqui vai ser o hiperlink pra imagem, ou diretamente puxa a imagem - verificar -->
-                    <a class="textoCard textoLimitado">{{.Conteudo}}</a> 
+                    <a class="textoCard">{{.Conteudo}}</a> 
                     <br>
                 </div>
             </div>

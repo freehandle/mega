@@ -22,32 +22,30 @@
     </header>
     
     <div class="conteudo">
-        <div class="postagens">
-            <div class="carrossel">
-                <div id="card-1" class="cardInput sombraG">
-                    <div class="cabecalhoCard corPrimaria">
-                            <img class="imgP" src="../img/fofoca.png" alt="categoria fofoca" >
-                            <p class="tituloCabecalho">Fofoca 1</p>
-                    </div>
-                    <label class="textoCard">Selecione o conteúdo que deseja postar</label>
-                    <br>
-                    <select id="tipoConteudo" class="textoCard cinzaClaro" type="text" id="usuario" placeholder="Usuário">
-                        <option value="fofoca" data-label="fofoca"> 👀 Fofoca</option>
-                        <option value="causo" data-label="causo"> 🔮 Causo</option>
-                        <option value="ideia" data-label="ideia"> 🧠 Ideia</option>
-                        <option value="livro" data-label="livro"> 📖 Livro</option>
-                        <option value="meme" data-label="meme"> 🐸 Meme</option>
-                        <option value="musica" data-label="música"> 🎶 Música</option>
-                    </select>
-                    <br>
-                    <br>
-                    <br>
-                    <p class="textoCard dataCard" id="dataCard"> </p>
-                    <br>
-                    <textarea id="textoConteudo" placeholder="Adicione seu conteúdo aqui ..." rows="5"></textarea>
-                    <br>
+        <div class="postagem">
+            <div id="card-1" class="cardInput sombraG">
+                <div class="cabecalhoCard corPrimaria">
+                        <img class="imgP" src="../img/fofoca.png" alt="categoria fofoca" >
+                        <p class="tituloCabecalho">Fofoca 1</p>
                 </div>
-            </div>      
+                <label class="textoCard">Selecione o conteúdo que deseja postar</label>
+                <br>
+                <select id="tipoConteudo" class="textoCard cinzaClaro" type="text" id="usuario" placeholder="Usuário">
+                    <option value="fofoca" data-label="fofoca"> 👀 Fofoca</option>
+                    <option value="causo" data-label="causo"> 🔮 Causo</option>
+                    <option value="ideia" data-label="ideia"> 🧠 Ideia</option>
+                    <option value="livro" data-label="livro"> 📖 Livro</option>
+                    <option value="meme" data-label="meme"> 🐸 Meme</option>
+                    <option value="musica" data-label="música"> 🎶 Música</option>
+                </select>
+                <br>
+                <br>
+                <br>
+                <p class="textoCard dataCard" id="dataCard"> </p>
+                <br>
+                <textarea id="textoConteudo" placeholder="Adicione seu conteúdo aqui ..." rows="5"></textarea>
+                <br>
+            </div>
             <div class="botoes">
                 <button onclick="voltarPagina()" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </button>
                 <button id="botaoPostar" onclick="postarConteudo()" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar fofoca </button>
