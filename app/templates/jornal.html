@@ -15,6 +15,7 @@
     <script src="../static/filtros.js"></script>
     <script src="../static/login.js"></script>
     <script src="../static/verificacaoLogin.js"></script>
+    <script src="../static/compartilharJornal.js"></script>
     <!-- <script src="../static/carrega_posts.js"></script> -->
     <script src="../static/verificadorDatas.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,8 +27,12 @@
 <body class="corTerciaria">
     <header>
         <a href="jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
-         <button onclick="logout()" class="sombraP corErro"> 
-            <p id="textoSair">Sair</p>
+        <button onclick="compartilharJornal ()" class="sombraP corSecundaria"> 
+            <p id="textoCompartilhar" class="tituloBotao">Compartilhar</p>
+            <img class="imgP" id="compartilhar" src="../img/compartilhar.png" alt="compartilhar jornal">
+        </button>  
+        <button onclick="logout()" class="sombraP corErro"> 
+            <p id="textoSair" class="tituloBotao">Sair</p>
             <img class="imgP" id="fecharSessao" src="../img/fechar.png" alt="fechar sessão">
         </button>
     </header>
