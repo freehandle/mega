@@ -64,15 +64,6 @@ type ConteudoCard struct {
 	ConteudoParcial string // conteudo parcial da postagem (deve caber no card)
 }
 
-type Calendario struct {
-	DiaAtual       string
-	MesAtual       string
-	AnoAtual       string
-	VermelhosDias  []string
-	VermelhosMeses []string
-	VermelhosAnos  []string
-}
-
 // Para construir a pagina de um jornal sem login jornal.html
 type PaginaJornal struct {
 	Arroba     string         //dono do jornal
@@ -459,11 +450,13 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// marcando a data atual no calendario
+	// Criando calendario
 	agora := time.Now()
-	pagina.Calendario.DiaAtual = agora.Format("02")
-	pagina.Calendario.MesAtual = agora.Format("01")
-	pagina.Calendario.AnoAtual = agora.Format("2006")
+	pagina.Calendario = Calendario{}
+
+	// A FAZER :
+	// precisa implementar check de selecao de data e trazer vetor de datas de postagens
+	pagina.Calendario.CriaCalendario(agora, true, agora, []time.Time{})
 
 	paraMontar := ParaMontarCards{
 		Jornal: jornal,
