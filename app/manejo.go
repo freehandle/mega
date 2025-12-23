@@ -738,34 +738,44 @@ func (a *Aplicacao) ManejoNovoUsuario(w http.ResponseWriter, r *http.Request) {
 	if err := a.templates.ExecuteTemplate(w, "credenciais.html", aviso); err != nil {
 		log.Println(err)
 	}
-	return
+}
+
+func (a *Aplicacao) ManejoCatraca(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Method)
+	if r.Method != "POST" {
+		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	arroba := r.FormValue("usuario")
+	senha := r.FormValue("senha")
+	fmt.Println(arroba, senha)
+	token, ok := a.Indice.ArrobaParaToken[arroba]
+
+	fmt.Println(token, ok)
+	if ok {
+		if a.Gerente.Check(token, senha) {
+			fmt.Println("chegou gerente")
+			sessao, _ := a.Gerente.CreateSession(arroba)
+			http.SetCookie(w, sessao)
+			end := "/meu_jornal/" + arroba
+			fmt.Println("catraca:" + end)
+			http.Redirect(w, r, end, http.StatusSeeOther)
+			return
+		}
+	}
+	fmt.Println("antes do redirect")
+	http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
 }
 
 func (a *Aplicacao) ManejoCredenciais(w http.ResponseWriter, r *http.Request) {
-	cookie, arroba, err := a.Gerente.CredentialsHandler(r)
-	fmt.Println(cookie)
-	fmt.Println(arroba)
-	if err != nil {
-		aviso := InformacaoCabecalho{
-			NomeMucua: a.NomeMucua,
-			Erro:      err.Error(),
-		}
-		if err := a.templates.ExecuteTemplate(w, "credenciais.html", aviso); err != nil {
-			log.Println(err)
-		}
+	arroba, _ := a.Gerente.SessionUser(r)
+	if arroba != "" {
+		http.Redirect(w, r, "/meu_jornal/"+arroba, http.StatusSeeOther)
 		return
 	}
-	// fmt.Println("DEU CERTO AQUI SEU MOCO")
-	http.SetCookie(w, cookie)
-	/*aviso := InformacaoCabecalho{
-		NomeMucua: a.NomeMucua,
-		Arroba:    arroba,
-	}
-	if err := a.templates.ExecuteTemplate(w, "main.html", aviso); err != nil {
+	if err := a.templates.ExecuteTemplate(w, "credenciais.html", a.NomeMucua); err != nil {
 		log.Println(err)
-	}*/
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-	return
+	}
 }
 
 func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {

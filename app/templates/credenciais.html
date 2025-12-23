@@ -7,7 +7,6 @@
     <title>MIGA - Make Internet Great Again</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/styleMobile.css">
-    <script src="/static/login.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
@@ -24,23 +23,25 @@
                 <p class="tituloLogin">Faça login para acessar</p>
         </div>
         <div class="espacamento formularioLogin">
-            <label for="usuario" class="textoCard">Adicione seu usuário cadastrado</label>
-            <input class="textoCard" type="text" id="usuario" placeholder="Usuário"><br>
-            <br>
-            <label for="senha" class="textoCard">Adicione sua senha</label>
-            <input class="textoCard" type="password" id="senha" placeholder="Senha"><br>
-            <p id="mensagem"> </p>
-            <a href="javascript:void(0)" onclick="descubraSenha()" class="linkLogin">
-                Descubra sua senha
-            </a>
-            <div class="botoes">
-                <button class="cinzaClaro sombraP botaoSecundario tituloBotao"> 
-                    <a href="https://freehandle.org/">Voltar para @s Livres</a>
-                </button>
-                <button onclick="validarLogin()" class="sombraP botaoPrimario tituloBotao corDestaque">
-                    Entrar
-                </button>
-            </div>
+            <form action="/catraca" method="post">
+                <label for="usuario" class="textoCard">Adicione seu usuário cadastrado</label>
+                <input class="textoCard" type="text" id="usuario" name="usuario" placeholder="Usuário"><br>
+                <br>
+                <label for="senha" class="textoCard">Adicione sua senha</label>
+                <input class="textoCard" type="password" id="senha" name="senha" placeholder="Senha"><br>
+                <p id="mensagem"> </p>
+                <a href="javascript:void(0)" class="linkLogin">
+                    Descubra sua senha
+                </a>
+                <div class="botoes">
+                    <button class="cinzaClaro sombraP botaoSecundario tituloBotao"> 
+                        <a href="https://freehandle.org/">Voltar para @s Livres</a>
+                    </button>
+                    <button class="sombraP botaoPrimario tituloBotao corDestaque" type="submit">
+                        Entrar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </body>

@@ -19,7 +19,7 @@ func main() {
 
 	ctx := context.Background()
 	aplicacao := app.NovaAplicacaoVazia()
-	novidades := simple.DissociateActions(ctx, simple.NewBlockReader(ctx, "/home/rmdamiao/go/src/github.com/freehandle/handles/cmd/proxy-handles", "blocos", time.Second))
+	novidades := simple.DissociateActions(ctx, simple.NewBlockReader(ctx, "/home/lienko/setembro/handles/cmd/proxy-handles", "blocos", time.Second))
 	sender, err := simple.Gateway(ctx, 7000, breezeToken, pk)
 	if err != nil {
 		log.Fatalf("error creating gateway: %v", err)
