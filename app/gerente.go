@@ -23,6 +23,8 @@ func ContrataGerente(app *Aplicacao, path, senhaGmail, usuarioGmail string, cred
 		EmailSigninMessageHeader: "Sign In Without Handle",
 		PasswordMessage:          "Your new password is: %s",
 		PasswordMessageHeader:    "New Password",
+		VerifyPOAHeader:          "MIGA - Confirmação de email",
+		VerifyPOA:                "Foi requerida a autorização de uso do seu handle %v para a aplicação %v. Se não foi você quem requisitou, por favor, ignore esta mensagem.\n\nPara autorizar, por favor, clique no link abaixo:\n\n%s",
 	}
 
 	var gmail auth.Mailer
@@ -48,6 +50,7 @@ func ContrataGerente(app *Aplicacao, path, senhaGmail, usuarioGmail string, cred
 	}
 
 	gerente := &auth.SigninManager{
+		AppName:        "MIGA",
 		Passwords:      cofrinho,
 		Cookies:        doceria,
 		Mail:           carteiro,
@@ -56,6 +59,8 @@ func ContrataGerente(app *Aplicacao, path, senhaGmail, usuarioGmail string, cred
 		Members:        app,
 		SafeAddress:    "http://localhost:8089",
 		SafeAPIAddress: "http://localhost:8090",
+		HandleToToken:  make(map[string]crypto.Token),
+		TokenToHandle:  make(map[crypto.Token]string),
 	}
 	return gerente, nil
 }

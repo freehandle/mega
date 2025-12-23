@@ -24,12 +24,17 @@ func main() {
 	if err != nil {
 		log.Fatalf("error creating gateway: %v", err)
 	}
+	// gatewayConn, err := socket.Dial("localhost", "localhost:7000", pk, breezeToken)
+	// if err != nil {
+	// 	panic(err)
+	// }
 	aplicacao.Credenciais = pk
 	aplicacao.Token = token
 	aplicacao.Novidades = novidades
 	aplicacao.Estado = estado.Genesis(0)
 	aplicacao.Indice = indice.NovoIndice()
 	aplicacao.Gateway = app.PorteiraDeCanal(sender, pk)
+	// aplicacao.Gateway = app.PorteiraInternet(gatewayConn, pk)
 	aplicacao.NomeMucua = ""
 	aplicacao.Hostname = ""
 	aplicacao.Gerente, err = app.ContrataGerente(aplicacao, ".", "", "", pk)
@@ -37,7 +42,7 @@ func main() {
 		panic(err)
 	}
 	fim := make(chan error, 1)
-	app.NovaMucua(ctx, aplicacao, 8070, "./app/static/", "localhost")
+	app.NovaMucua(ctx, aplicacao, 8070, "./app", "localhost")
 	err = <-fim
 }
 

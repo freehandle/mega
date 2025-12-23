@@ -4,13 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Protocolo MIGA">
+    <meta property="og:title" content="@s livres">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="Protocolo social MIGA - rodando via infra @s livres">
     <title>MIGA - Make Internet Great Again</title>
     <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/styleMobile.css">
     <script src="../static/filtros.js"></script>
     <script src="../static/login.js"></script>
-    <script src="../static/verificadorDatas.js"></script>
     <script src="../static/compartilharJornal.js"></script>
+    <script src="../static/verificadorDatas.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
@@ -19,15 +24,11 @@
 </head>
 <body class="corTerciaria">
     <header>
-        <a href="meu_jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
+        <a href="jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
         <button onclick="compartilharJornal ()" class="sombraP corSecundaria"> 
             <p id="textoCompartilhar" class="tituloBotao">Compartilhar</p>
             <img class="imgP" id="compartilhar" src="../img/compartilhar.png" alt="compartilhar jornal">
         </button>  
-        <button onclick="logout()" class="sombraP corErro"> 
-            <p id="textoSair">Sair</p>
-            <img class="imgP" id="fecharSessao" src="../img/fechar.png" alt="fechar sessão">
-        </button>
     </header>
     
     <div class="conteudo">
@@ -61,32 +62,30 @@
     
             <div class="carrossel">
                 <div class="carrossel">
-                    {{range .Cards}}
-                    <section class="listaCards" data-categoria={{.CategoriaMin}}>
-                       {{if .Vazio}}
-                       <div class="cabecalhoCard corPrimaria">
-                           <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
-                           <p class="tituloCabecalho">{{.Categoria}}</p>
-                         </div>
-                         <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
-                         <br>
-                         <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
-                         <br>
-                       {{else}}
-                       <div class="cabecalhoCard corPrimaria">
-                           <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
-                           <p class="tituloCabecalho">{{.Categoria}}</p>
-                       </div>
-                       <br>
-                       <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
-                       {{end}}
-                    </section>
-                    {{end}}
-                </div>        
+                    <!-- contêiner para cada categoria -->
+                     {{range .Cards}}
+                     <section class="listaCards" data-categoria={{.CategoriaMin}}>
+                        {{if .Vazio}}
+                        <div class="cabecalhoCard corPrimaria">
+                            <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                            <p class="tituloCabecalho">{{.Categoria}}</p>
+                          </div>
+                          <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
+                          <br>
+                          <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
+                          <br>
+                        {{else}}
+                        <div class="cabecalhoCard corPrimaria">
+                            <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                            <p class="tituloCabecalho">{{.Categoria}}</p>
+                        </div>
+                        <br>
+                        <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
+                        {{end}}
+                     </section>
+                     {{end}}
+                  </div>             
             </div> 
-            <div class="botoes">  
-                <button onclick="window.location.href='postagem.html'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
-            </div>
         </div>
         <div id="divisoria"></div>
         <div class="calendario">

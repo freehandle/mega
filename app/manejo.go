@@ -55,7 +55,7 @@ type PaginaPostAberto struct {
 	TipoTexto    bool
 }
 
-// Para construir o objeto card que vai na pagina jorna.html ou pagina meu_jornal.html
+// Para construir o objeto card que vai na pagina jorna.html
 type ConteudoCard struct {
 	Categoria       string //categoria com primeira em maiuscula
 	CategoriaMin    string //categoria tudo minuscula
@@ -395,7 +395,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 	}
 }
 
-// Monta o array de cards para a pagina jornal/meu_jornal
+// Monta o array de cards para a pagina jornal
 func CriaCards(paraMontar ParaMontarCards) []ConteudoCard {
 	// categoria precisa estar com a mesma grafia (no plural) usada para a construcao da struct index.Jornal
 
@@ -452,26 +452,17 @@ func CriaCards(paraMontar ParaMontarCards) []ConteudoCard {
 }
 
 // Gerenciador
-// func (a *Aplicacao) ManejoInterfacePublicar(w http.ResponseWriter, r *http.Request) {
-// 	arroba := a.Autor(r)
-// 	fmt.Println("ARROBA:", arroba)
-// 	if arroba == "" {
-// 		http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
-// 		return
-// 	}
-// 	view := ViewPublicar{
-// 		Cabecalho: InformacaoCabecalho{
-// 			Arroba:    arroba,
-// 			NomeMucua: a.NomeMucua,
-// 			// Ativo:           "",
-// 			// LinkSelecionada: "",
-// 		},
-// 		Tipo: "causo",
-// 	}
-// 	if err := a.templates.ExecuteTemplate(w, "novotexto.html", view); err != nil {
-// 		log.Println(err)
-// 	}
-// }
+func (a *Aplicacao) ManejoPostagem(w http.ResponseWriter, r *http.Request) {
+	arroba := a.Autor(r)
+	fmt.Println("ARROBA:", arroba)
+	if arroba == "" {
+		http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
+		return
+	}
+	if err := a.templates.ExecuteTemplate(w, "postagem.html", arroba); err != nil {
+		log.Println(err)
+	}
+}
 
 // Gerenciador do template principal da aplicacao
 // func (a *Aplicacao) ManejoPrincipal(w http.ResponseWriter, r *http.Request) {
@@ -489,26 +480,25 @@ func CriaCards(paraMontar ParaMontarCards) []ConteudoCard {
 // Manejo da pagina de jornal sem login
 func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 
-	//ver := VerPagina{}
-	// to suponto um formato mucua/jornal/@/[categoria ou data ou vazio ou categoria/data, que redireciona pra post_aberto]
-	//ver.PegarInfoURL(r.URL.RequestURI(), a.NomeMucua+"/jornal/")
-	fmt.Println(r.URL.RequestURI())
 	ver := ProcessaURL(r.URL.RequestURI())
 	fmt.Println(ver)
-	if ver.Tipo == "postagem_aberta" || ver.Tipo == "erro" {
+	if ver.Tipo == "erro" {
 		log.Println("endereco nao esta em formato jornal ou contem erro")
+		http.NotFound(w, r)
 		return
-	}
-	pagina := PaginaJornal{
-		Arroba: ver.Usuario,
-		Cards:  []ConteudoCard{},
 	}
 
 	// tentando pegar o jornal da arroba indicada pelo endereco URL
 	jornal, ok := a.Indice.ArrobaParaJornal[ver.Usuario]
 	if !ok {
 		log.Println("Nome de usuario nao tem jornal associado")
+		http.NotFound(w, r)
 		return
+	}
+
+	pagina := PaginaJornal{
+		Arroba: ver.Usuario,
+		Cards:  []ConteudoCard{},
 	}
 
 	// Criando calendario
@@ -518,62 +508,6 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 	// A FAZER :
 	// precisa implementar check de selecao de data e trazer vetor de datas de postagens
 	pagina.Calendario.CriaCalendario(agora, true, agora, []time.Time{})
-
-	paraMontar := ParaMontarCards{
-		Jornal: jornal,
-		Tipo:   ver.Tipo,
-	}
-	if ver.Categoria != "" {
-		paraMontar.Categoria = ver.Categoria
-	}
-	if ver.Data != "" {
-		if dataConvertida, err := strconv.ParseUint(ver.Data, 10, 64); err != nil {
-			paraMontar.Data = dataConvertida
-		} else {
-			log.Println("Erro ao converter data")
-		}
-	}
-	pagina.Cards = CriaCards(paraMontar)
-	if err := a.templates.ExecuteTemplate(w, "jornal.html", pagina); err != nil {
-		log.Println(err)
-	}
-	return
-}
-
-// Manejo do proprio jornal de usuario (precisa estar logado), tem link para postagem
-func (a *Aplicacao) ManejoMeuJornal(w http.ResponseWriter, r *http.Request) {
-
-	//ver := VerPagina{}
-	// to suponto um formato mucua/meu_jornal/@/[categoria ou data ou vazio ou categoria/data, que redireciona pra post_aberto]
-	//ver.PegarInfoURL(r.URL.RequestURI(), a.NomeMucua+"/meu_jornal/")
-	ver := ProcessaURL(r.URL.RequestURI())
-	if ver.Tipo == "postagem_aberta" || ver.Tipo == "erro" {
-		log.Println("endereco nao esta em formato meu_jornal ou contem erro")
-		return
-	}
-	pagina := PaginaJornal{
-		Arroba: ver.Usuario,
-		Cards:  []ConteudoCard{},
-	}
-
-	// tentando pegar o jornal da arroba indicada pelo endereco URL
-	jornal, ok := a.Indice.ArrobaParaJornal[ver.Usuario]
-	if !ok {
-		log.Println("Nome de usuario nao tem jornal associado")
-		return
-	}
-
-	// Criando calendario
-	agora := time.Now()
-	pagina.Calendario = Calendario{}
-
-	// A FAZER :
-	// precisa implementar check de selecao de data e trazer vetor de datas de postagens
-	pagina.Calendario.CriaCalendario(agora, true, agora, []time.Time{})
-
-	if err := a.templates.ExecuteTemplate(w, "meu_jornal.html", pagina); err != nil {
-		log.Println(err)
-	}
 
 	paraMontar := ParaMontarCards{
 		Jornal: jornal,
@@ -692,7 +626,6 @@ func (a *Aplicacao) ManejoSignin(w http.ResponseWriter, r *http.Request) {
 	hashEncoded := r.URL.Path
 	hashEncoded = strings.Replace(hashEncoded, "/signin/", "", 1)
 	hash := crypto.DecodeHash(hashEncoded)
-	// fmt.Println("oia", len(a.Convidar))
 	if _, ok := a.Convidar[hash]; ok || len(a.Convidar) == 0 {
 		view := ViewConvite{
 			Cabecalho: InformacaoCabecalho{
@@ -748,29 +681,27 @@ func (a *Aplicacao) ManejoCatraca(w http.ResponseWriter, r *http.Request) {
 	}
 	arroba := r.FormValue("usuario")
 	senha := r.FormValue("senha")
-	fmt.Println(arroba, senha)
 	token, ok := a.Indice.ArrobaParaToken[arroba]
-
-	fmt.Println(token, ok)
 	if ok {
 		if a.Gerente.Check(token, senha) {
-			fmt.Println("chegou gerente")
-			sessao, _ := a.Gerente.CreateSession(arroba)
+			sessao, erro := a.Gerente.CreateSession(arroba)
+			fmt.Println(erro)
+			fmt.Println("cookie value", sessao.Value)
+			fmt.Printf("%+v\n", *sessao)
 			http.SetCookie(w, sessao)
-			end := "/meu_jornal/" + arroba
-			fmt.Println("catraca:" + end)
+			end := "/jornal/" + arroba
+			// a.Indice.ArrobaParaJornal[arroba] = &indice.Jornal{}
 			http.Redirect(w, r, end, http.StatusSeeOther)
 			return
 		}
 	}
-	fmt.Println("antes do redirect")
 	http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
 }
 
 func (a *Aplicacao) ManejoCredenciais(w http.ResponseWriter, r *http.Request) {
 	arroba, _ := a.Gerente.SessionUser(r)
 	if arroba != "" {
-		http.Redirect(w, r, "/meu_jornal/"+arroba, http.StatusSeeOther)
+		http.Redirect(w, r, "/jornal/"+arroba, http.StatusSeeOther)
 		return
 	}
 	if err := a.templates.ExecuteTemplate(w, "credenciais.html", a.NomeMucua); err != nil {
@@ -783,15 +714,16 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
 		return
 	}
-	handle := a.Autor(r)
-	token, ok := a.Indice.ArrobaParaToken[handle]
-	if !ok {
-		http.Error(w, "usuario desconhecido", http.StatusMethodNotAllowed)
-		return
-	}
+	autor := a.Autor(r)
+	token := crypto.TokenFromString(autor)
+	// token, ok := a.Indice.ArrobaParaToken[handle]
+	// if !ok {
+	// 	http.Error(w, "usuario desconhecido", http.StatusMethodNotAllowed)
+	// 	return
+	// }
 	tipo := r.FormValue("tipoConteudo")
 	conteudo := r.FormValue("textoConteudo")
-	fmt.Println("TIPO:", tipo)
+	// arroba := r.FormValue("arroba")
 	switch tipo {
 	case "causo":
 		causo := &acoes.PostarCauso{
@@ -803,7 +735,7 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("CAUSO VÁLIDO, ENVIANDO PARA A REDE")
+		fmt.Println("causo válido, enviando para rede")
 		a.Gateway.Encaminha([]acoes.Acao{causo}, token, a.Epoca)
 	case "fofoca":
 		fofoca := &acoes.PostarFofoca{
@@ -815,7 +747,7 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("FOFOCA VÁLIDA, ENVIANDO PARA A REDE")
+		fmt.Println("fofoca válida, enviando para rede")
 		a.Gateway.Encaminha([]acoes.Acao{fofoca}, token, a.Epoca)
 
 	case "ideia":
@@ -828,7 +760,7 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("IDEIA VÁLIDA, ENVIANDO PARA A REDE")
+		fmt.Println("ideia válida, enviando para rede")
 		a.Gateway.Encaminha([]acoes.Acao{ideia}, token, a.Epoca)
 
 	case "livro":
@@ -841,7 +773,7 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("LIVRO VÁLIDO, ENVIANDO PARA A REDE")
+		fmt.Println("livro válido, enviando para rede")
 		a.Gateway.Encaminha([]acoes.Acao{livro}, token, a.Epoca)
 
 	case "meme":
@@ -854,7 +786,7 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("MEME VÁLIDO, ENVIANDO PARA A REDE")
+		fmt.Println("meme válido, enviando para rede")
 		a.Gateway.Encaminha([]acoes.Acao{meme}, token, a.Epoca)
 
 	case "musica":
@@ -867,13 +799,9 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("MUSICA VÁLIDA, ENVIANDO PARA A REDE")
+		fmt.Println("música válida, enviando para rede")
 		a.Gateway.Encaminha([]acoes.Acao{musica}, token, a.Epoca)
 	}
-	// aviso := InformacaoCabecalho{
-	// 	NomeMucua: a.NomeMucua,
-	// 	Arroba:    handle,
-	// }
 	if err := a.templates.ExecuteTemplate(w, "jornal.html", a.NomeMucua); err != nil {
 		log.Println(err)
 	}

@@ -30,12 +30,16 @@ type ConfiguracaoMucua struct {
 	Safe      *safe.Safe
 }
 
-func NovaMucua(ctx context.Context, app *Aplicacao, port int, staticPath string, servername string) {
+func NovaMucua(ctx context.Context, app *Aplicacao, port int, caminho string, servername string) {
 	go app.Rodar(ctx)
 	mux := http.NewServeMux()
-	fmt.Println("Static path:", staticPath)
+	fmt.Println("Static path:", caminho)
+	staticPath := fmt.Sprintf("%s/static/", caminho)
+	imagePath := fmt.Sprintf("%s/img/", caminho)
 	fs := http.FileServer(http.Dir(staticPath))
+	fi := http.FileServer(http.Dir(imagePath))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/img/", http.StripPrefix("/img/", fi))
 
 	// mux.HandleFunc("/", app.ManejoJornal) // funcao que gera o template main
 	//mux.HandleFunc("/verjornal", procurador.AgenteVerJornal)
@@ -46,10 +50,9 @@ func NovaMucua(ctx context.Context, app *Aplicacao, port int, staticPath string,
 
 	mux.HandleFunc("/catraca", app.ManejoCatraca)
 
-	// mux.HandleFunc("/postagem", app.ManejoInterfacePublicar)
+	mux.HandleFunc("/postagem", app.ManejoPostagem)
 
-	mux.HandleFunc("/jornal", app.ManejoJornal)
-	mux.HandleFunc("/meu_jornal", app.ManejoMeuJornal)
+	mux.HandleFunc("/jornal/", app.ManejoJornal)
 	mux.HandleFunc("/post_aberto", app.ManejoPostAberto)
 
 	mux.HandleFunc("/publica", app.ManejoPublica)

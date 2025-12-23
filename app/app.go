@@ -19,7 +19,7 @@ import (
 const appName = "MIGA"
 
 var arquivosTemplate []string = []string{
-	"credenciais", "signin", "meu_jornal", "jornal", "postagem", "post_aberto",
+	"credenciais", "signin", "jornal", "postagem", "post_aberto",
 }
 
 type Aplicacao struct {
@@ -63,13 +63,26 @@ func (p *Aplicacao) Rodar(ctx context.Context) {
 				}
 			} else {
 				acao := novidade[1:]
-				if tipoHandles := attorney.Kind(acao); tipoHandles == attorney.JoinNetworkType {
+				tipoHandles := attorney.Kind(acao)
+				if tipoHandles == attorney.JoinNetworkType {
 					if usuario := attorney.ParseJoinNetwork(acao); usuario != nil {
 						fmt.Printf("%+v\n", usuario)
 						p.Indice.IncorporaAutor(usuario.Handle, usuario.Author)
+						p.Gerente.HandleToToken[usuario.Handle] = usuario.Author
+						p.Gerente.TokenToHandle[usuario.Author] = usuario.Handle
+					}
+				} else if tipoHandles == attorney.GrantPowerOfAttorneyType {
+					if grant := attorney.ParseGrantPowerOfAttorney(acao); grant != nil {
+						fmt.Printf("%+v\n", grant)
+						arroba, ok := p.Indice.TokenParaArroba[grant.Author]
+						if ok {
+							p.Gerente.Granted[arroba] = grant.Author
+							p.Indice.ArrobaParaJornal[arroba] = &indice.Jornal{}
+						}
 					}
 				} else if validador.Validate(acao) {
 					p.Indice.IncorporaAcao(acao)
+					fmt.Println("validou acao")
 				}
 			}
 		}

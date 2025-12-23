@@ -7,9 +7,6 @@
     <title>MIGA - Make Internet Great Again</title>
     <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/styleMobile.css">
-    <script src="../static/verificacaoLogin.js"></script>
-    <script src="../static/postarConteudo.js"></script>
-    <script src="../static/verificadorDatas.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
@@ -18,11 +15,13 @@
 </head>
 <body class="corTerciaria">
     <header>
-        <h1 class="sixtyfour">Jornal da Ana</h1>
+        <h1 class="sixtyfour">Jornal de {{.}}</h1>
     </header>
     
     <div class="conteudo">
         <div class="postagem">
+            <form method="post" action="/publica">
+                <input class="none" type="text" name="arroba" value="{{.}}" readonly/>
             <div id="card-1" class="cardInput sombraG">
                 <div class="cabecalhoCard corPrimaria">
                         <img class="imgP" src="../img/zoom.png" alt="categoria postar" >
@@ -30,7 +29,7 @@
                 </div>
                 <label class="textoCard">Selecione o conteúdo que deseja postar</label>
                 <br>
-                <select id="tipoConteudo" class="textoCard cinzaClaro" type="text" id="usuario" placeholder="Usuário">
+                <select id="tipoConteudo" class="textoCard cinzaClaro" type="text" placeholder="fofoca" name="tipoConteudo">
                     <option value="fofoca" data-label="fofoca"> 👀 Fofoca</option>
                     <option value="causo" data-label="causo"> 🔮 Causo</option>
                     <option value="ideia" data-label="ideia"> 🧠 Ideia</option>
@@ -43,13 +42,14 @@
                 <br>
                 <p class="textoCard dataCard" id="dataCard"> </p>
                 <br>
-                <textarea id="textoConteudo" placeholder="Adicione seu conteúdo aqui ..." rows="5"></textarea>
+                <textarea id="textoConteudo" name="textoConteudo" placeholder="Adicione seu conteúdo aqui ..." rows="5"></textarea>
                 <br>
             </div>
             <div class="botoes">
-                <button onclick="voltarPagina()" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </button>
-                <button id="botaoPostar" onclick="postarConteudo()" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar fofoca </button>
+                <button onclick="window.location.href='/jornal'" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </button>
+                <button id="botaoPostar" type="submit" class="corPrimaria sombraP botaoPrimario tituloBotao"> Adicionar </button>
             </div>
+        </form>
         </div>
     </div>
 </body>
