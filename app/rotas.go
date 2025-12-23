@@ -37,12 +37,10 @@ func NovaMucua(ctx context.Context, app *Aplicacao, port int, staticPath string,
 	fs := http.FileServer(http.Dir(staticPath))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	// mux.HandleFunc("/", app.ManejoPrincipal) // funcao que gera o template main
+	mux.HandleFunc("/", app.ManejoJornal) // funcao que gera o template main
 	//mux.HandleFunc("/verjornal", procurador.AgenteVerJornal)
 
-	mux.HandleFunc("/login", app.ManejoSignin)
-	mux.HandleFunc("/signin", app.ManejoCredenciais)
-
+	mux.HandleFunc("/signin", app.ManejoSignin)
 	mux.HandleFunc("/novousuario", app.ManejoNovoUsuario)
 	mux.HandleFunc("/credenciais", app.ManejoCredenciais)
 

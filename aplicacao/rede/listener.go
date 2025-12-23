@@ -1,5 +1,6 @@
 package rede
 
+/*
 import (
 	"log"
 
@@ -91,3 +92,4 @@ func NewMEGANode(axe *HandlesDB, attorneyGeneral *aplicacao.ProcuradorGeral, sig
 		}
 	}
 }
+*/

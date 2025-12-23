@@ -18,12 +18,12 @@ func main() {
 	breezeToken := crypto.TokenFromString("91ad274d06c4be307a332a0e59449ad25ae2c65e4ad5a8f0af87067ac2fc3a54")
 
 	ctx := context.Background()
+	aplicacao := app.NovaAplicacaoVazia()
 	novidades := simple.DissociateActions(ctx, simple.NewBlockReader(ctx, "/home/rmdamiao/go/src/github.com/freehandle/handles/cmd/proxy-handles", "blocos", time.Second))
 	sender, err := simple.Gateway(ctx, 7000, breezeToken, pk)
 	if err != nil {
 		log.Fatalf("error creating gateway: %v", err)
 	}
-	aplicacao := app.NovaAplicacaoVazia()
 	aplicacao.Credenciais = pk
 	aplicacao.Token = token
 	aplicacao.Novidades = novidades
@@ -37,7 +37,7 @@ func main() {
 		panic(err)
 	}
 	fim := make(chan error, 1)
-	app.NovaMucua(ctx, aplicacao, 8070, "./aplicao/static/", "localhost")
+	app.NovaMucua(ctx, aplicacao, 8070, "./app/static/", "localhost")
 	err = <-fim
 }
 

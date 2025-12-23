@@ -71,6 +71,57 @@ type PaginaJornal struct {
 	Calendario Calendario
 }
 
+func parteData(v string) bool {
+	anomesdia, err := strconv.ParseInt(v, 10, 64)
+	if err != nil {
+		return false
+	}
+	if anomesdia < 20250101 || anomesdia > 21000101 {
+		return false
+	}
+	return true
+}
+
+func ProcessaURL(valor string) VerPagina {
+	pagina := VerPagina{}
+	partes := strings.Split(valor, "/")
+	fmt.Println(partes)
+	for n := len(partes) - 1; n >= 0; n-- {
+		if len(partes[n]) == 0 {
+			continue
+		}
+		if parteData(partes[n]) {
+			if pagina.Data == "" {
+				pagina.Data = partes[n]
+			} else {
+				pagina.Tipo = "erro"
+				return pagina
+			}
+		} else if partes[n] == "causo" || partes[n] == "fofoca" || partes[n] == "ideia" || partes[n] == "livro" || partes[n] == "meme" || partes[n] == "musica" {
+			if pagina.Categoria == "" {
+				pagina.Categoria = partes[n]
+			} else {
+				pagina.Tipo = "erro"
+				return pagina
+			}
+		} else {
+			pagina.Usuario = partes[n]
+			if pagina.Categoria == "" && pagina.Data == "" {
+				pagina.Tipo = "atual"
+			} else if pagina.Categoria != "" && pagina.Data == "" {
+				pagina.Tipo = "categoria"
+			} else if pagina.Categoria == "" && pagina.Data != "" {
+				pagina.Tipo = "data"
+			} else if pagina.Categoria != "" && pagina.Data != "" {
+				pagina.Tipo = "postagem_aberta"
+			}
+			return pagina
+		}
+	}
+	pagina.Tipo = "erro"
+	return pagina
+}
+
 // Para enviar para o montador de card
 type ParaMontarCards struct {
 	Jornal    *indice.Jornal
@@ -81,9 +132,14 @@ type ParaMontarCards struct {
 }
 
 // Encontrando o tipo de pagina a ser construida a partir do endereco acessado
-func (v *VerPagina) PegarInfoURL(r *http.Request, mucua string) {
+func (v *VerPagina) PegarInfoURL(endereco, mucua string) {
 	categorias_possiveis := []string{"causo", "fofoca", "ideia", "livro", "meme", "musica"}
-	endereco := r.URL.RequestURI()
+	//endereco := r.URL.RequestURI()
+	if len(mucua) == 0 {
+		mucua = "/jornal/"
+	} else {
+		mucua = fmt.Sprintf("/%v/jornal/", mucua)
+	}
 	novo := strings.Replace(endereco, mucua, "", 1) // remove servidor
 
 	re := regexp.MustCompile(`\/`) // regex para encontrar o separador
@@ -433,9 +489,12 @@ func CriaCards(paraMontar ParaMontarCards) []ConteudoCard {
 // Manejo da pagina de jornal sem login
 func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 
-	ver := VerPagina{}
+	//ver := VerPagina{}
 	// to suponto um formato mucua/jornal/@/[categoria ou data ou vazio ou categoria/data, que redireciona pra post_aberto]
-	ver.PegarInfoURL(r, a.NomeMucua+"/jornal/")
+	//ver.PegarInfoURL(r.URL.RequestURI(), a.NomeMucua+"/jornal/")
+	fmt.Println(r.URL.RequestURI())
+	ver := ProcessaURL(r.URL.RequestURI())
+	fmt.Println(ver)
 	if ver.Tipo == "postagem_aberta" || ver.Tipo == "erro" {
 		log.Println("endereco nao esta em formato jornal ou contem erro")
 		return
@@ -484,9 +543,10 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 // Manejo do proprio jornal de usuario (precisa estar logado), tem link para postagem
 func (a *Aplicacao) ManejoMeuJornal(w http.ResponseWriter, r *http.Request) {
 
-	ver := VerPagina{}
+	//ver := VerPagina{}
 	// to suponto um formato mucua/meu_jornal/@/[categoria ou data ou vazio ou categoria/data, que redireciona pra post_aberto]
-	ver.PegarInfoURL(r, a.NomeMucua+"/meu_jornal/")
+	//ver.PegarInfoURL(r.URL.RequestURI(), a.NomeMucua+"/meu_jornal/")
+	ver := ProcessaURL(r.URL.RequestURI())
 	if ver.Tipo == "postagem_aberta" || ver.Tipo == "erro" {
 		log.Println("endereco nao esta em formato meu_jornal ou contem erro")
 		return
@@ -539,9 +599,9 @@ func (a *Aplicacao) ManejoMeuJornal(w http.ResponseWriter, r *http.Request) {
 // Manejo de um post do jornal aberto no detalhe
 func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 
-	ver := VerPagina{}
-	ver.PegarInfoURL(r, a.NomeMucua)
-
+	//ver := VerPagina{}
+	//ver.PegarInfoURL(r.URL.RequestURI(), a.NomeMucua)
+	ver := ProcessaURL(r.URL.RequestURI())
 	// checa se o endereco tem a forma de um post especifico
 	if ver.Tipo != "postagem_aberta" || ver.Tipo == "erro" {
 		log.Println("endereco nao e de uma postagem aberta ou contem erro")
@@ -654,7 +714,7 @@ func (a *Aplicacao) ManejoSignin(w http.ResponseWriter, r *http.Request) {
 			Erro:      "convite inválido",
 			NomeMucua: a.NomeMucua,
 		}
-		if err := a.templates.ExecuteTemplate(w, "login.html", view); err != nil {
+		if err := a.templates.ExecuteTemplate(w, "credenciais.html", view); err != nil {
 			log.Println(err)
 		}
 	}
@@ -675,7 +735,7 @@ func (a *Aplicacao) ManejoNovoUsuario(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		aviso.Erro = "Confira seu email para ativar sua conta ou tente outro arroba."
 	}
-	if err := a.templates.ExecuteTemplate(w, "login.html", aviso); err != nil {
+	if err := a.templates.ExecuteTemplate(w, "credenciais.html", aviso); err != nil {
 		log.Println(err)
 	}
 	return
@@ -804,7 +864,7 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 	// 	NomeMucua: a.NomeMucua,
 	// 	Arroba:    handle,
 	// }
-	if err := a.templates.ExecuteTemplate(w, "main.html", a.NomeMucua); err != nil {
+	if err := a.templates.ExecuteTemplate(w, "jornal.html", a.NomeMucua); err != nil {
 		log.Println(err)
 	}
 }

@@ -1,5 +1,6 @@
 package rede
 
+/*
 import (
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/handles/attorney"
@@ -102,3 +103,4 @@ func (a *HandlesDB) Incorporate(action []byte) []byte {
 	}
 	return action
 }
+*/

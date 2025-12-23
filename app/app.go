@@ -19,7 +19,7 @@ import (
 const appName = "MIGA"
 
 var arquivosTemplate []string = []string{
-	"login", "signin", "meujornal", "login", "novotexto",
+	"credenciais", "signin", "meu_jornal", "jornal", "postagem", "post_aberto",
 }
 
 type Aplicacao struct {
@@ -46,7 +46,7 @@ func (p *Aplicacao) Rodar(ctx context.Context) {
 			log.Println("Aplicacao.Rodar: context done, exiting")
 			return
 		case novidade := <-p.Novidades:
-			log.Printf("Aplicacao.Rodar: received action of size %d bytes\n", len(novidade))
+			//log.Printf("Aplicacao.Rodar: received action of size %d bytes\n", len(novidade))
 			if len(novidade) == 0 {
 				continue
 			}
@@ -65,10 +65,10 @@ func (p *Aplicacao) Rodar(ctx context.Context) {
 				acao := novidade[1:]
 				if tipoHandles := attorney.Kind(acao); tipoHandles == attorney.JoinNetworkType {
 					if usuario := attorney.ParseJoinNetwork(acao); usuario != nil {
+						fmt.Printf("%+v\n", usuario)
 						p.Indice.IncorporaAutor(usuario.Handle, usuario.Author)
 					}
-				}
-				if validador.Validate(acao) {
+				} else if validador.Validate(acao) {
 					p.Indice.IncorporaAcao(acao)
 				}
 			}
@@ -79,7 +79,7 @@ func (p *Aplicacao) Rodar(ctx context.Context) {
 func NovaAplicacaoVazia() *Aplicacao {
 	files := make([]string, len(arquivosTemplate))
 	for n, file := range arquivosTemplate {
-		files[n] = fmt.Sprintf("%v/%v.html", "./aplicacao/templates", file)
+		files[n] = fmt.Sprintf("%v/%v.html", "./app/templates", file)
 	}
 	t, err := template.ParseFiles(files...)
 	if err != nil {
@@ -109,7 +109,7 @@ func (p *Aplicacao) Autor(r *http.Request) string {
 	cookie, err := r.Cookie(appName)
 	if err == nil {
 		if handle, ok := p.Gerente.Cookies.Get(cookie.Value); ok {
-			return handle
+			return handle.String()
 		}
 	}
 	return ""
