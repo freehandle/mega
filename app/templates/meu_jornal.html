@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="../static/styleMobile.css">
     <script src="../static/filtros.js"></script>
     <script src="../static/login.js"></script>
-    <script src="../static/verificacaoLogin.js"></script>
-    <script src="../static/carregarPostagem.js"></script>
     <script src="../static/verificadorDatas.js"></script>
     <script src="../static/compartilharJornal.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,14 +61,28 @@
     
             <div class="carrossel">
                 <div class="carrossel">
-                    <!-- contêiner para cada categoria -->
-                    <section class="listaCards" data-categoria="fofoca"></section>            
-                    <section class="listaCards" data-categoria="causo"></section>
-                    <section class="listaCards" data-categoria="ideia"></section>            
-                    <section class="listaCards" data-categoria="livro"></section>
-                    <section class="listaCards" data-categoria="meme"></section>
-                    <section class="listaCards" data-categoria="musica"></section>
-                  </div>             
+                    {{range .Cards}}
+                    <section class="listaCards" data-categoria={{.CategoriaMin}}>
+                       {{if .Vazio}}
+                       <div class="cabecalhoCard corPrimaria">
+                           <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                           <p class="tituloCabecalho">{{.Categoria}}</p>
+                         </div>
+                         <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
+                         <br>
+                         <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
+                         <br>
+                       {{else}}
+                       <div class="cabecalhoCard corPrimaria">
+                           <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                           <p class="tituloCabecalho">{{.Categoria}}</p>
+                       </div>
+                       <br>
+                       <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
+                       {{end}}
+                    </section>
+                    {{end}}
+                </div>        
             </div> 
             <div class="botoes">  
                 <button onclick="window.location.href='postagem.html'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
@@ -78,80 +90,17 @@
         </div>
         <div id="divisoria"></div>
         <div class="calendario">
-            <div id="mesAnterior"  class="mes sombraP">
-                <div id="tituloMesAnterior" class="tituloMes">                 </div>
-                <div class= "dias">
-                    <p class="dia" onclick="selecionarDia(this)">1</p>
-                    <p class="dia" onclick="selecionarDia(this)">2</p>
-                    <p class="dia" onclick="selecionarDia(this)">3</p>
-                    <p class="dia" onclick="selecionarDia(this)">4</p>
-                    <p class="dia" onclick="selecionarDia(this)">5</p>
-                    <p class="dia" onclick="selecionarDia(this)">6</p>
-                    <p class="dia" onclick="selecionarDia(this)">7</p>
-                    <p class="dia" onclick="selecionarDia(this)">8</p>
-                    <p class="dia" onclick="selecionarDia(this)">9</p>
-                    <p class="dia" onclick="selecionarDia(this)">10</p>
-                    <p class="dia" onclick="selecionarDia(this)">11</p>
-                    <p class="dia" onclick="selecionarDia(this)">12</p>
-                    <p class="dia" onclick="selecionarDia(this)">13</p>
-                    <p class="dia" onclick="selecionarDia(this)">14</p>
-                    <p class="dia" onclick="selecionarDia(this)">15</p>
-                    <p class="dia" onclick="selecionarDia(this)">16</p>
-                    <p class="dia" onclick="selecionarDia(this)">17</p>
-                    <p class="dia" onclick="selecionarDia(this)">18</p>
-                    <p class="dia" onclick="selecionarDia(this)">19</p>
-                    <p class="dia" onclick="selecionarDia(this)">20</p>
-                    <p class="dia" onclick="selecionarDia(this)">21</p>
-                    <p class="dia" onclick="selecionarDia(this)">22</p>
-                    <p class="dia" onclick="selecionarDia(this)">23</p>
-                    <p class="dia" onclick="selecionarDia(this)">24</p>
-                    <p class="dia" onclick="selecionarDia(this)">25</p>
-                    <p class="dia" onclick="selecionarDia(this)">26</p>
-                    <p class="dia" onclick="selecionarDia(this)">27</p>
-                    <p class="dia" onclick="selecionarDia(this)">28</p>
-                    <p class="dia" onclick="selecionarDia(this)">29</p>
-                    <p class="dia" onclick="selecionarDia(this)">30</p>
-                    <p class="dia" onclick="selecionarDia(this)">31</p>
-                </div>
-            </div>
+            {{range .MesAno}}
             <div class="mes sombraP">
-                <div id="tituloMesAtual" class="tituloMes"> XXXX </div>
+                <div class="tituloMes">{{.Mes}} '{{.Ano}}</div>
                 <div class= "dias">
-                    <p class="dia" onclick="selecionarDia(this)">1</p>
-                    <p class="dia" onclick="selecionarDia(this)">2</p>
-                    <p class="dia" onclick="selecionarDia(this)">3</p>
-                    <p class="dia" onclick="selecionarDia(this)">4</p>
-                    <p class="dia" onclick="selecionarDia(this)">5</p>
-                    <p class="dia" onclick="selecionarDia(this)">6</p>
-                    <p class="dia" onclick="selecionarDia(this)">7</p>
-                    <p class="dia" onclick="selecionarDia(this)">8</p>
-                    <p class="dia" onclick="selecionarDia(this)">9</p>
-                    <p class="dia" onclick="selecionarDia(this)">10</p>
-                    <p class="dia" onclick="selecionarDia(this)">11</p>
-                    <p class="dia" onclick="selecionarDia(this)">12</p>
-                    <p class="dia" onclick="selecionarDia(this)">13</p>
-                    <p class="dia" onclick="selecionarDia(this)">14</p>
-                    <p class="dia" onclick="selecionarDia(this)">15</p>
-                    <p class="dia" onclick="selecionarDia(this)">16</p>
-                    <p class="dia" onclick="selecionarDia(this)">17</p>
-                    <p class="dia" onclick="selecionarDia(this)">18</p>
-                    <p class="dia" onclick="selecionarDia(this)">19</p>
-                    <p class="dia" onclick="selecionarDia(this)">20</p>
-                    <p class="dia" onclick="selecionarDia(this)">21</p>
-                    <p class="dia" onclick="selecionarDia(this)">22</p>
-                    <p class="dia" onclick="selecionarDia(this)">23</p>
-                    <p class="dia" onclick="selecionarDia(this)">24</p>
-                    <p class="dia" onclick="selecionarDia(this)">25</p>
-                    <p class="dia" onclick="selecionarDia(this)">26</p>
-                    <p class="dia" onclick="selecionarDia(this)">27</p>
-                    <p class="dia" onclick="selecionarDia(this)">28</p>
-                    <p class="dia" onclick="selecionarDia(this)">29</p>
-                    <p class="dia" onclick="selecionarDia(this)">30</p>
+                    {{range. Dias}}
+                    <p class="dia {{.Cor}}" onclick="selecionarDia(this)">{{.Dia}}</p>
+                    {{end}}
                 </div>
             </div>
+            {{end}}
         </div>
     </div>
-
-    </body>
 </body>
 </html>

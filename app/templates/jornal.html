@@ -14,9 +14,7 @@
     <link rel="stylesheet" href="../static/styleMobile.css">
     <script src="../static/filtros.js"></script>
     <script src="../static/login.js"></script>
-    <script src="../static/verificacaoLogin.js"></script>
     <script src="../static/compartilharJornal.js"></script>
-    <!-- <script src="../static/carrega_posts.js"></script> -->
     <script src="../static/verificadorDatas.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,17 +93,17 @@
         </div>
         <div id="divisoria"></div>
         <div class="calendario">
-            <div id="mesAnterior"  class="mes sombraP">
-                {{range .MesAno}}
-                <div id="tituloMesAnterior" class="tituloMes">{{.Mes}} '{{.Ano}}</div>
+            {{range .MesAno}}
+            <div class="mes sombraP">
+                <div class="tituloMes">{{.Mes}} '{{.Ano}}</div>
                 <div class= "dias">
                     {{range. Dias}}
                     <p class="dia {{.Cor}}" onclick="selecionarDia(this)">{{.Dia}}</p>
+                    {{end}}
                 </div>
             </div>
+            {{end}}
         </div>
     </div>
-
-    </body>
 </body>
 </html>
