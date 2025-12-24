@@ -33,7 +33,7 @@ type ConfiguracaoMucua struct {
 func NovaMucua(ctx context.Context, app *Aplicacao, port int, caminho string, servername string) {
 	go app.Rodar(ctx)
 	mux := http.NewServeMux()
-	fmt.Println("Static path:", caminho)
+	// fmt.Println("Static path:", caminho)
 	staticPath := fmt.Sprintf("%s/static/", caminho)
 	imagePath := fmt.Sprintf("%s/img/", caminho)
 	fs := http.FileServer(http.Dir(staticPath))

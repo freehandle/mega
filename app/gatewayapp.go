@@ -53,6 +53,16 @@ type Porteira struct {
 	credenciais crypto.PrivateKey
 }
 
+const finalBreeze = 2*crypto.SignatureSize + 2*crypto.TokenSize + 8
+
+func BreezeParaMega(action []byte) []byte {
+	bytes := make([]byte, 8+len(action)-finalBreeze-15)
+	copy(bytes[0:8], action[2:10])
+	copy(bytes[8:], action[15:len(action)-finalBreeze])
+	return bytes
+	// return append(action[2:10], action[15:len(action)-finalBreeze]...)
+}
+
 func MegaParaBreeze(action []byte, epoch uint64) []byte {
 	if action == nil {
 		log.Print("PANIC BUG: MegaParaBreeze chamado com acao nula ")

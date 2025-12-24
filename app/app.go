@@ -32,10 +32,15 @@ type Aplicacao struct {
 	Indice      *indice.Indice
 	templates   *template.Template
 	GenesisTime time.Time
+	Intervalo   time.Duration
 	NomeMucua   string
 	Hostname    string
 	Convidar    map[crypto.Hash]struct{} // map of invite user hash to token
 	Gerente     *auth.SigninManager
+}
+
+func (p *Aplicacao) DataDaEpoca(epoca uint64) time.Time {
+	return p.GenesisTime.Add(time.Duration(epoca) * p.Intervalo)
 }
 
 func (p *Aplicacao) Rodar(ctx context.Context) {
@@ -66,23 +71,26 @@ func (p *Aplicacao) Rodar(ctx context.Context) {
 				tipoHandles := attorney.Kind(acao)
 				if tipoHandles == attorney.JoinNetworkType {
 					if usuario := attorney.ParseJoinNetwork(acao); usuario != nil {
-						fmt.Printf("%+v\n", usuario)
+						// fmt.Printf("%+v\n", usuario)
 						p.Indice.IncorporaAutor(usuario.Handle, usuario.Author)
 						p.Gerente.HandleToToken[usuario.Handle] = usuario.Author
 						p.Gerente.TokenToHandle[usuario.Author] = usuario.Handle
 					}
 				} else if tipoHandles == attorney.GrantPowerOfAttorneyType {
 					if grant := attorney.ParseGrantPowerOfAttorney(acao); grant != nil {
-						fmt.Printf("%+v\n", grant)
+						// fmt.Printf("%+v\n", grant)
 						arroba, ok := p.Indice.TokenParaArroba[grant.Author]
 						if ok {
 							p.Gerente.Granted[arroba] = grant.Author
 							p.Indice.ArrobaParaJornal[arroba] = &indice.Jornal{}
 						}
 					}
-				} else if validador.Validate(acao) {
-					p.Indice.IncorporaAcao(acao)
-					fmt.Println("validou acao")
+				} else if tipoHandles == attorney.VoidType {
+					p.Indice.IncorporaAcao(BreezeParaMega(acao))
+					if a := BreezeParaMega(acao); validador.Validate(a) {
+						p.Indice.IncorporaAcao(a)
+						// fmt.Println("validou acao")
+					}
 				}
 			}
 		}

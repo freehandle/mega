@@ -85,7 +85,6 @@ func parteData(v string) bool {
 func ProcessaURL(valor string) VerPagina {
 	pagina := VerPagina{}
 	partes := strings.Split(valor, "/")
-	fmt.Println(partes)
 	for n := len(partes) - 1; n >= 0; n-- {
 		if len(partes[n]) == 0 {
 			continue
@@ -179,7 +178,6 @@ func (v *VerPagina) PegarInfoURL(endereco, mucua string) {
 		return
 	}
 	fmt.Printf("Endereco URL fora de formato")
-	return
 }
 
 // Cria cards para mostrar no jornal a parti da data e categoria dadas
@@ -217,7 +215,11 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
-			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			if len(conteudoTexto.Conteudo) > 200 {
+				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			} else {
+				c.ConteudoParcial = conteudoTexto.Conteudo
+			}
 			return
 		} else {
 			c.Vazio = true
@@ -481,7 +483,6 @@ func (a *Aplicacao) ManejoPostagem(w http.ResponseWriter, r *http.Request) {
 func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 
 	ver := ProcessaURL(r.URL.RequestURI())
-	fmt.Println(ver)
 	if ver.Tipo == "erro" {
 		log.Println("endereco nao esta em formato jornal ou contem erro")
 		http.NotFound(w, r)
@@ -674,7 +675,7 @@ func (a *Aplicacao) ManejoNovoUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Aplicacao) ManejoCatraca(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Method)
+	// fmt.Println(r.Method)
 	if r.Method != "POST" {
 		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
 		return
@@ -684,10 +685,10 @@ func (a *Aplicacao) ManejoCatraca(w http.ResponseWriter, r *http.Request) {
 	token, ok := a.Indice.ArrobaParaToken[arroba]
 	if ok {
 		if a.Gerente.Check(token, senha) {
-			sessao, erro := a.Gerente.CreateSession(arroba)
-			fmt.Println(erro)
-			fmt.Println("cookie value", sessao.Value)
-			fmt.Printf("%+v\n", *sessao)
+			sessao, _ := a.Gerente.CreateSession(arroba)
+			// fmt.Println(erro)
+			// fmt.Println("cookie value", sessao.Value)
+			// fmt.Printf("%+v\n", *sessao)
 			http.SetCookie(w, sessao)
 			end := "/jornal/" + arroba
 			// a.Indice.ArrobaParaJornal[arroba] = &indice.Jornal{}
