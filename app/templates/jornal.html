@@ -7,9 +7,6 @@
     <title>MIGA - Make Internet Great Again</title>
     <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/styleMobile.css">
-    <!-- <script src="../static/filtros.js"></script> -->
-    <!-- <script src="../static/login.js"></script> -->
-    <!-- <script src="../static/verificadorDatas.js"></script> -->
     <!-- <script src="../static/compartilharJornal.js"></script> -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,26 +60,30 @@
                 <div class="carrossel">
                     {{range .Cards}}
                     <section class="listaCards" data-categoria={{.CategoriaMin}}>
-                       {{if .Vazio}}
-                       <div class="cabecalhoCard corPrimaria">
-                            <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
-                            <p class="tituloCabecalho">{{.Categoria}}</p>
-                        </div>
-                        <br>
-                    <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
-                       {{else}}
-                        <div class="cabecalhoCard corPrimaria">
-                            <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
-                            <p class="tituloCabecalho">{{.Categoria}}</p>
-                        </div>
-                        
-                        <br>
-                        <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
-                        <br>
-                       {{end}}
+                        {{if .Vazio}}
+                        <article class="cardVazio sombraG" data-categoria="{{.CategoriaMin}}">
+                            <div class="cabecalhoCard corPrimaria">
+                                <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                                <p class="tituloCabecalho">{{.Categoria}}</p>
+                            </div>
+                            <br>
+                            <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
+                        </article>
+                        {{else}}
+                        <article class="card sombraG" data-categoria="{{.CategoriaMin}}">
+                            <div class="cabecalhoCard corPrimaria">
+                                <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                                <p class="tituloCabecalho">{{.Categoria}}</p>
+                            </div>
+                            <p class="textoCard dataCard" id="dataCard">{{.Data}}</p>
+                            <br>
+                            <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
+                            <br>
+                        </article>
+                        {{end}}
                     </section>
                     {{end}}
-                </div>        
+                </div> 
             </div> 
             <div class="botoes">  
                 <button onclick="window.location.href='/postagem'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
@@ -90,12 +91,12 @@
         </div>
         <div id="divisoria"></div>
         <div class="calendario">
-            {{range .MesAno}}
+            {{range .Calendario.MesAno}}
             <div class="mes sombraP">
                 <div class="tituloMes">{{.Mes}} '{{.Ano}}</div>
                 <div class= "dias">
                     {{range .Dias}}
-                    <p class="dia {{.Cor}}" onclick="selecionarDia(this)">{{.Dia}}</p>
+                    <p class="{{.Cor}}">{{.Numero}}</p>
                     {{end}}
                 </div>
             </div>

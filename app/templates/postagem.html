@@ -21,13 +21,13 @@
     <div class="conteudo">
         <div class="postagem">
             <form method="post" action="/publica">
-                <input class="none" type="text" name="arroba" value="{{.}}" readonly/>
+                <input class="none" type="hidden" name="arroba" value="{{.}}" readonly/>
             <div id="card-1" class="cardInput sombraG">
                 <div class="cabecalhoCard corPrimaria">
                         <img class="imgP" src="../img/zoom.png" alt="categoria postar" >
                         <p class="tituloCabecalho">Postagem</p>
                 </div>
-                <label class="textoCard">Selecione o conteúdo que deseja postar</label>
+                <p class="textoCard">Selecione o conteúdo que deseja postar</p>
                 <br>
                 <select id="tipoConteudo" class="textoCard cinzaClaro" type="text" placeholder="fofoca" name="tipoConteudo">
                     <option value="fofoca" data-label="fofoca"> 👀 Fofoca</option>

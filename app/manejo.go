@@ -128,6 +128,7 @@ type ParaMontarCards struct {
 	Categoria string
 	Data      uint64
 	Ultimo    int //index do ultimo elemento trazido no caso de posts selecionados via categoria
+	Aplicacao *Aplicacao
 }
 
 // Encontrando o tipo de pagina a ser construida a partir do endereco acessado
@@ -214,7 +215,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 				}
 			}
 			c.Vazio = false
-			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > 200 {
 				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
 			} else {
@@ -251,7 +252,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 				}
 			}
 			c.Vazio = false
-			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
 			return
 		} else {
@@ -284,7 +285,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 				}
 			}
 			c.Vazio = false
-			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
 			return
 		} else {
@@ -317,7 +318,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 				}
 			}
 			c.Vazio = false
-			c.Data = strconv.FormatUint(conteudoTexto.Data, 10)
+			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
 			return
 		} else {
@@ -344,13 +345,13 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 						break
 					}
 				}
-				if conteudoTexto == nil {
+				if conteudoHash == nil {
 					c.Vazio = true
 					return
 				}
 			}
 			c.Vazio = false
-			c.Data = strconv.FormatUint(conteudoHash.Data, 10)
+			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoHash.Data)
 			c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
 			return
 		} else {
@@ -377,13 +378,13 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 						break
 					}
 				}
-				if conteudoTexto == nil {
+				if conteudoHash == nil {
 					c.Vazio = true
 					return
 				}
 			}
 			c.Vazio = false
-			c.Data = strconv.FormatUint(conteudoHash.Data, 10)
+			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoHash.Data)
 			c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
 			return
 		} else {
@@ -455,14 +456,15 @@ func CriaCards(paraMontar ParaMontarCards) []ConteudoCard {
 
 // Gerenciador
 func (a *Aplicacao) ManejoPostagem(w http.ResponseWriter, r *http.Request) {
-	arroba := a.Autor(r)
-	fmt.Println("ARROBA:", arroba)
-	if arroba == "" {
+	strToken := a.Autor(r)
+	arroba, ok := a.Indice.TokenParaArroba[crypto.TokenFromString(strToken)]
+	if strToken == "" || !ok {
 		http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
 		return
 	}
 	if err := a.templates.ExecuteTemplate(w, "postagem.html", arroba); err != nil {
 		log.Println(err)
+		return
 	}
 }
 
@@ -511,8 +513,9 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 	pagina.Calendario.CriaCalendario(agora, true, agora, []time.Time{})
 
 	paraMontar := ParaMontarCards{
-		Jornal: jornal,
-		Tipo:   ver.Tipo,
+		Jornal:    jornal,
+		Tipo:      ver.Tipo,
+		Aplicacao: a,
 	}
 	if ver.Categoria != "" {
 		paraMontar.Categoria = ver.Categoria
@@ -528,7 +531,6 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 	if err := a.templates.ExecuteTemplate(w, "jornal.html", pagina); err != nil {
 		log.Println(err)
 	}
-	return
 }
 
 // Manejo de um post do jornal aberto no detalhe
@@ -731,6 +733,8 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			Epoca:    a.Epoca,
 			Autor:    token,
 			Conteudo: conteudo,
+			// Data:     a.DataDaEpoca(a.Epoca),
+			Data: time.Now(),
 		}
 		if !causo.ValidarFormato() {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
@@ -743,6 +747,8 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			Epoca:    a.Epoca,
 			Autor:    token,
 			Conteudo: conteudo,
+			// Data:     a.DataDaEpoca(a.Epoca),
+			Data: time.Now(),
 		}
 		if !fofoca.ValidarFormato() {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
@@ -756,6 +762,8 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			Epoca:    a.Epoca,
 			Autor:    token,
 			Conteudo: conteudo,
+			// Data:     a.DataDaEpoca(a.Epoca),
+			Data: time.Now(),
 		}
 		if !ideia.ValidarFormato() {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
@@ -769,6 +777,8 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			Epoca:    a.Epoca,
 			Autor:    token,
 			Conteudo: crypto.BytesToHash([]byte(conteudo)),
+			// Data:     a.DataDaEpoca(a.Epoca),
+			Data: time.Now(),
 		}
 		if !livro.ValidarFormato() {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
@@ -782,6 +792,8 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			Epoca:    a.Epoca,
 			Autor:    token,
 			Conteudo: crypto.BytesToHash([]byte(conteudo)),
+			// Data:     a.DataDaEpoca(a.Epoca),
+			Data: time.Now(),
 		}
 		if !meme.ValidarFormato() {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
@@ -795,6 +807,8 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 			Epoca:    a.Epoca,
 			Autor:    token,
 			Conteudo: conteudo,
+			// Data:     a.DataDaEpoca(a.Epoca),
+			Data: time.Now(),
 		}
 		if !musica.ValidarFormato() {
 			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
@@ -803,7 +817,13 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("música válida, enviando para rede")
 		a.Gateway.Encaminha([]acoes.Acao{musica}, token, a.Epoca)
 	}
-	if err := a.templates.ExecuteTemplate(w, "jornal.html", a.NomeMucua); err != nil {
+	arroba, ok := a.Indice.TokenParaArroba[token]
+	if !ok {
+		http.Error(w, "erro ao recuperar arroba do usuario", http.StatusMethodNotAllowed)
+		log.Println("erro ao recuperar arroba a partir do token")
+		return
+	}
+	if err := a.templates.ExecuteTemplate(w, "jornal.html", arroba); err != nil {
 		log.Println(err)
 	}
 }

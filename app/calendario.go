@@ -44,10 +44,10 @@ func VetorDiasMes(inicioMes time.Time, datasPostagens []time.Time) []DiaCor {
 	for i := range vetorDias {
 		vetorDias[i] = DiaCor{}
 		vetorDias[i].Numero = strconv.Itoa(i + 1)
-		vetorDias[i].Cor = "padrao"
+		vetorDias[i].Cor = "dia" // cor padrao
 		for _, d := range postagens {
 			if d == i {
-				vetorDias[i].Cor = "post"
+				vetorDias[i].Cor = "diaCheio" // cor para dias selecionados com postagem
 				break
 			}
 		}
@@ -67,11 +67,11 @@ func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time
 	mesAno1 := MesAno{}
 	mesAno1.Dias = VetorDiasMes(inicioMes1, datasPostagens)
 	mesAno1.Mes = mapaMeses[int(data1.Month())] // aparece no titulo do calendario
-	mesAno1.Ano = strconv.Itoa(inicioMes1.Year())
+	mesAno1.Ano = inicioMes1.Format("06")       // pegando o ano
 
 	// inclui tag de cor para dia atual
 	if data1Atual {
-		mesAno1.Dias[data1.Day()+1].Cor = "atual"
+		mesAno1.Dias[data1.Day()-1].Cor = "diaAtual"
 	}
 
 	// pega o mes anterior
@@ -80,19 +80,21 @@ func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time
 	mesAno2 := MesAno{}
 	mesAno2.Dias = VetorDiasMes(inicioMes2, datasPostagens)
 	mesAno2.Mes = mapaMeses[int(inicioMes2.Month())]
-	mesAno2.Ano = strconv.Itoa(inicioMes2.Year())
+	mesAno2.Ano = inicioMes2.Format("06") // pegando o ano
 
 	// inclui tag de cor para data selecionada se houver
 	if data1 != data2 {
 		if data1.Month() == data2.Month() && data1.Year() == data2.Year() {
-			mesAno1.Dias[data2.Day()+1].Cor = "selecionada"
+			mesAno1.Dias[data2.Day()+1].Cor = "diaSelecionado" // dia selecionado
 		} else {
 			if inicioMes2.Month() == data2.Month() && inicioMes2.Year() == data2.Year() {
-				mesAno2.Dias[data2.Day()+1].Cor = "selecionada"
+				mesAno2.Dias[data2.Day()+1].Cor = "diaSelecionado" // dia selecionado
 			}
 		}
 	}
-	c.MesAno = append(c.MesAno, mesAno1, mesAno2)
-	return
+	c.MesAno = append(c.MesAno, mesAno2, mesAno1)
+}
 
+func DataFormatadaParaCard(aplicacao *Aplicacao, epoca uint64) string {
+	return aplicacao.DataDaEpoca(epoca).Format("02/01/2006")
 }
