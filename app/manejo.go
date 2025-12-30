@@ -16,6 +16,8 @@ import (
 
 var NomesCategorias = [6]string{"meme", "fofoca", "causo", "musica", "ideia", "livro"}
 
+const maxLetrasCard = 200
+
 type InformacaoCabecalho struct {
 	Arroba string
 	// Ativo           string
@@ -216,8 +218,8 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
-			if len(conteudoTexto.Conteudo) > 200 {
-				c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			if len(conteudoTexto.Conteudo) > maxLetrasCard {
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
 			} else {
 				c.ConteudoParcial = conteudoTexto.Conteudo
 			}
@@ -253,7 +255,11 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
-			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			if len(conteudoTexto.Conteudo) > maxLetrasCard {
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
+			} else {
+				c.ConteudoParcial = conteudoTexto.Conteudo
+			}
 			return
 		} else {
 			c.Vazio = true
@@ -286,7 +292,11 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
-			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			if len(conteudoTexto.Conteudo) > maxLetrasCard {
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
+			} else {
+				c.ConteudoParcial = conteudoTexto.Conteudo
+			}
 			return
 		} else {
 			c.Vazio = true
@@ -319,7 +329,11 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
-			c.ConteudoParcial = conteudoTexto.Conteudo[:200]
+			if len(conteudoTexto.Conteudo) > maxLetrasCard {
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
+			} else {
+				c.ConteudoParcial = conteudoTexto.Conteudo
+			}
 			return
 		} else {
 			c.Vazio = true
@@ -352,7 +366,11 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoHash.Data)
-			c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
+			if len(conteudoHash.Hash.String()) > maxLetrasCard {
+				c.ConteudoParcial = conteudoHash.Hash.String()[:maxLetrasCard]
+			} else {
+				c.ConteudoParcial = conteudoHash.Hash.String()
+			}
 			return
 		} else {
 			c.Vazio = true
@@ -385,7 +403,11 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoHash.Data)
-			c.ConteudoParcial = conteudoHash.Hash.String()[0:200]
+			if len(conteudoHash.Hash.String()) > maxLetrasCard {
+				c.ConteudoParcial = conteudoHash.Hash.String()[:maxLetrasCard]
+			} else {
+				c.ConteudoParcial = conteudoHash.Hash.String()
+			}
 			return
 		} else {
 			c.Vazio = true
