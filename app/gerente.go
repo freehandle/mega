@@ -2,7 +2,8 @@ package app
 
 import (
 	"fmt"
-	"iu/auth"
+
+	"github.com/freehandle/iu/auth"
 
 	"github.com/freehandle/breeze/crypto"
 )

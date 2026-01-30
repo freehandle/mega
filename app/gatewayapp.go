@@ -70,7 +70,7 @@ func MegaParaBreeze(action []byte, epoch uint64) []byte {
 	}
 	bytes := []byte{0, breeze.IVoid}                     // Breeze Void instruction version 0
 	util.PutUint64(epoch+256, &bytes)                    // epoch (mega)
-	bytes = append(bytes, 1, 1, 0, 0, attorney.VoidType) // mega protocol code + palcos Void instruction code
+	bytes = append(bytes, 1, 2, 0, 0, attorney.VoidType) // mega protocol code + palcos Void instruction code
 	bytes = append(bytes, action[8:]...)                 //
 	return bytes
 }

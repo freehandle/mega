@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"iu/auth"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/freehandle/iu/auth"
 
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/breeze/util"
@@ -86,10 +87,13 @@ func (p *Aplicacao) Rodar(ctx context.Context) {
 						}
 					}
 				} else if tipoHandles == attorney.VoidType {
-					p.Indice.IncorporaAcao(BreezeParaMega(acao))
-					if a := BreezeParaMega(acao); validador.Validate(a) {
-						p.Indice.IncorporaAcao(a)
-						// fmt.Println("validou acao")
+					// Preciso testar se é um void do MEGA
+					if acao[10] == 1 && acao[11] == 2 && acao[12] == 0 && acao[13] == 0 {
+						p.Indice.IncorporaAcao(BreezeParaMega(acao))
+						if a := BreezeParaMega(acao); validador.Validate(a) {
+							p.Indice.IncorporaAcao(a)
+							// fmt.Println("validou acao")
+						}
 					}
 				}
 			}
