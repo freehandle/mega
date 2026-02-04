@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -29,7 +28,6 @@ func main() {
 			caminhoBlocos, _ = strings.CutPrefix(env, "CAMINHO_BLOCOS=")
 		}
 	}
-	fmt.Println(senhaEmail)
 
 	pk := crypto.PrivateKeyFromString("e18e6528bd958000e51553f1828456c96509a3daa595421e24890d3153962297bb46f0c6a41ffc8ca179f3429d2584f103f66e540e21a197a45295ca8aa045de")
 	token := pk.PublicKey()
