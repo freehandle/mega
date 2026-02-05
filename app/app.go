@@ -58,7 +58,7 @@ func (p *Aplicacao) Rodar(ctx context.Context) {
 			}
 			if novidade[0] == 0 {
 				if len(novidade) >= 9 {
-					epoca, _ := util.ParseUint64(novidade[1:], 1)
+					epoca, _ := util.ParseUint64(novidade, 1)
 					mutacoes := validador.Mutations()
 					p.Estado.Incorporate(mutacoes)
 					validador = p.Estado.Validator()
