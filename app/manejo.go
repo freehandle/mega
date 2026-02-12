@@ -658,7 +658,7 @@ func (a *Aplicacao) ManejoSignin(w http.ResponseWriter, r *http.Request) {
 	if _, ok := a.Convidar[hash]; ok || len(a.Convidar) == 0 {
 		view := ViewConvite{
 			Cabecalho: InformacaoCabecalho{
-				NomeMucua: "",
+				NomeMucua: a.NomeMucua,
 				// Ativo:           "",
 				// LinkSelecionada: "",
 				Arroba: "",
