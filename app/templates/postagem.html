@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIGA - Make Internet Great Again</title>
-    <link rel="stylesheet" href="/{{.NomeMucua}}/static/style.css">
-    <link rel="stylesheet" href="/{{.NomeMucua}}/static/styleMobile.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/style.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/styleMobile.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
@@ -14,16 +14,16 @@
 </head>
 <body class="corTerciaria">
     <header>
-        <h1 class="sixtyfour">Jornal de {{.}}</h1>
+        <h1 class="sixtyfour">Jornal de {{.Arroba}}</h1>
     </header>
     
     <div class="conteudo">
         <div class="postagem">
-            <form method="post" action="/{{.NomeMucua}}/publica">
+            <form method="post" action="{{.NomeMucua}}/publica">
                 <input class="none" type="hidden" name="arroba" value="{{.}}" readonly/>
             <div id="card-1" class="cardInput sombraG">
                 <div class="cabecalhoCard corPrimaria">
-                        <img class="imgP" src="/{{.NomeMucua}}/img/zoom.png" alt="categoria postar" >
+                        <img class="imgP" src="{{.NomeMucua}}/img/zoom.png" alt="categoria postar" >
                         <p class="tituloCabecalho">Postagem</p>
                 </div>
                 <p class="textoCard">Selecione o conteúdo que deseja postar</p>
@@ -45,7 +45,7 @@
                 <br>
             </div>
             <div class="botoes">
-                <button onclick="window.location.href='/{{.NomeMucua}}/jornal'" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </button>
+                <button onclick="window.location.href='{{.NomeMucua}}/jornal'" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </button>
                 <button id="botaoPostar" type="submit" class="corPrimaria sombraP botaoPrimario tituloBotao"> Adicionar </button>
             </div>
         </form>

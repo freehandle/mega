@@ -486,7 +486,11 @@ func (a *Aplicacao) ManejoPostagem(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, fmt.Sprintf("%s/credenciais", a.NomeMucua), http.StatusSeeOther)
 		return
 	}
-	if err := a.templates.ExecuteTemplate(w, "postagem.html", arroba); err != nil {
+	view := InformacaoCabecalho{
+		Arroba:    arroba,
+		NomeMucua: a.NomeMucua,
+	}
+	if err := a.templates.ExecuteTemplate(w, "postagem.html", view); err != nil {
 		log.Println(err)
 		return
 	}
