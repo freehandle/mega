@@ -857,5 +857,5 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 		log.Println("erro ao recuperar arroba a partir do token")
 		return
 	}
-	http.Redirect(w, r, fmt.Sprintf("%s/jornal/%s", a, a.NomeMucua, arroba), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("%s/jornal/%s", a.NomeMucua, arroba), http.StatusSeeOther)
 }
