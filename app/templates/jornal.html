@@ -22,7 +22,7 @@
             <img class="imgP" id="compartilhar" src="{{.NomeMucua}}/img/compartilhar.png" alt="compartilhar jornal">
         </button>  
         {{if .Logado}}
-        <a href="{{.NomeMucua}}/sair" class="sombraP corErro"> 
+        <a class="fakebutton" href="{{.NomeMucua}}/sair" class="sombraP corErro"> 
             <p id="textoSair">Sair</p>
             <img class="imgP" id="fecharSessao" src="{{.NomeMucua}}/img/fechar.png" alt="fechar sessão">
         </a>
@@ -58,7 +58,7 @@
                 </div>
             </div>
     
-            <div class="carrossel">
+            <div class="carrosselmae">
                 <div class="carrossel">
                     {{range .Cards}}
                     <section class="listaCards" data-categoria={{.CategoriaMin}}>
