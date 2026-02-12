@@ -5,23 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIGA - Make Internet Great Again</title>
-    <link rel="stylesheet" href="{{.NomeMucua}}//static/style.css">
-    <link rel="stylesheet" href="{{.NomeMucua}}//static/styleMobile.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/style.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/styleMobile.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
     <link rel="icon" href="{{.NomeMucua}}//img/favicon.ico" type="image/x-icon">
+    <script src="{{.NomeMucua}}/static/filtros.js"></script>
 </head>
 <body class="corTerciaria">
     <header>
-        <a href="{{.NomeMucua}}//meu_jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
+        <a href="{{.NomeMucua}}/meu_jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
         <button onclick="compartilharJornal ()" class="sombraP corSecundaria"> 
             <p id="textoCompartilhar" class="tituloBotao">Compartilhar</p>
-            <img class="imgP" id="compartilhar" src="{{.NomeMucua}}//img/compartilhar.png" alt="compartilhar jornal">
+            <img class="imgP" id="compartilhar" src="{{.NomeMucua}}/img/compartilhar.png" alt="compartilhar jornal">
         </button>  
         <button onclick="logout()" class="sombraP corErro"> 
             <p id="textoSair">Sair</p>
-            <img class="imgP" id="fecharSessao" src="{{.NomeMucua}}//img/fechar.png" alt="fechar sessão">
+            <img class="imgP" id="fecharSessao" src="{{.NomeMucua}}/img/fechar.png" alt="fechar sessão">
         </button>
     </header>
     
@@ -29,15 +30,15 @@
         <div class="postagens">
             <div class="categorias">                
                 <div id="fofoca" class="categoria" onclick="selecionarAba(this)">
-                    <img class="imgM" src="{{.NomeMucua}}//img/fofoca.png" alt="categoria fofoca">
+                    <img class="imgM" src="{{.NomeMucua}}/img/fofoca.png" alt="categoria fofoca">
                     <p>Fofoca</p>
                 </div>
                 <div id="causo" class="categoria" onclick="selecionarAba(this)">
-                    <img class="imgM" src="{{.NomeMucua}}//img/causo.png" alt="categoria causo">
+                    <img class="imgM" src="{{.NomeMucua}}/img/causo.png" alt="categoria causo">
                     <p>Causo</p>
                 </div>
                 <div id="ideia" class="categoria" onclick="selecionarAba(this)">
-                    <img class="imgM" src="{{.NomeMucua}}//img/ideia.png" alt="categoria ideia">
+                    <img class="imgM" src="{{.NomeMucua}}/img/ideia.png" alt="categoria ideia">
                     <p>Ideia</p>
                 </div>
                 <div id="livro" class="categoria" onclick="selecionarAba(this)">
@@ -84,7 +85,7 @@
                 </div> 
             </div> 
             <div class="botoes">  
-                <button onclick="window.location.href='{{.NomeMucua}}//postagem'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
+                <button onclick="window.location.href='{{.NomeMucua}}/postagem'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
             </div>
         </div>
         <div id="divisoria"></div>
