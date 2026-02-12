@@ -49,6 +49,7 @@ type VerPagina struct {
 
 // Para construir a pagina de um post especifico aberto para leitura post_aberto.html
 type PaginaPostAberto struct {
+	NomeMucua    string
 	Categoria    string
 	CategoriaMin string
 	Arroba       string
@@ -68,6 +69,7 @@ type ConteudoCard struct {
 
 // Para construir a pagina de um jornal sem login jornal.html
 type PaginaJornal struct {
+	NomeMucua  string
 	Arroba     string         //dono do jornal
 	Cards      []ConteudoCard //vetor com conteudo dos cards
 	Calendario Calendario
@@ -522,8 +524,9 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pagina := PaginaJornal{
-		Arroba: ver.Usuario,
-		Cards:  []ConteudoCard{},
+		NomeMucua: a.NomeMucua,
+		Arroba:    ver.Usuario,
+		Cards:     []ConteudoCard{},
 	}
 
 	// Criando calendario
@@ -567,6 +570,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	pagina := PaginaPostAberto{
+		NomeMucua:    a.NomeMucua,
 		Categoria:    ver.Categoria,
 		Arroba:       ver.Usuario,
 		CategoriaMin: strings.ToLower(ver.Categoria),
@@ -729,7 +733,11 @@ func (a *Aplicacao) ManejoCredenciais(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/jornal/"+arroba, http.StatusSeeOther)
 		return
 	}
-	if err := a.templates.ExecuteTemplate(w, "credenciais.html", a.NomeMucua); err != nil {
+	view := InformacaoCabecalho{
+		NomeMucua: a.NomeMucua,
+	}
+
+	if err := a.templates.ExecuteTemplate(w, "credenciais.html", view); err != nil {
 		log.Println(err)
 	}
 }
@@ -845,7 +853,5 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 		log.Println("erro ao recuperar arroba a partir do token")
 		return
 	}
-	if err := a.templates.ExecuteTemplate(w, "jornal.html", arroba); err != nil {
-		log.Println(err)
-	}
+	http.Redirect(w, r, fmt.Sprintf("/jornal/%s", arroba), http.StatusSeeOther)
 }

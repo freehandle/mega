@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Categoria}}</title>
-    <link rel="stylesheet" href="../static/style.css">
-    <link rel="stylesheet" href="../static/styleMobile.css">
-    <script src="../static/filtros.js"></script>
-    <script src="../static/login.js"></script>
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/style.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/styleMobile.css">
+    <script src="{{.NomeMucua}}/static/filtros.js"></script>
+    <!-- <script src="../static/login.js"></script>
     <script src="../static/verificacaoLogin.js"></script>
     <script src="../static/carregarPostagem.js"></script>
     <script src="../static/verificadorDatas.js"></script>
-    <script src="../static/compartilharJornal.js"></script>
+    <script src="../static/compartilharJornal.js"></script> -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
-    <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{{.NomeMucua}}/img/favicon.ico" type="image/x-icon">
 </head>
 <body class="corTerciaria">
     <header>
-        <a href="jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
+        <a href="{{.NomeMucua}}/jornal.html"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
         <button onclick="compartilharJornal ()" class="sombraP corSecundaria"> 
             <p id="textoCompartilhar" class="tituloBotao">Compartilhar</p>
-            <img class="imgP" id="compartilhar" src="../img/compartilhar.png" alt="compartilhar jornal">
+            <img class="imgP" id="compartilhar" src="{{.NomeMucua}}/img/compartilhar.png" alt="compartilhar jornal">
         </button> 
     </header>
     
@@ -30,7 +30,7 @@
         <article class="card sombraG listaCards">
             <div class="data-categoria">
                 <div class="cabecalhoCard corPrimaria">
-                    <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                    <img class="imgP" src="{{.NomeMucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
                     <p class="tituloCabecalho">{{.Categoria}}</p>
                     </div>
                     <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
@@ -44,7 +44,7 @@
         <article class="card sombraG listaCards">
             <div class="data-categoria">
                 <div class="cabecalhoCard corPrimaria">
-                    <img class="imgP" src="../img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                    <img class="imgP" src="{{.NomeMucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
                     <p class="tituloCabecalho">{{.Categoria}}</p>
                     </div>
                     <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>

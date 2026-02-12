@@ -1,17 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIGA - Make Internet Great Again</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <link rel="stylesheet" href="/static/styleMobile.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/style.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/styleMobile.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
-    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
-
+    <link rel="icon" href="{{.NomeMucua}}/img/favicon.ico" type="image/x-icon">
 </head>
 <body class="corTerciaria">
     <header>
@@ -19,11 +17,11 @@
     </header>
     <div id="cardLogin" class="cardLogin sombraG">
         <div class="cabecalhoCard corDestaque">
-                <img class="imgP" src="../img/miga.png" alt="categoria fofoca" >
+                <img class="imgP" src="{{.NomeMucua}}/img/miga.png" alt="categoria fofoca" >
                 <p class="tituloLogin">Faça login para acessar</p>
         </div>
         <div class="espacamento formularioLogin">
-            <form action="/catraca" method="post">
+            <form action="{{.NomeMucua}}/catraca" method="post">
                 <label for="usuario" class="textoCard">Adicione seu usuário cadastrado</label>
                 <input class="textoCard" type="text" id="usuario" name="usuario" placeholder="Usuário"><br>
                 <br>
