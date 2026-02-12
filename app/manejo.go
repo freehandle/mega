@@ -483,7 +483,7 @@ func (a *Aplicacao) ManejoPostagem(w http.ResponseWriter, r *http.Request) {
 	strToken := a.Autor(r)
 	arroba, ok := a.Indice.TokenParaArroba[crypto.TokenFromString(strToken)]
 	if strToken == "" || !ok {
-		http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("%s/credenciais", a.NomeMucua), http.StatusSeeOther)
 		return
 	}
 	if err := a.templates.ExecuteTemplate(w, "postagem.html", arroba); err != nil {
@@ -718,19 +718,19 @@ func (a *Aplicacao) ManejoCatraca(w http.ResponseWriter, r *http.Request) {
 			// fmt.Println("cookie value", sessao.Value)
 			// fmt.Printf("%+v\n", *sessao)
 			http.SetCookie(w, sessao)
-			end := "/jornal/" + arroba
+			end := fmt.Sprintf("%s/jornal/%s", a.NomeMucua, arroba)
 			// a.Indice.ArrobaParaJornal[arroba] = &indice.Jornal{}
 			http.Redirect(w, r, end, http.StatusSeeOther)
 			return
 		}
 	}
-	http.Redirect(w, r, "/credenciais", http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("%s/credenciais", a.NomeMucua), http.StatusSeeOther)
 }
 
 func (a *Aplicacao) ManejoCredenciais(w http.ResponseWriter, r *http.Request) {
 	arroba, _ := a.Gerente.SessionUser(r)
 	if arroba != "" {
-		http.Redirect(w, r, "/jornal/"+arroba, http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("%s/jornal/%s", a.NomeMucua, arroba), http.StatusSeeOther)
 		return
 	}
 	view := InformacaoCabecalho{
