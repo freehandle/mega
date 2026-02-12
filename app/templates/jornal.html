@@ -1,4 +1,4 @@
-
+{{$mucua:=.NomeMucua}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,7 +61,7 @@
                         {{if .Vazio}}
                         <article class="cardVazio sombraG" data-categoria="{{.CategoriaMin}}">
                             <div class="cabecalhoCard corPrimaria">
-                                <img class="imgP" src="{{.NomeMucua}}//img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                                <img class="imgP" src="{{$mucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
                                 <p class="tituloCabecalho">{{.Categoria}}</p>
                             </div>
                             <br>
@@ -70,7 +70,7 @@
                         {{else}}
                         <article class="card sombraG" data-categoria="{{.CategoriaMin}}">
                             <div class="cabecalhoCard corPrimaria">
-                                <img class="imgP" src="{{.NomeMucua}}//img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                                <img class="imgP" src="{{$mucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
                                 <p class="tituloCabecalho">{{.Categoria}}</p>
                             </div>
                             <p class="textoCard dataCard" id="dataCard">{{.Data}}</p>
