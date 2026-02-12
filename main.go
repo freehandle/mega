@@ -49,7 +49,7 @@ func main() {
 	aplicacao.Novidades = novidades
 	aplicacao.Estado = estado.Genesis(0)
 	aplicacao.Indice = indice.NovoIndice()
-	aplicacao.GenesisTime = time.Date(2025, time.December, 24, 15, 10, 10, 0, time.UTC) // colocado à mao
+	aplicacao.GenesisTime = time.Date(2025, time.August, 21, 15, 10, 10, 0, time.UTC) // colocado à mao
 	aplicacao.Intervalo = time.Second
 	aplicacao.Gateway = app.PorteiraDeCanal(sender, pk)
 	// aplicacao.Gateway = app.PorteiraInternet(gatewayConn, pk)
