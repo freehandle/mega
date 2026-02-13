@@ -129,7 +129,7 @@ function filtrarPostagensPorDia() {
   });
 }
 
-function compartilharJornal () {
+function compartilharJornal() {
     const url = window.location.href;
 
     navigator.clipboard.writeText(url);
