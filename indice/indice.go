@@ -163,7 +163,6 @@ func (i *Indice) IncorporaAcao(dados []byte) {
 		i.IncorporaFofoca(acao)
 	case acoes.APostarIdeia:
 		acao := acoes.LeIdeia(dados)
-		// fmt.Printf("%+v\n", acao)
 		i.IncorporaIdeia(acao)
 	case acoes.APostarLivro:
 		acao := acoes.LeLivro(dados)

@@ -1,7 +1,6 @@
 package estado
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/freehandle/breeze/crypto"
@@ -96,7 +95,6 @@ func (e *EstadoMutante) Validate(dados []byte) bool {
 			return false
 		}
 		ultima := e.UltimaPublicao(acao.Autor, acoes.APostarIdeia)
-		fmt.Println("ultima em \n", ultima)
 		if ultima > 0 && (acao.Epoca < ultima+LapsoIdeia) {
 			return false
 		}
