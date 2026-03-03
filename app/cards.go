@@ -47,8 +47,9 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			// por data, vai procurar a data pedida
 			if paraMontar.Tipo == "data" {
-				for _, post := range paraMontar.Jornal.Ideias {
-					if post.Data == paraMontar.Data {
+				for n := len(paraMontar.Jornal.Ideias) - 1; n >= 0; n-- {
+					post := paraMontar.Jornal.Ideias[n]
+					if post.Data <= paraMontar.Data {
 						conteudoTexto = post
 						break
 					}

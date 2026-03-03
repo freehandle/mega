@@ -1,12 +1,11 @@
 package app
 
 import (
-	"strconv"
 	"time"
 )
 
 type DiaCor struct {
-	Numero string
+	Numero int
 	Cor    string // padrao, selecionada, post ou atual -> cinza, azul, cinza escuro ou vermelho
 }
 
@@ -17,7 +16,11 @@ type MesAno struct {
 }
 
 type Calendario struct {
-	MesAno []MesAno
+	Atual       MesAno
+	Anterior    MesAno
+	RefAnterior int
+	RefProximo  int
+	RefAtual    int
 }
 
 var mapaMeses = map[int]string{1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril", 5: "Maio", 6: "Junho",
@@ -43,7 +46,7 @@ func VetorDiasMes(inicioMes time.Time, datasPostagens []time.Time) []DiaCor {
 	vetorDias := make([]DiaCor, ultimoDia.Day())
 	for i := range vetorDias {
 		vetorDias[i] = DiaCor{}
-		vetorDias[i].Numero = strconv.Itoa(i + 1)
+		vetorDias[i].Numero = i + 1
 		vetorDias[i].Cor = "dia" // cor padrao
 		for _, d := range postagens {
 			if d == i {
@@ -60,7 +63,8 @@ func VetorDiasMes(inicioMes time.Time, datasPostagens []time.Time) []DiaCor {
 //	é data selecionada se data 1 for a data atual.
 func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time.Time, datasPostagens []time.Time) {
 
-	c.MesAno = []MesAno{}
+	c.Atual = MesAno{}
+	c.Anterior = MesAno{}
 
 	// pega a primeira data do mes 1
 	inicioMes1 := time.Date(data1.Year(), data1.Month(), 1, 0, 0, 0, 0, data1.Location())
@@ -74,8 +78,15 @@ func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time
 		mesAno1.Dias[data1.Day()-1].Cor = "diaAtual"
 	}
 
-	// pega o mes anterior
+	// pega o mes anterior e proximo
 	mesAnterior := inicioMes1.Add(-time.Second)
+	c.RefAnterior = mesAnterior.Year()*100 + int(mesAnterior.Month())
+
+	mesProximo := inicioMes1.AddDate(0, 1, 0)
+	c.RefProximo = mesProximo.Year()*100 + int(mesProximo.Month())
+
+	c.RefAtual = inicioMes1.Year()*100 + int(inicioMes1.Month())
+
 	inicioMes2 := time.Date(mesAnterior.Year(), mesAnterior.Month(), 1, 0, 0, 0, 0, mesAnterior.Location())
 	mesAno2 := MesAno{}
 	mesAno2.Dias = VetorDiasMes(inicioMes2, datasPostagens)
@@ -92,7 +103,8 @@ func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time
 			}
 		}
 	}
-	c.MesAno = append(c.MesAno, mesAno2, mesAno1)
+	c.Atual = mesAno1
+	c.Anterior = mesAno2
 }
 
 func DataFormatadaParaCard(aplicacao *Aplicacao, epoca uint64) string {

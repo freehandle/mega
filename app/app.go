@@ -44,6 +44,10 @@ func (p *Aplicacao) DataDaEpoca(epoca uint64) time.Time {
 	return p.GenesisTime.Add(time.Duration(epoca) * p.Intervalo)
 }
 
+func (p *Aplicacao) EpocaDaData(data time.Time) uint64 {
+	return uint64(data.Sub(p.GenesisTime) / p.Intervalo)
+}
+
 func (p *Aplicacao) Rodar(ctx context.Context) {
 	validador := p.Estado.Validator()
 	for {

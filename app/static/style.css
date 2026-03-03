@@ -35,6 +35,10 @@ p{
     margin: 0;
 }
 
+.semmargem {
+    margin: 0;
+}
+
 textarea{
     margin: 1% 1% 0 5%;
     width: 90%;
@@ -497,7 +501,7 @@ select{
     color: #000;
 }
 
-.mes a {
+.botaocalendario {
     color: #1D6CEB;
     text-decoration: none;
     font-size: 1.5em;

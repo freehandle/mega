@@ -235,6 +235,13 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 
 	// Criando calendario
 	agora := time.Now()
+	if ver.Data != "" {
+		data, erro := time.Parse("20060102", ver.Data)
+		if erro == nil {
+			agora = data
+		}
+	}
+	fmt.Println(agora)
 	pagina.Calendario = Calendario{}
 
 	// A FAZER :
@@ -250,11 +257,8 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 		paraMontar.Categoria = ver.Categoria
 	}
 	if ver.Data != "" {
-		if dataConvertida, err := strconv.ParseUint(ver.Data, 10, 64); err != nil {
-			paraMontar.Data = dataConvertida
-		} else {
-			log.Println("Erro ao converter data")
-		}
+		paraMontar.Data = a.EpocaDaData(agora)
+		fmt.Println(paraMontar.Data)
 	}
 	pagina.Cards = CriaCards(paraMontar)
 	if err := a.templates.ExecuteTemplate(w, "jornal.html", pagina); err != nil {

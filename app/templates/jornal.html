@@ -1,4 +1,7 @@
 {{$mucua:=.NomeMucua}}
+{{$arroba:=.Arroba}}
+{{$refatual:=.Calendario.RefAtual}}
+{{$refanterior:=.Calendario.RefAnterior}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,35 +61,34 @@
                 </div>
             </div>
     
-            <div class="carrosselmae">
-                <div class="carrossel">
-                    {{range .Cards}}
-                    <section class="listaCards" data-categoria={{.CategoriaMin}}>
-                        {{if .Vazio}}
-                        <article class="cardVazio sombraG" data-categoria="{{.CategoriaMin}}">
-                            <div class="cabecalhoCard corPrimaria">
-                                <img class="imgP" src="{{$mucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
-                                <p class="tituloCabecalho">{{.Categoria}}</p>
-                            </div>
-                            <br>
-                            <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
-                        </article>
-                        {{else}}
-                        <article class="card sombraG" data-categoria="{{.CategoriaMin}}">
-                            <div class="cabecalhoCard corPrimaria">
-                                <img class="imgP" src="{{$mucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
-                                <p class="tituloCabecalho">{{.Categoria}}</p>
-                            </div>
-                            <p class="textoCard dataCard" id="dataCard">{{.Data}}</p>
-                            <br>
-                            <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
-                            <br>
-                        </article>
-                        {{end}}
-                    </section>
+            <div class="carrossel">
+                {{range .Cards}}
+                <section class="listaCards" data-categoria={{.CategoriaMin}}>
+                    {{if .Vazio}}
+                    <article class="cardVazio sombraG" data-categoria="{{.CategoriaMin}}">
+                        <div class="cabecalhoCard corPrimaria">
+                            <img class="imgP" src="{{$mucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                            <p class="tituloCabecalho">{{.Categoria}}</p>
+                        </div>
+                        <br>
+                        <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
+                    </article>
+                    {{else}}
+                    <article class="card sombraG" data-categoria="{{.CategoriaMin}}">
+                        <div class="cabecalhoCard corPrimaria">
+                            <img class="imgP" src="{{$mucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                            <p class="tituloCabecalho">{{.Categoria}}</p>
+                        </div>
+                        <p class="textoCard dataCard" id="dataCard">{{.Data}}</p>
+                        <br>
+                        <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
+                        <br>
+                    </article>
                     {{end}}
-                </div> 
+                </section>
+                {{end}}
             </div> 
+            
             {{if .Logado}}
             <div class="botoes">  
                 <button onclick="window.location.href='{{.NomeMucua}}/postagem'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
@@ -95,16 +97,37 @@
         </div>
         <div id="divisoria"></div>
         <div class="calendario">
-            {{range .Calendario.MesAno}}
             <div class="mes sombraP">
-                <div class="tituloMes">{{.Mes}} '{{.Ano}}</div>
+                <div class="tituloMes">{{.Calendario.Anterior.Mes}} '{{.Calendario.Anterior.Ano}}</div>
                 <div class= "dias">
-                    {{range .Dias}}
-                    <p class="{{.Cor}}">{{.Numero}}</p>
+                    {{range .Calendario.Anterior.Dias}}
+                        {{if lt .Numero 10}}
+                        <a href="{{$mucua}}/jornal/{{$arroba}}/{{$refanterior}}0{{.Numero}}" class="{{.Cor}} semmargem">{{.Numero}}</a>
+                        {{else}}
+                        <a href="{{$mucua}}/jornal/{{$arroba}}/{{$refanterior}}{{.Numero}}" class="{{.Cor}} semmargem">{{.Numero}}</a>
+                        {{end}}
                     {{end}}
                 </div>
             </div>
-            {{end}}
+
+            <div class="mes sombraP">
+                <div class="tituloMes">
+                    <div class="navegacaoMes">
+                        <a class="botaocalendario" href="{{$mucua}}/jornal/{{.Arroba}}/{{.Calendario.RefAnterior}}01"> ◀ </a>
+                        <span class="nomeMes">{{.Calendario.Atual.Mes}} '{{.Calendario.Atual.Ano}}</span>
+                        <a class="botaocalendario" href="{{$mucua}}/jornal/{{.Arroba}}/{{.Calendario.RefProximo}}01"> ▶ </a>
+                    </div>
+                </div>
+                <div class= "dias">
+                    {{range .Calendario.Atual.Dias}}
+                        {{if lt .Numero 10}}
+                        <a href="{{$mucua}}/jornal/{{$arroba}}/{{$refatual}}0{{.Numero}}" class="{{.Cor}} semmargem">{{.Numero}}</a>
+                        {{else}}
+                        <a href="{{$mucua}}/jornal/{{$arroba}}/{{$refatual}}{{.Numero}}" class="{{.Cor}} semmargem">{{.Numero}}</a>
+                        {{end}}
+                    {{end}}
+                </div>
+            </div>
         </div>
     </div>
 </body>
