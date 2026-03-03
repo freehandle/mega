@@ -27,6 +27,7 @@
     select{
         padding: 5px 3px 5px 3px;
     }
+
     label{
         font-size: 1em;
         margin: 0 0 10px 0;
@@ -44,14 +45,8 @@
         border-radius: 10px 10px 0 0;
         box-shadow: 5px 5px 0 0 #000;
     }
-    .imgP {
-        height: 70%px;
-        width: auto;
-    }
-    .imgM {
-        height: 100%;
-        width: auto;
-    }
+
+    
     .espacamento{
         margin: 10px;
         padding: 10px;
@@ -92,7 +87,6 @@
             justify-content: space-between;
             overflow-x: scroll;
             scroll-snap-type: x mandatory;
-            gap: 5px;
             margin-bottom: 20px;
             width: 100%;
             scrollbar-width: none;
@@ -103,29 +97,13 @@
         }
 
         .carrossel{
-            gap: 10px;
             padding: 0 10px 10px 0;
         }
 
         .listaCards{
-            padding: 0 5px 5px 5px;
-            margin-bottom: 10px;
             width: 100%;            
         }
 
-        .card{
-            flex: 0 0 100px;
-            min-width: 200px;
-            min-height: 200px;            
-            padding-bottom: 15px;
-        }
-
-        .cardVazio{
-            flex: 0 0 100px;
-            min-width: 200px;
-            min-height: 200px;            
-            padding-bottom: 15px;
-        }
 
         .cardInput{
             margin: 0;
