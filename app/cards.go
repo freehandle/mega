@@ -85,8 +85,9 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			// por data, vai procurar a data pedida
 			if paraMontar.Tipo == "data" {
-				for _, post := range paraMontar.Jornal.Causos {
-					if post.Data == paraMontar.Data {
+				for n := len(paraMontar.Jornal.Causos) - 1; n >= 0; n-- {
+					post := paraMontar.Jornal.Causos[n]
+					if post.Data <= paraMontar.Data {
 						conteudoTexto = post
 						break
 					}
@@ -122,8 +123,9 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			// por data, vai procurar a data pedida
 			if paraMontar.Tipo == "data" {
-				for _, post := range paraMontar.Jornal.Musicas {
-					if post.Data == paraMontar.Data {
+				for n := len(paraMontar.Jornal.Musicas) - 1; n >= 0; n++ {
+					post := paraMontar.Jornal.Musicas[n]
+					if post.Data <= paraMontar.Data {
 						conteudoTexto = post
 						break
 					}
@@ -159,8 +161,9 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			// por data, vai procurar a data pedida
 			if paraMontar.Tipo == "data" {
-				for _, post := range paraMontar.Jornal.Fofocas {
-					if post.Data == paraMontar.Data {
+				for n := len(paraMontar.Jornal.Fofocas) - 1; n >= 0; n-- {
+					post := paraMontar.Jornal.Fofocas[n]
+					if post.Data <= paraMontar.Data {
 						conteudoTexto = post
 						break
 					}
@@ -196,8 +199,9 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			// por data, vai procurar a data pedida
 			if paraMontar.Tipo == "data" {
-				for _, post := range paraMontar.Jornal.Memes {
-					if post.Data == paraMontar.Data {
+				for n := len(paraMontar.Jornal.Memes) - 1; n >= 0; n-- {
+					post := paraMontar.Jornal.Memes[n]
+					if post.Data <= paraMontar.Data {
 						conteudoHash = post
 						break
 					}
@@ -233,8 +237,9 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			// por data, vai procurar a data pedida
 			if paraMontar.Tipo == "data" {
-				for _, post := range paraMontar.Jornal.Livros {
-					if post.Data == paraMontar.Data {
+				for n := len(paraMontar.Jornal.Livros) - 1; n >= 0; n-- {
+					post := paraMontar.Jornal.Livros[n]
+					if post.Data <= paraMontar.Data {
 						conteudoHash = post
 						break
 					}
