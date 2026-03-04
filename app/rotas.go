@@ -57,6 +57,7 @@ func NovaMucua(ctx context.Context, app *Aplicacao, port int, caminho string, se
 
 	mux.HandleFunc("/publica", app.ManejoPublica)
 	mux.HandleFunc("/sair", app.ManejoSair)
+	mux.HandleFunc("/conteudo/", app.ManejoConteudo)
 
 	//mux.HandleFunc("/uploadfile", procurador.OperadorUpload)
 	srv := &http.Server{

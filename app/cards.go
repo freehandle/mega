@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/freehandle/mega/indice"
@@ -22,7 +23,9 @@ type ConteudoCard struct {
 	CategoriaMin    string //categoria tudo minuscula
 	Vazio           bool   //se nao ha postagem da categoria -> true
 	Data            string //data da postagem
+	DataRef         string // data formatada para ir no endereco de referencia caso clicado
 	ConteudoParcial string // conteudo parcial da postagem (deve caber no card)
+	Texto           bool   // true se for texto, caso contrario é imagem
 }
 
 // Cria cards para mostrar no jornal a parti da data e categoria dadas
@@ -34,6 +37,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 	switch paraMontar.Categoria {
 
 	case "ideia":
+		c.Texto = true
 		c.Categoria = "Ideia"
 		c.CategoriaMin = paraMontar.Categoria
 		if len(paraMontar.Jornal.Ideias) > 0 {
@@ -49,7 +53,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			if paraMontar.Tipo == "data" {
 				for n := len(paraMontar.Jornal.Ideias) - 1; n >= 0; n-- {
 					post := paraMontar.Jornal.Ideias[n]
-					if post.Data <= paraMontar.Data {
+					if post.Data <= paraMontar.Data+24*3600 {
 						conteudoTexto = post
 						break
 					}
@@ -61,6 +65,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
+			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
 				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
 			} else {
@@ -72,6 +77,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			return
 		}
 	case "causo":
+		c.Texto = true
 		c.Categoria = "Causo"
 		c.CategoriaMin = paraMontar.Categoria
 		if len(paraMontar.Jornal.Causos) > 0 {
@@ -99,6 +105,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
+			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
 				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
 			} else {
@@ -110,6 +117,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			return
 		}
 	case "musica":
+		c.Texto = true
 		c.Categoria = "Música"
 		c.CategoriaMin = paraMontar.Categoria
 		if len(paraMontar.Jornal.Musicas) > 0 {
@@ -137,6 +145,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
+			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
 				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
 			} else {
@@ -148,6 +157,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			return
 		}
 	case "fofoca":
+		c.Texto = true
 		c.Categoria = "Fofoca"
 		c.CategoriaMin = paraMontar.Categoria
 		if len(paraMontar.Jornal.Fofocas) > 0 {
@@ -175,6 +185,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
+			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
 				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
 			} else {
@@ -213,11 +224,10 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoHash.Data)
-			if len(conteudoHash.Hash.String()) > maxLetrasCard {
-				c.ConteudoParcial = conteudoHash.Hash.String()[:maxLetrasCard]
-			} else {
-				c.ConteudoParcial = conteudoHash.Hash.String()
-			}
+			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoHash.Data)
+
+			c.ConteudoParcial = fmt.Sprintf("%s%s", conteudoHash.Hash.String(), conteudoHash.Tipo)
+
 			return
 		} else {
 			c.Vazio = true
@@ -251,11 +261,8 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			}
 			c.Vazio = false
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoHash.Data)
-			if len(conteudoHash.Hash.String()) > maxLetrasCard {
-				c.ConteudoParcial = conteudoHash.Hash.String()[:maxLetrasCard]
-			} else {
-				c.ConteudoParcial = conteudoHash.Hash.String()
-			}
+			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoHash.Data)
+			c.ConteudoParcial = fmt.Sprintf("%s%s", conteudoHash.Hash.String(), conteudoHash.Tipo)
 			return
 		} else {
 			c.Vazio = true

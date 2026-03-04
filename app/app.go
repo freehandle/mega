@@ -24,20 +24,21 @@ var arquivosTemplate []string = []string{
 }
 
 type Aplicacao struct {
-	Epoca       uint64
-	Credenciais crypto.PrivateKey
-	Token       crypto.Token
-	Gateway     *Porteira
-	Novidades   chan []byte
-	Estado      *estado.Estado
-	Indice      *indice.Indice
-	templates   *template.Template
-	GenesisTime time.Time
-	Intervalo   time.Duration
-	NomeMucua   string
-	Hostname    string
-	Convidar    map[crypto.Hash]struct{} // map of invite user hash to token
-	Gerente     *auth.SigninManager
+	Epoca           uint64
+	Credenciais     crypto.PrivateKey
+	Token           crypto.Token
+	Gateway         *Porteira
+	Novidades       chan []byte
+	Estado          *estado.Estado
+	Indice          *indice.Indice
+	templates       *template.Template
+	GenesisTime     time.Time
+	Intervalo       time.Duration
+	NomeMucua       string
+	Hostname        string
+	Convidar        map[crypto.Hash]struct{} // map of invite user hash to token
+	Gerente         *auth.SigninManager
+	CaminhoArquivos string
 }
 
 func (p *Aplicacao) DataDaEpoca(epoca uint64) time.Time {

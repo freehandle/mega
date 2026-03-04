@@ -74,15 +74,19 @@
                         <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
                     </article>
                     {{else}}
-                    <article class="card sombraG" data-categoria="{{.CategoriaMin}}">
+                    <article onclick="window.location.href='{{$mucua}}/jornal/{{$arroba}}/{{.CategoriaMin}}/{{.DataRef}}'" class="card sombraG" data-categoria="{{.CategoriaMin}}">
                         <div class="cabecalhoCard corPrimaria">
                             <img class="imgP" src="{{$mucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
                             <p class="tituloCabecalho">{{.Categoria}}</p>
                         </div>
                         <p class="textoCard dataCard" id="dataCard">{{.Data}}</p>
                         <br>
-                        <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
-                        <br>
+                        {{if .Texto}}
+                            <p class="textoCard textoLimitado">{{.ConteudoParcial}}</p>
+                            <br>
+                        {{else}}
+                            <img src="{{$mucua}}/conteudo/{{.ConteudoParcial}}" alt="imagem" style="width: 100%; height: auto;">
+                        {{end}}
                     </article>
                     {{end}}
                 </section>

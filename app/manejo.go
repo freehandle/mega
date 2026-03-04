@@ -2,8 +2,11 @@ package app
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,6 +15,7 @@ import (
 	"github.com/freehandle/breeze/crypto"
 	"github.com/freehandle/mega/indice"
 	"github.com/freehandle/mega/protocolo/acoes"
+	"github.com/freehandle/mega/protocolo/estado"
 )
 
 var NomesCategorias = [6]string{"meme", "fofoca", "causo", "musica", "ideia", "livro"}
@@ -37,6 +41,16 @@ type ViewConvite struct {
 type ViewPublicar struct {
 	Cabecalho InformacaoCabecalho
 	Tipo      string
+}
+
+type VerPostagem struct {
+	Cabecalho InformacaoCabecalho
+	Fofoca    bool
+	Ideia     bool
+	Musica    bool
+	Meme      bool
+	Livro     bool
+	Causo     bool
 }
 
 // Para puxar do endereco o tipo de pagina a ser construida
@@ -65,6 +79,29 @@ type PaginaJornal struct {
 	Arroba     string         //dono do jornal
 	Cards      []ConteudoCard //vetor com conteudo dos cards
 	Calendario Calendario
+}
+
+func (p *Aplicacao) Datas(j *indice.Jornal) []time.Time {
+	saida := make([]time.Time, 0)
+	for _, i := range j.Ideias {
+		saida = append(saida, p.DataDaEpoca(i.Data))
+	}
+	for _, i := range j.Memes {
+		saida = append(saida, p.DataDaEpoca(i.Data))
+	}
+	for _, i := range j.Musicas {
+		saida = append(saida, p.DataDaEpoca(i.Data))
+	}
+	for _, i := range j.Causos {
+		saida = append(saida, p.DataDaEpoca(i.Data))
+	}
+	for _, i := range j.Livros {
+		saida = append(saida, p.DataDaEpoca(i.Data))
+	}
+	for _, i := range j.Fofocas {
+		saida = append(saida, p.DataDaEpoca(i.Data))
+	}
+	return saida
 }
 
 func parteData(v string) bool {
@@ -185,33 +222,39 @@ func (a *Aplicacao) ManejoPostagem(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, fmt.Sprintf("%s/credenciais", a.NomeMucua), http.StatusSeeOther)
 		return
 	}
-	view := InformacaoCabecalho{
+	cabecalho := InformacaoCabecalho{
 		Arroba:    arroba,
 		NomeMucua: a.NomeMucua,
 	}
+	view := VerPostagem{
+		Cabecalho: cabecalho,
+	}
+	jornal := a.Indice.ArrobaParaJornal[arroba]
+	if jornal != nil {
+		view.Causo = len(jornal.Causos) == 0 || a.Epoca-jornal.Causos[len(jornal.Causos)-1].Data >= estado.LapsoCauso
+		view.Fofoca = len(jornal.Fofocas) == 0 || a.Epoca-jornal.Fofocas[len(jornal.Fofocas)-1].Data >= estado.LapsoFofoca
+		view.Meme = len(jornal.Memes) == 0 || a.Epoca-jornal.Memes[len(jornal.Memes)-1].Data >= estado.LapsoMeme
+		view.Musica = len(jornal.Musicas) == 0 || a.Epoca-jornal.Musicas[len(jornal.Musicas)-1].Data >= estado.LapsoMusica
+		view.Livro = len(jornal.Livros) == 0 || a.Epoca-jornal.Livros[len(jornal.Livros)-1].Data >= estado.LapsoLivro
+		view.Ideia = len(jornal.Ideias) == 0 || a.Epoca-jornal.Ideias[len(jornal.Ideias)-1].Data >= estado.LapsoIdeia
+	}
+
 	if err := a.templates.ExecuteTemplate(w, "postagem.html", view); err != nil {
 		log.Println(err)
 		return
 	}
 }
 
-// Gerenciador do template principal da aplicacao
-// func (a *Aplicacao) ManejoPrincipal(w http.ResponseWriter, r *http.Request) {
-// 	view := InformacaoCabecalho{
-// 		Arroba:    a.Autor(r),
-// 		NomeMucua: a.NomeMucua,
-// 		// Ativo:           "",
-// 		// LinkSelecionada: "",
-// 	}
-// 	if err := a.templates.ExecuteTemplate(w, "main.html", view); err != nil {
-// 		log.Println(err)
-// 	}
-// }
-
 // Manejo da pagina de jornal sem login
 func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 	strToken := a.Autor(r)
 	ver := ProcessaURL(r.URL.RequestURI())
+
+	if ver.Tipo == "postagem_aberta" {
+		a.ManejoPostAberto(w, r)
+		return
+	}
+
 	if ver.Tipo == "erro" {
 		log.Println("endereco nao esta em formato jornal ou contem erro")
 		http.NotFound(w, r)
@@ -234,19 +277,16 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Criando calendario
-	agora := time.Now()
+	selecionado := time.Now()
 	if ver.Data != "" {
 		data, erro := time.Parse("20060102", ver.Data)
 		if erro == nil {
-			agora = data
+			selecionado = data
 		}
 	}
-	fmt.Println(agora)
 	pagina.Calendario = Calendario{}
 
-	// A FAZER :
-	// precisa implementar check de selecao de data e trazer vetor de datas de postagens
-	pagina.Calendario.CriaCalendario(agora, true, agora, []time.Time{})
+	pagina.Calendario.CriaCalendario(selecionado, a.Datas(jornal))
 
 	paraMontar := ParaMontarCards{
 		Jornal:    jornal,
@@ -257,9 +297,10 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 		paraMontar.Categoria = ver.Categoria
 	}
 	if ver.Data != "" {
-		paraMontar.Data = a.EpocaDaData(agora)
+		paraMontar.Data = a.EpocaDaData(selecionado)
 		fmt.Println(paraMontar.Data)
 	}
+
 	pagina.Cards = CriaCards(paraMontar)
 	if err := a.templates.ExecuteTemplate(w, "jornal.html", pagina); err != nil {
 		log.Println(err)
@@ -277,6 +318,13 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 		log.Println("endereco nao e de uma postagem aberta ou contem erro")
 		return
 	}
+
+	datanum, err := time.Parse("20060201", ver.Data)
+	if err != nil {
+		return
+	}
+	epoca := a.EpocaDaData(datanum)
+
 	pagina := PaginaPostAberto{
 		NomeMucua:    a.NomeMucua,
 		Categoria:    ver.Categoria,
@@ -290,8 +338,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	case "causo":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Causos
 		for i := 0; i < len(posts); i++ {
-			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.Data {
+			if posts[i].Data >= epoca && posts[i].Data < epoca+24*3600 {
 				post_texto = posts[i]
 				break
 			}
@@ -299,8 +346,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	case "fofoca":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Fofocas
 		for i := 0; i < len(posts); i++ {
-			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.Data {
+			if posts[i].Data >= epoca && posts[i].Data < epoca+24*3600 {
 				post_texto = posts[i]
 				break
 			}
@@ -308,8 +354,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	case "ideia":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Ideias
 		for i := 0; i < len(posts); i++ {
-			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.Data {
+			if posts[i].Data >= epoca && posts[i].Data < epoca+24*3600 {
 				post_texto = posts[i]
 				break
 			}
@@ -317,8 +362,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	case "livro":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Livros
 		for i := 0; i < len(posts); i++ {
-			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.Data {
+			if posts[i].Data >= epoca && posts[i].Data < epoca+24*3600 {
 				post_hash = posts[i]
 				break
 			}
@@ -326,8 +370,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	case "meme":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Memes
 		for i := 0; i < len(posts); i++ {
-			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.Data {
+			if posts[i].Data >= epoca && posts[i].Data < epoca+24*3600 {
 				post_hash = posts[i]
 				break
 			}
@@ -335,8 +378,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	case "musica":
 		posts := a.Indice.ArrobaParaJornal[ver.Usuario].Musicas
 		for i := 0; i < len(posts); i++ {
-			datastr := strconv.FormatUint(posts[i].Data, 10)
-			if datastr == ver.Data {
+			if posts[i].Data >= epoca && posts[i].Data < epoca+24*3600 {
 				post_texto = posts[i]
 				break
 			}
@@ -351,7 +393,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	}
 	if post_hash != nil {
 		pagina.DataPostagem = ver.Data
-		pagina.Conteudo = post_hash.Hash.String()
+		pagina.Conteudo = fmt.Sprintf("%s%s", post_hash.Hash.String(), post_hash.Tipo)
 		pagina.TipoTexto = false
 	}
 	if err := a.templates.ExecuteTemplate(w, "post_aberto.html", pagina); err != nil {
@@ -462,99 +504,144 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "usuario desconhecido", http.StatusMethodNotAllowed)
 	// 	return
 	// }
+	erro := r.ParseMultipartForm(20000000)
+	if erro != nil {
+		fmt.Println(erro)
+		http.Error(w, "Não foi possivel subir multiform", http.StatusMethodNotAllowed)
+		return
+	}
+
 	tipo := r.FormValue("tipoConteudo")
 	conteudo := r.FormValue("textoConteudo")
-	// arroba := r.FormValue("arroba")
-	switch tipo {
-	case "causo":
-		causo := &acoes.PostarCauso{
-			Epoca:    a.Epoca,
-			Autor:    token,
-			Conteudo: conteudo,
-			// Data:     a.DataDaEpoca(a.Epoca),
-			Data: time.Now(),
-		}
-		if !causo.ValidarFormato() {
-			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
-			return
-		}
-		fmt.Println("causo válido, enviando para rede")
-		a.Gateway.Encaminha([]acoes.Acao{causo}, token, a.Epoca)
-	case "fofoca":
-		fofoca := &acoes.PostarFofoca{
-			Epoca:    a.Epoca,
-			Autor:    token,
-			Conteudo: conteudo,
-			// Data:     a.DataDaEpoca(a.Epoca),
-			Data: time.Now(),
-		}
-		if !fofoca.ValidarFormato() {
-			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
-			return
-		}
-		fmt.Println("fofoca válida, enviando para rede")
-		a.Gateway.Encaminha([]acoes.Acao{fofoca}, token, a.Epoca)
 
-	case "ideia":
-		ideia := &acoes.PostarIdeia{
-			Epoca:    a.Epoca,
-			Autor:    token,
-			Conteudo: conteudo,
-			// Data:     a.DataDaEpoca(a.Epoca),
-			Data: time.Now(),
-		}
-		if !ideia.ValidarFormato() {
-			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
-			return
-		}
-		fmt.Println("ideia válida, enviando para rede")
-		a.Gateway.Encaminha([]acoes.Acao{ideia}, token, a.Epoca)
+	if tipo == "livro" || tipo == "meme" {
 
-	case "livro":
-		livro := &acoes.PostarLivro{
-			Epoca:    a.Epoca,
-			Autor:    token,
-			Conteudo: crypto.BytesToHash([]byte(conteudo)),
-			// Data:     a.DataDaEpoca(a.Epoca),
-			Data: time.Now(),
-		}
-		if !livro.ValidarFormato() {
-			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+		arquivo, arqcabecalho, erro := r.FormFile("subir")
+		if erro != nil {
+			fmt.Println(erro)
+			http.Error(w, "Não foi possivel subir o arquivo", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("livro válido, enviando para rede")
-		a.Gateway.Encaminha([]acoes.Acao{livro}, token, a.Epoca)
+		if arqcabecalho.Size > 20000000 {
+			http.Error(w, "Tamanho do arquivo está muito grande", http.StatusMethodNotAllowed)
+			return
+		}
+		bytes, erro := io.ReadAll(arquivo)
+		if erro != nil {
+			http.Error(w, "Não foi possivel ler o arquivo", http.StatusMethodNotAllowed)
+			return
+		}
+		extensao := filepath.Ext(arqcabecalho.Filename)
+		hash := crypto.Hasher(bytes)
+		nomearquivo := fmt.Sprintf("%s%s", hash.String(), extensao) // salva o hash.extensao
+		caminho := filepath.Join(a.CaminhoArquivos, nomearquivo)
 
-	case "meme":
-		meme := &acoes.PostarMeme{
-			Epoca:    a.Epoca,
-			Autor:    token,
-			Conteudo: crypto.BytesToHash([]byte(conteudo)),
-			// Data:     a.DataDaEpoca(a.Epoca),
-			Data: time.Now(),
-		}
-		if !meme.ValidarFormato() {
-			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+		arquivocriado, erro := os.Create(caminho)
+		if erro != nil {
+			http.Error(w, "Não foi possivel salvar o arquivo", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("meme válido, enviando para rede")
-		a.Gateway.Encaminha([]acoes.Acao{meme}, token, a.Epoca)
 
-	case "musica":
-		musica := &acoes.PostarMusica{
-			Epoca:    a.Epoca,
-			Autor:    token,
-			Conteudo: conteudo,
-			// Data:     a.DataDaEpoca(a.Epoca),
-			Data: time.Now(),
-		}
-		if !musica.ValidarFormato() {
-			http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+		_, erro = arquivocriado.Write(bytes)
+		if erro != nil {
+			http.Error(w, "Não foi possivel escrever o arquivo", http.StatusMethodNotAllowed)
 			return
 		}
-		fmt.Println("música válida, enviando para rede")
-		a.Gateway.Encaminha([]acoes.Acao{musica}, token, a.Epoca)
+		switch tipo {
+		case "livro":
+			livro := &acoes.PostarLivro{
+				Epoca:       a.Epoca,
+				Autor:       token,
+				Conteudo:    hash,
+				TipoArquivo: extensao,
+				Data:        time.Now(),
+			}
+			if !livro.ValidarFormato() {
+				http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+				return
+			}
+			fmt.Println("livro válido, enviando para rede")
+			a.Gateway.Encaminha([]acoes.Acao{livro}, token, a.Epoca)
+
+		case "meme":
+			meme := &acoes.PostarMeme{
+				Epoca:       a.Epoca,
+				Autor:       token,
+				Conteudo:    hash,
+				TipoArquivo: extensao,
+				Data:        time.Now(),
+			}
+			if !meme.ValidarFormato() {
+				http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+				return
+			}
+			fmt.Println("meme válido, enviando para rede")
+			a.Gateway.Encaminha([]acoes.Acao{meme}, token, a.Epoca)
+		}
+	} else {
+
+		switch tipo {
+		case "causo":
+			causo := &acoes.PostarCauso{
+				Epoca:    a.Epoca,
+				Autor:    token,
+				Conteudo: conteudo,
+				// Data:     a.DataDaEpoca(a.Epoca),
+				Data: time.Now(),
+			}
+			if !causo.ValidarFormato() {
+				http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+				return
+			}
+			fmt.Println("causo válido, enviando para rede")
+			a.Gateway.Encaminha([]acoes.Acao{causo}, token, a.Epoca)
+		case "fofoca":
+			fofoca := &acoes.PostarFofoca{
+				Epoca:    a.Epoca,
+				Autor:    token,
+				Conteudo: conteudo,
+				// Data:     a.DataDaEpoca(a.Epoca),
+				Data: time.Now(),
+			}
+			if !fofoca.ValidarFormato() {
+				http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+				return
+			}
+			fmt.Println("fofoca válida, enviando para rede")
+			a.Gateway.Encaminha([]acoes.Acao{fofoca}, token, a.Epoca)
+
+		case "ideia":
+			ideia := &acoes.PostarIdeia{
+				Epoca:    a.Epoca,
+				Autor:    token,
+				Conteudo: conteudo,
+				// Data:     a.DataDaEpoca(a.Epoca),
+				Data: time.Now(),
+			}
+			if !ideia.ValidarFormato() {
+				http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+				return
+			}
+			fmt.Println("ideia válida, enviando para rede")
+			a.Gateway.Encaminha([]acoes.Acao{ideia}, token, a.Epoca)
+
+		case "musica":
+			musica := &acoes.PostarMusica{
+				Epoca:    a.Epoca,
+				Autor:    token,
+				Conteudo: conteudo,
+				// Data:     a.DataDaEpoca(a.Epoca),
+				Data: time.Now(),
+			}
+			if !musica.ValidarFormato() {
+				http.Error(w, "formato errado", http.StatusMethodNotAllowed)
+				return
+			}
+			fmt.Println("música válida, enviando para rede")
+			a.Gateway.Encaminha([]acoes.Acao{musica}, token, a.Epoca)
+		}
 	}
+	time.Sleep(time.Second)
 	arroba, ok := a.Indice.TokenParaArroba[token]
 	if !ok {
 		http.Error(w, "erro ao recuperar arroba do usuario", http.StatusMethodNotAllowed)
@@ -562,4 +649,17 @@ func (a *Aplicacao) ManejoPublica(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("%s/jornal/%s", a.NomeMucua, arroba), http.StatusSeeOther)
+}
+
+func (a *Aplicacao) ManejoConteudo(w http.ResponseWriter, r *http.Request) {
+
+	requisicao := r.URL.RequestURI()
+	partes := strings.Split(requisicao, "/")
+	ultima := partes[len(partes)-1]
+
+	arquivo := filepath.Join(a.CaminhoArquivos, ultima)
+	bytes, _ := os.ReadFile(arquivo)
+	if len(bytes) > 0 {
+		w.Write(bytes)
+	}
 }

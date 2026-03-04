@@ -40,7 +40,7 @@
                 </div>
             </div>
         </article>
-    {{else if .TipoImagem}}
+    {{else}}
         <article class="card sombraG listaCards">
             <div class="data-categoria">
                 <div class="cabecalhoCard corPrimaria">
@@ -49,8 +49,7 @@
                     </div>
                     <p class="textoCard dataCard" id="dataCard"> {{.DataPostagem}}</p>
                     <br>
-                    <!-- Aqui vai ser o hiperlink pra imagem, ou diretamente puxa a imagem - verificar -->
-                    <a class="textoCard">{{.Conteudo}}</a> 
+                    <img src="{{.NomeMucua}}/conteudo/{{.Conteudo}}" alt="imagem" style="width: 100%; height: auto;">
                     <br>
                 </div>
             </div>

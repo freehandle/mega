@@ -61,7 +61,7 @@ func VetorDiasMes(inicioMes time.Time, datasPostagens []time.Time) []DiaCor {
 // Cria calendarios usados - data 1 é data atual (se possivel), ou data selecionada. data 2, se diferente
 //
 //	é data selecionada se data 1 for a data atual.
-func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time.Time, datasPostagens []time.Time) {
+func (c *Calendario) CriaCalendario(data1 time.Time, datasPostagens []time.Time) {
 
 	c.Atual = MesAno{}
 	c.Anterior = MesAno{}
@@ -73,10 +73,17 @@ func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time
 	mesAno1.Mes = mapaMeses[int(data1.Month())] // aparece no titulo do calendario
 	mesAno1.Ano = inicioMes1.Format("06")       // pegando o ano
 
-	// inclui tag de cor para dia atual
-	if data1Atual {
-		mesAno1.Dias[data1.Day()-1].Cor = "diaAtual"
+	// colorindo os dias com postagem
+	for _, tempo := range datasPostagens {
+		if tempo.Year() == inicioMes1.Year() && tempo.Month() == inicioMes1.Month() {
+			mesAno1.Dias[tempo.Day()-1].Cor = "diaCheio"
+		}
 	}
+
+	// // inclui tag de cor para dia atual
+	// if data1Atual {
+	// 	mesAno1.Dias[data1.Day()-1].Cor = "diaAtual"
+	// }
 
 	// pega o mes anterior e proximo
 	mesAnterior := inicioMes1.Add(-time.Second)
@@ -93,20 +100,32 @@ func (c *Calendario) CriaCalendario(data1 time.Time, data1Atual bool, data2 time
 	mesAno2.Mes = mapaMeses[int(inicioMes2.Month())]
 	mesAno2.Ano = inicioMes2.Format("06") // pegando o ano
 
-	// inclui tag de cor para data selecionada se houver
-	if data1 != data2 {
-		if data1.Month() == data2.Month() && data1.Year() == data2.Year() {
-			mesAno1.Dias[data2.Day()+1].Cor = "diaSelecionado" // dia selecionado
-		} else {
-			if inicioMes2.Month() == data2.Month() && inicioMes2.Year() == data2.Year() {
-				mesAno2.Dias[data2.Day()+1].Cor = "diaSelecionado" // dia selecionado
-			}
+	// colorindo os dias com postagem
+	for _, tempo := range datasPostagens {
+		if tempo.Year() == inicioMes2.Year() && tempo.Month() == inicioMes2.Month() {
+			mesAno2.Dias[tempo.Day()-1].Cor = "diaCheio"
 		}
 	}
+
+	// marcando o dia de hoje no calendario (se houver)
+	hoje := time.Now()
+	if data1.Month() == hoje.Month() && data1.Year() == hoje.Year() {
+		mesAno1.Dias[hoje.Day()-1].Cor = "diaAtual"
+	} else if inicioMes2.Month() == hoje.Month() && inicioMes2.Year() == hoje.Year() {
+		mesAno2.Dias[hoje.Day()-1].Cor = "diaAtual"
+	}
+
+	// marcando o dia selecionado
+	mesAno1.Dias[data1.Day()-1].Cor = "diaSelecionado"
+
 	c.Atual = mesAno1
 	c.Anterior = mesAno2
 }
 
 func DataFormatadaParaCard(aplicacao *Aplicacao, epoca uint64) string {
 	return aplicacao.DataDaEpoca(epoca).Format("02/01/2006")
+}
+
+func DataFormatadaParaReferencia(aplicacao *Aplicacao, epoca uint64) string {
+	return aplicacao.DataDaEpoca(epoca).Format("20060201")
 }

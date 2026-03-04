@@ -38,6 +38,7 @@ type ConteudoData struct {
 type HashData struct {
 	Hash crypto.Hash
 	Data uint64
+	Tipo string
 }
 
 func (i *Indice) IncorporaAutor(arroba string, token crypto.Token) {
@@ -110,6 +111,7 @@ func (i *Indice) IncorporaLivro(causo *acoes.PostarLivro) {
 	novoCauso := &HashData{
 		Hash: causo.Conteudo,
 		Data: causo.Epoca,
+		Tipo: causo.TipoArquivo,
 	}
 	if jornal.Livros == nil {
 		jornal.Livros = []*HashData{novoCauso}
@@ -127,6 +129,7 @@ func (i *Indice) IncorporaMeme(causo *acoes.PostarMeme) {
 	novoCauso := &HashData{
 		Hash: causo.Conteudo,
 		Data: causo.Epoca,
+		Tipo: causo.TipoArquivo,
 	}
 	if jornal.Memes == nil {
 		jornal.Memes = []*HashData{novoCauso}

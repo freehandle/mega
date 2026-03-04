@@ -5,47 +5,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIGA - Make Internet Great Again</title>
-    <link rel="stylesheet" href="{{.NomeMucua}}/static/style.css">
-    <link rel="stylesheet" href="{{.NomeMucua}}/static/styleMobile.css">
+    <link rel="stylesheet" href="{{.Cabecalho.NomeMucua}}/static/style.css">
+    <link rel="stylesheet" href="{{.Cabecalho.NomeMucua}}/static/styleMobile.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
-    <link rel="icon" href="/{{.NomeMucua}}/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/{{.Cabecalho.NomeMucua}}/img/favicon.ico" type="image/x-icon">
 </head>
 <body class="corTerciaria">
     <header>
-        <h1 class="sixtyfour">Jornal de {{.Arroba}}</h1>
+        <h1 class="sixtyfour">Jornal de {{.Cabecalho.Arroba}}</h1>
     </header>
     
     <div class="conteudo">
         <div class="postagem">
-            <form method="post" action="{{.NomeMucua}}/publica">
+            <form class="formulario" method="post" action="{{.Cabecalho.NomeMucua}}/publica" enctype="multipart/form-data">
                 <input class="none" type="hidden" name="arroba" value="{{.}}" readonly/>
             <div id="card-1" class="cardInput sombraG">
                 <div class="cabecalhoCard corPrimaria">
-                        <img class="imgP" src="{{.NomeMucua}}/img/zoom.png" alt="categoria postar" >
+                        <img class="imgP" src="{{.Cabecalho.NomeMucua}}/img/zoom.png" alt="categoria postar" >
                         <p class="tituloCabecalho">Postagem</p>
                 </div>
                 <p class="textoCard">Selecione o conteúdo que deseja postar</p>
                 <br>
                 <select id="tipoConteudo" class="textoCard cinzaClaro" type="text" placeholder="fofoca" name="tipoConteudo">
-                    <option value="fofoca" data-label="fofoca"> 👀 Fofoca</option>
+                    {{if .Fofoca}}
+                        <option value="fofoca" data-label="fofoca"> 👀 Fofoca</option>
+                    {{end}}
+                    {{if .Causo}}
                     <option value="causo" data-label="causo"> 🔮 Causo</option>
+                    {{end}}
+                    {{if .Ideia}}
                     <option value="ideia" data-label="ideia"> 🧠 Ideia</option>
+                    {{end}}
+                    {{if .Livro}}
                     <option value="livro" data-label="livro"> 📖 Livro</option>
+                    {{end}}
+                    {{if .Meme}}
                     <option value="meme" data-label="meme"> 🐸 Meme</option>
+                    {{end}}
+                    {{if .Musica}}
                     <option value="musica" data-label="música"> 🎶 Música</option>
+                    {{end}}
                 </select>
                 <br>
                 <br>
                 <br>
                 <p class="textoCard dataCard" id="dataCard"> </p>
                 <br>
-                <textarea id="textoConteudo" name="textoConteudo" placeholder="Adicione seu conteúdo aqui ..." rows="5"></textarea>
+                <textarea id="textoConteudo" name="textoConteudo" placeholder="Adicione seu conteúdo aqui ..." rows="25"></textarea>
                 <br>
             </div>
+            <input type="file" id="subir" name="subir">
             <div class="botoes">
-                <button onclick="window.location.href='{{.NomeMucua}}/jornal'" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </button>
+                <p onclick="window.location.href='{{.Cabecalho.NomeMucua}}/jornal/{{.Cabecalho.Arroba}}'" class="cinzaClaro sombraP botaoSecundario tituloBotao"> Cancelar </p>
                 <button id="botaoPostar" type="submit" class="corPrimaria sombraP botaoPrimario tituloBotao"> Adicionar </button>
             </div>
         </form>
