@@ -387,12 +387,12 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 		log.Println("categoria nao encontrada")
 	}
 	if post_texto != nil {
-		pagina.DataPostagem = ver.Data
+		pagina.DataPostagem = DataFormatadaParaCard(a, epoca)
 		pagina.Conteudo = post_texto.Conteudo
 		pagina.TipoTexto = true
 	}
 	if post_hash != nil {
-		pagina.DataPostagem = ver.Data
+		pagina.DataPostagem = DataFormatadaParaCard(a, epoca)
 		pagina.Conteudo = fmt.Sprintf("%s%s", post_hash.Hash.String(), post_hash.Tipo)
 		pagina.TipoTexto = false
 	}

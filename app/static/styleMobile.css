@@ -46,6 +46,9 @@
         box-shadow: 5px 5px 0 0 #000;
     }
 
+    .fakebutton {
+        padding: 2px 2px 2px 4px;
+    }
     
     .espacamento{
         margin: 10px;
