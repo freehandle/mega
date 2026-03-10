@@ -20,7 +20,7 @@ import (
 const appName = "MIGA"
 
 var arquivosTemplate []string = []string{
-	"credenciais", "signin", "jornal", "postagem", "post_aberto",
+	"credenciais", "signin", "jornal", "postagem", "post_aberto", "lista_categoria",
 }
 
 type Aplicacao struct {
