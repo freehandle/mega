@@ -1,0 +1,100 @@
+{{$mucua:=.NomeMucua}}
+{{$arroba:=.Arroba}}
+{{$categoria:=.CategoriaMin}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Categoria}} - {{.Arroba}}</title>
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/style.css">
+    <link rel="stylesheet" href="{{.NomeMucua}}/static/styleMobile.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sixtyfour&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{.NomeMucua}}/img/favicon.ico" type="image/x-icon">
+    <script src="{{.NomeMucua}}/static/filtros.js"></script>
+</head>
+<body class="corTerciaria">
+    <header>
+        <a href="{{.NomeMucua}}/jornal/{{.Arroba}}"><h1 class="sixtyfour">Jornal de {{.Arroba}}</h1></a>
+        <button onclick="compartilharJornal()" class="sombraP corSecundaria">
+            <p id="textoCompartilhar" class="tituloBotao">Compartilhar</p>
+            <img class="imgP" id="compartilhar" src="{{.NomeMucua}}/img/compartilhar.png" alt="compartilhar jornal">
+        </button>
+        {{if .Logado}}
+        <a class="fakebutton sombraP corErro" href="{{.NomeMucua}}/sair">
+            <p id="textoSair">Sair</p>
+            <img class="imgP" id="fecharSessao" src="{{.NomeMucua}}/img/fechar.png" alt="fechar sessão">
+        </a>
+        {{end}}
+    </header>
+
+    <div class="conteudo">
+        <div class="postagens">
+            <div class="cabecalhoCategoria">
+                <img class="imgM" src="{{.NomeMucua}}/img/{{.CategoriaMin}}.png" alt="icone {{.Categoria}}">
+                <div class="navegacaoCategoria">
+                    <a class="botaocalendario" href="#" onclick="navegarCarrossel(-1); return false;">◀</a>
+                    <span class="tituloCategoria">{{.Categoria}} (<span id="indicadorAtual">1</span>/{{len .Posts}})</span>
+                    <a class="botaocalendario" href="#" onclick="navegarCarrossel(1); return false;">▶</a>
+                </div>
+            </div>
+
+            <div class="carrosselSlide" id="carrosselSlide">
+                {{if eq (len .Posts) 0}}
+                <article class="cardVazio sombraG ativo">
+                    <div class="cabecalhoCard corPrimaria">
+                        <img class="imgP" src="{{$mucua}}/img/{{$categoria}}.png" alt="icone {{.Categoria}}">
+                        <p class="tituloCabecalho">{{.Categoria}}</p>
+                    </div>
+                    <br>
+                    <p class="textoCard textoLimitado">Este jornal ainda não tem nenhum post de {{.Categoria}}</p>
+                </article>
+                {{else}}
+                {{range $index, $post := .Posts}}
+                <article onclick="window.location.href='{{$mucua}}/jornal/{{$arroba}}/{{$categoria}}/{{$post.DataRef}}'" class="card sombraG{{if eq $index 0}} ativo{{end}}">
+                    <div class="cabecalhoCard corPrimaria">
+                        <img class="imgP" src="{{$mucua}}/img/{{$categoria}}.png" alt="icone categoria">
+                        <p class="tituloCabecalho">{{$post.Data}}</p>
+                    </div>
+                    <br>
+                    {{if $post.TipoTexto}}
+                        <p class="textoCard">{{$post.Conteudo}}</p>
+                    {{else}}
+                        <img src="{{$mucua}}/conteudo/{{$post.Conteudo}}" alt="imagem" style="width: 100%; height: auto;">
+                    {{end}}
+                    <br>
+                </article>
+                {{end}}
+                {{end}}
+            </div>
+
+            <script>
+                let indiceAtual = 0;
+                const cards = document.querySelectorAll('#carrosselSlide .card, #carrosselSlide .cardVazio');
+                const total = cards.length;
+
+                function navegarCarrossel(direcao) {
+                    if (total <= 1) return;
+
+                    cards[indiceAtual].classList.remove('ativo');
+                    indiceAtual += direcao;
+
+                    if (indiceAtual < 0) indiceAtual = total - 1;
+                    if (indiceAtual >= total) indiceAtual = 0;
+
+                    cards[indiceAtual].classList.add('ativo');
+                    document.getElementById('indicadorAtual').textContent = indiceAtual + 1;
+                }
+            </script>
+
+            {{if .Logado}}
+            <div class="botoes botoesCategoria">
+                <button onclick="window.location.href='{{.NomeMucua}}/postagem'" class="corPrimaria sombraP botaoPrimario tituloBotao"> adicionar conteúdo </button>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>

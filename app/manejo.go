@@ -81,6 +81,24 @@ type PaginaJornal struct {
 	Calendario Calendario
 }
 
+// Para construir a pagina de listagem de todas publicacoes de uma categoria
+type PaginaListaCategoria struct {
+	NomeMucua    string
+	Arroba       string
+	Categoria    string // ex: "Fofoca"
+	CategoriaMin string // ex: "fofoca"
+	Logado       bool
+	Posts        []ItemCategoria
+}
+
+// Item individual da lista de publicacoes por categoria
+type ItemCategoria struct {
+	Data      string // data formatada para exibicao
+	DataRef   string // data para URL
+	Conteudo  string // texto completo ou hash da imagem
+	TipoTexto bool   // true = texto, false = imagem
+}
+
 func (p *Aplicacao) Datas(j *indice.Jornal) []time.Time {
 	saida := make([]time.Time, 0)
 	for _, i := range j.Ideias {
@@ -261,6 +279,11 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if ver.Tipo == "categoria" {
+		a.ManejoListaCategoria(w, r, ver)
+		return
+	}
+
 	// tentando pegar o jornal da arroba indicada pelo endereco URL
 	jornal, ok := a.Indice.ArrobaParaJornal[ver.Usuario]
 	if !ok {
@@ -303,6 +326,104 @@ func (a *Aplicacao) ManejoJornal(w http.ResponseWriter, r *http.Request) {
 
 	pagina.Cards = CriaCards(paraMontar)
 	if err := a.templates.ExecuteTemplate(w, "jornal.html", pagina); err != nil {
+		log.Println(err)
+	}
+}
+
+// Manejo de listagem de todas publicacoes de uma categoria
+func (a *Aplicacao) ManejoListaCategoria(w http.ResponseWriter, r *http.Request, ver VerPagina) {
+	strToken := a.Autor(r)
+
+	jornal, ok := a.Indice.ArrobaParaJornal[ver.Usuario]
+	if !ok {
+		log.Println("Nome de usuario nao tem jornal associado")
+		http.NotFound(w, r)
+		return
+	}
+
+	pagina := PaginaListaCategoria{
+		NomeMucua:    a.NomeMucua,
+		Arroba:       ver.Usuario,
+		CategoriaMin: ver.Categoria,
+		Logado:       strToken != "",
+		Posts:        []ItemCategoria{},
+	}
+
+	// Define o nome da categoria com primeira letra maiuscula
+	switch ver.Categoria {
+	case "ideia":
+		pagina.Categoria = "Ideia"
+		for i := len(jornal.Ideias) - 1; i >= 0; i-- {
+			post := jornal.Ideias[i]
+			pagina.Posts = append(pagina.Posts, ItemCategoria{
+				Data:      DataFormatadaParaCard(a, post.Data),
+				DataRef:   DataFormatadaParaReferencia(a, post.Data),
+				Conteudo:  post.Conteudo,
+				TipoTexto: true,
+			})
+		}
+	case "causo":
+		pagina.Categoria = "Causo"
+		for i := len(jornal.Causos) - 1; i >= 0; i-- {
+			post := jornal.Causos[i]
+			pagina.Posts = append(pagina.Posts, ItemCategoria{
+				Data:      DataFormatadaParaCard(a, post.Data),
+				DataRef:   DataFormatadaParaReferencia(a, post.Data),
+				Conteudo:  post.Conteudo,
+				TipoTexto: true,
+			})
+		}
+	case "fofoca":
+		pagina.Categoria = "Fofoca"
+		for i := len(jornal.Fofocas) - 1; i >= 0; i-- {
+			post := jornal.Fofocas[i]
+			pagina.Posts = append(pagina.Posts, ItemCategoria{
+				Data:      DataFormatadaParaCard(a, post.Data),
+				DataRef:   DataFormatadaParaReferencia(a, post.Data),
+				Conteudo:  post.Conteudo,
+				TipoTexto: true,
+			})
+		}
+	case "musica":
+		pagina.Categoria = "Música"
+		for i := len(jornal.Musicas) - 1; i >= 0; i-- {
+			post := jornal.Musicas[i]
+			pagina.Posts = append(pagina.Posts, ItemCategoria{
+				Data:      DataFormatadaParaCard(a, post.Data),
+				DataRef:   DataFormatadaParaReferencia(a, post.Data),
+				Conteudo:  post.Conteudo,
+				TipoTexto: true,
+			})
+		}
+	case "meme":
+		pagina.Categoria = "Meme"
+		for i := len(jornal.Memes) - 1; i >= 0; i-- {
+			post := jornal.Memes[i]
+			pagina.Posts = append(pagina.Posts, ItemCategoria{
+				Data:      DataFormatadaParaCard(a, post.Data),
+				DataRef:   DataFormatadaParaReferencia(a, post.Data),
+				Conteudo:  fmt.Sprintf("%s%s", post.Hash.String(), post.Tipo),
+				TipoTexto: false,
+			})
+		}
+	case "livro":
+		pagina.Categoria = "Livro"
+		for i := len(jornal.Livros) - 1; i >= 0; i-- {
+			post := jornal.Livros[i]
+			pagina.Posts = append(pagina.Posts, ItemCategoria{
+				Data:      DataFormatadaParaCard(a, post.Data),
+				DataRef:   DataFormatadaParaReferencia(a, post.Data),
+				Conteudo:  fmt.Sprintf("%s%s", post.Hash.String(), post.Tipo),
+				TipoTexto: false,
+			})
+		}
+	default:
+		log.Println("categoria nao reconhecida")
+		http.NotFound(w, r)
+		return
+	}
+
+	if err := a.templates.ExecuteTemplate(w, "lista_categoria.html", pagina); err != nil {
 		log.Println(err)
 	}
 }

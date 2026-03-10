@@ -5,30 +5,25 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/freehandle/breeze/crypto"
-	"github.com/freehandle/mega/aplicacao/configuracoes"
-	"github.com/freehandle/mega/protocolo/estado"
-	"github.com/freehandle/safe"
 )
 
-type ConfiguracaoMucua struct {
-	Vault      *configuracoes.SecretsVault
-	Procurador crypto.Token
-	//Ephemeral   crypto.Token
-	//Senhas      configuracoes.PasswordManager
-	//CookieStore *configuracoes.CookieStore
-	//Indexer     *Index
-	Gateway     chan []byte
-	State       *estado.Estado
-	GenesisTime time.Time
-	//Mail        Mailer
-	Port      int
-	Path      string
-	NomeMucua string
-	Hostname  string
-	Safe      *safe.Safe
-}
+// type ConfiguracaoMucua struct {
+// 	Vault      *configuracoes.SecretsVault
+// 	Procurador crypto.Token
+// 	//Ephemeral   crypto.Token
+// 	//Senhas      configuracoes.PasswordManager
+// 	//CookieStore *configuracoes.CookieStore
+// 	//Indexer     *Index
+// 	Gateway     chan []byte
+// 	State       *estado.Estado
+// 	GenesisTime time.Time
+// 	//Mail        Mailer
+// 	Port      int
+// 	Path      string
+// 	NomeMucua string
+// 	Hostname  string
+// 	Safe      *safe.Safe
+// }
 
 func NovaMucua(ctx context.Context, app *Aplicacao, port int, caminho string, servername string) {
 	go app.Rodar(ctx)

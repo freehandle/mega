@@ -104,9 +104,31 @@
         }
 
         .listaCards{
-            width: 100%;            
+            width: 100%;
         }
 
+        .carrosselSlide {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .carrosselSlide .card,
+        .carrosselSlide .cardVazio {
+            width: 100%;
+            max-width: 100%;
+            min-width: unset;
+            flex: none;
+            margin: 10px 0;
+        }
+
+        .cabecalhoCategoria {
+            width: 100%;
+        }
+
+        .tituloCategoria {
+            font-size: 1.2em;
+            min-width: 120px;
+        }
 
         .cardInput{
             margin: 0;
