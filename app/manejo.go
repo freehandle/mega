@@ -20,7 +20,7 @@ import (
 
 var NomesCategorias = [6]string{"meme", "fofoca", "causo", "musica", "ideia", "livro"}
 
-const maxLetrasCard = 200
+const maxLetrasCard = 197
 
 type InformacaoCabecalho struct {
 	Arroba string

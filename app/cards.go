@@ -67,7 +67,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
-				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard] + "..."
 			} else {
 				c.ConteudoParcial = conteudoTexto.Conteudo
 			}
@@ -107,7 +107,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
-				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard] + "..."
 			} else {
 				c.ConteudoParcial = conteudoTexto.Conteudo
 			}
@@ -147,7 +147,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
-				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard] + "..."
 			} else {
 				c.ConteudoParcial = conteudoTexto.Conteudo
 			}
@@ -187,7 +187,7 @@ func (c *ConteudoCard) CriaCard(paraMontar ParaMontarCards) {
 			c.Data = DataFormatadaParaCard(paraMontar.Aplicacao, conteudoTexto.Data)
 			c.DataRef = DataFormatadaParaReferencia(paraMontar.Aplicacao, conteudoTexto.Data)
 			if len(conteudoTexto.Conteudo) > maxLetrasCard {
-				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard]
+				c.ConteudoParcial = conteudoTexto.Conteudo[:maxLetrasCard] + "..."
 			} else {
 				c.ConteudoParcial = conteudoTexto.Conteudo
 			}
