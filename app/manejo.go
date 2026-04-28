@@ -445,6 +445,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	epoca := a.EpocaDaData(datanum)
+	fmt.Println(epoca, datanum)
 
 	pagina := PaginaPostAberto{
 		NomeMucua:    a.NomeMucua,
@@ -520,6 +521,7 @@ func (a *Aplicacao) ManejoPostAberto(w http.ResponseWriter, r *http.Request) {
 	if err := a.templates.ExecuteTemplate(w, "post_aberto.html", pagina); err != nil {
 		log.Println(err)
 	}
+	fmt.Printf("%+v\n", pagina)
 }
 
 func (a *Aplicacao) ManejoSignin(w http.ResponseWriter, r *http.Request) {
